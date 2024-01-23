@@ -48,18 +48,32 @@ const StyledButton = styled.input`
     border-radius: 4px;
     cursor: pointer;
 `;
-
+// 중복확인 버튼
 const StyledCheckButton = styled.button`
-    margin-left: 10px;  
+    margin-left: 10px;
+    margin-right: 10px;
     padding: 8px;
-    background-color: #4caf50;
+    height: 100%;
+    background-color: ${props => (props.disabled ? "#888" : "#4caf50")};
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: ${props => (props.disabled ? "not-allowed" : "pointer")};
+`;
+
+const StyledResetButton = styled.button`
+    padding: 8px;
+    height: 100%; 
+    background-color: #f44336;
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
 `;
+
 const SignUp = () => {
     const navigate = useNavigate();
+    
     const [member, setMember] = useState({
         memberName: "",
         username: "",
@@ -77,7 +91,8 @@ const SignUp = () => {
     const handleChange = (field, value) => {
         if (field === 'username') {
             const usernameRegex = /^[a-zA-Z0-9]{6,12}$/;
-            setIsUsernameValid(usernameRegex.test(value));
+            const isInputValid = value.trim() !== '' && usernameRegex.test(value); // 빈 값이 아닌지와 정규식을 통한 유효성 검사
+            setIsUsernameValid(isInputValid);
         }
         if (field === 'password') {
             const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z\d!@#$%^&*]{8,}$/;
@@ -118,7 +133,10 @@ const SignUp = () => {
             alert("이름은 한글로 2~5글자 사이여야 합니다.");
             return;
         }
-        
+        if (!isCheckButtonDisabled) {
+            alert("ID 중복확인 해주세요.");
+            return;
+        }
         // 비밀번호 일치 여부 확인
         if (member.password !== userPasswordCheck) {
             alert("비밀번호가 일치하지 않습니다.");
@@ -133,7 +151,7 @@ const SignUp = () => {
             alert("모든 필드를 채워주세요.");
             return;
         }
-
+        
         // 전화번호 유효성 검사
         const phoneRegex = /^(010|011)\d{8}$/;
         if (!phoneRegex.test(member.phoneNum.replace(/-/g, ''))) {
@@ -152,12 +170,14 @@ const SignUp = () => {
             } else {
                 alert(response.data);
                 console.log(response.data);
+                
             }
         } catch (error) {
             console.log("Error sending data: ", error);
         }
         console.log("폼 제출됨:", member);
     };
+    const [isCheckButtonDisabled, setIsCheckButtonDisabled] = useState(false);
     const checkId = async (event) => {
         event.preventDefault();
         // 아이디 유효성 검사
@@ -170,17 +190,31 @@ const SignUp = () => {
             const response = await axios.post("/checkId", member);
             console.log(response.data);
             // 추가적으로 서버로부터의 응답을 처리하거나 상태를 업데이트할 수 있음
-            if (response.data === "ok") {
+            if (response.data === "Exist") {
                 console.log(response.data);
-                alert(response.data);
+                alert("이미 존재하는 아이디입니다.");
+            } else if(response.data === "Empty") {
+                console.log(response.data);
+                alert("아이디를 입력하세요.");
             } else {
                 alert(response.data);
                 console.log(response.data);
+                setIsCheckButtonDisabled(true);
             }
         } catch (error) {
             console.log("Error sending data: ", error);
-        }
+        } 
     }
+    const handleReset = () => {
+        setMember((prevMember) => ({
+            ...prevMember,
+            username: "",
+        }));
+        setUserPasswordCheck("");
+        setIsUsernameValid(false);
+        setIsCheckButtonDisabled(false); // reset 버튼 클릭 시 CheckId 버튼 활성화
+    };
+    
     return (
         <FormContainer>
             <FormHeader>회원 가입</FormHeader>
@@ -209,8 +243,18 @@ const SignUp = () => {
                                         handleChange("username", event.target.value)
                                     }
                                     value={member.username}
+                                    disabled={isCheckButtonDisabled} // 중복 확인 버튼이 활성화되면 ID 입력란 비활성화
+                                    style={{
+                                        backgroundColor: isCheckButtonDisabled ? "#ddd" : "white",
+                                    }} // 중복 확인 버튼이 활성화되면 배경색을 회색으로 변경
                                 />
-                                <StyledCheckButton onClick={checkId}>CheckId</StyledCheckButton>
+                               <StyledCheckButton
+                                    onClick={checkId}
+                                    disabled={isCheckButtonDisabled}
+                                >
+                                    CheckId
+                                </StyledCheckButton>
+                                <StyledResetButton type="button" onClick={handleReset}>reset</StyledResetButton>
                             </td>
                         </tr>
                         <tr>
