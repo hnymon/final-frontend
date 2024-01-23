@@ -6,11 +6,13 @@ import Mypage from './components/pages/Mypage';
 import Cart from './components/pages/Cart';
 import CustomerService from './components/pages/CustomerService';
 import Layout from './components/layout/Layout';
+import HomePage from './components/pages/HomePage';
 
 function App() {
   return (
       <Routes>
         <Route element={<Layout />} >
+          <Route index element={<HomePage/>}/>
           <Route path='/signup' element={<SignUp/>}/>
           <Route path='/login' element={<Login />}/>
           <Route path='/mypage' element={<Mypage />}/>

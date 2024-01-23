@@ -45,34 +45,43 @@ const StyledButton = styled.input`
 const Login = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-
+    const [currentnMember, setCurrentnMember] = useState({
+        cusername :"",
+        cuserrole :"",
+    }); 
     const handleSubmit = async (event) => {
         event.preventDefault();
-
+        
         try {
             // axios를 사용하여 서버로 데이터 전송
             const response = await axios.post("/login", { username, password });
-            
+            const token = response.headers.authorization.split(" ")[1];
+            // console.log(axios.defaults.headers.common.Authorization = `Bearer ${token}`); 
+
             // 추가적으로 서버로부터의 응답을 처리하거나 상태를 업데이트할 수 있음
-            if (response.data) {
+            if (response) {
+                // 토큰을 로컬 스토리지에 저장
+                localStorage.setItem("token", token);
+                console.log("로그인 성공");
+                console.log(token);
                 // 로그인 성공
                 alert("로그인 성공!");
-                
-                // 토큰을 로컬 스토리지에 저장
-                localStorage.setItem("token", response.data.token);
-                
-                // 로그인 후 리다이렉트 또는 다른 작업 수행
-                // 예: 리다이렉트는 React Router를 사용하여 수행할 수 있음
-                // history.push("/dashboard");
+                // 토큰으로 username, role 가져오기
+                // const responseC = await axios.post("/getIdRole", null, {
+                //     headers: {
+                //       Authorization: `Bearer ${token}`,
+                //     },
+                //   });
+                // console.log("test : "+responseC.data.currentMember.username)
             } else {
                 // 로그인 실패
                 alert("로그인 실패. 아이디 또는 비밀번호를 확인해주세요.");
             }
         } catch (error) {
+            alert("로그인 실패. 아이디 또는 비밀번호를 확인해주세요.");
             console.log("Error sending data: ", error);
         }
     };
-
     return (
         <FormContainer>
             <FormHeader>로그인</FormHeader>

@@ -91,7 +91,8 @@ const SignUp = () => {
     const handleChange = (field, value) => {
         if (field === 'username') {
             const usernameRegex = /^[a-zA-Z0-9]{6,12}$/;
-            setIsUsernameValid(usernameRegex.test(value));
+            const isInputValid = value.trim() !== '' && usernameRegex.test(value); // 빈 값이 아닌지와 정규식을 통한 유효성 검사
+            setIsUsernameValid(isInputValid);
         }
         if (field === 'password') {
             const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z\d!@#$%^&*]{8,}$/;
@@ -192,6 +193,9 @@ const SignUp = () => {
             if (response.data === "Exist") {
                 console.log(response.data);
                 alert("이미 존재하는 아이디입니다.");
+            } else if(response.data === "Empty") {
+                console.log(response.data);
+                alert("아이디를 입력하세요.");
             } else {
                 alert(response.data);
                 console.log(response.data);
@@ -239,6 +243,10 @@ const SignUp = () => {
                                         handleChange("username", event.target.value)
                                     }
                                     value={member.username}
+                                    disabled={isCheckButtonDisabled} // 중복 확인 버튼이 활성화되면 ID 입력란 비활성화
+                                    style={{
+                                        backgroundColor: isCheckButtonDisabled ? "#ddd" : "white",
+                                    }} // 중복 확인 버튼이 활성화되면 배경색을 회색으로 변경
                                 />
                                <StyledCheckButton
                                     onClick={checkId}
