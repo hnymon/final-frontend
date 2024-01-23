@@ -1,19 +1,25 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import BoardCreate from './conponents/board/BoardCreate';
-import Main from './conponents/Main';
-import BoardList from './conponents/board/BoardList';
-import BoardDetail from './conponents/board/BoardDetail';
+import './App.css';
+import {Route, Routes } from 'react-router-dom';
+import SignUp from './components/pages/SignUp';
+import Login from './components/pages/Login';
+import Mypage from './components/pages/Mypage';
+import Cart from './components/pages/Cart';
+import CustomerService from './components/pages/CustomerService';
+import Layout from './components/layout/Layout';
+import HomePage from './components/pages/HomePage';
+
 function App() {
   return (
-        <BrowserRouter>
-          <Routes>
-
-            <Route index element={<Main/>}/>
-            <Route path='/board/BoardCreate' element={<BoardCreate/>}></Route>
-            <Route path='/board/BoardList' element={<BoardList/>}></Route>
-            <Route path='/board/BoardDetail/:boardSeq' element={<BoardDetail/>}></Route>
-          </Routes>
-        </BrowserRouter>
+      <Routes>
+        <Route element={<Layout />} >
+          <Route index element={<HomePage/>}/>
+          <Route path='/signup' element={<SignUp/>}/>
+          <Route path='/login' element={<Login />}/>
+          <Route path='/mypage' element={<Mypage />}/>
+          <Route path='/cart' element={<Cart/>}/>
+          <Route path='/customer-service' element={<CustomerService/>}/>
+        </Route>
+      </Routes>
   );
 }
 
