@@ -7,7 +7,19 @@ const MainHeader = styled.header`
     top: 0;
     width: 100%;
     height: 80px;
-    background-color: #dde0ea;
+    background-color: #4caf50; // 수정: 헤더 배경 색상 변경
+    color: white; // 수정: 글자 색상 변경
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); // 수정: 그림자 효과 추가
+    z-index: 1000; // 수정: 다른 요소 위에 헤더를 배치
+
+    h1 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: bold;
+        line-height: 80px;
+        color: white; // 수정: 로고 글자 색상 변경
+        text-decoration: none;
+    }
 `;
 
 const Contents = styled.div`
@@ -24,6 +36,7 @@ const Navigation = styled.div`
     ul {
         display: flex;
         list-style: none;
+        margin: 0; // 수정: 기본 마진 제거
 
         li + li {
             margin-left: 30px;
@@ -31,11 +44,11 @@ const Navigation = styled.div`
 
         a {
             text-decoration: none;
-            color: #333;
+            color: white; // 수정: 네비게이션 링크 글자 색상 변경
             font-weight: bold;
 
             &:hover {
-                color: #4caf50; // 링크에 마우스를 올렸을 때의 색상
+                color: #ffee58; // 수정: 링크에 마우스를 올렸을 때의 색상
             }
         }
     }
@@ -45,9 +58,9 @@ const Header = () => {
     return (
         <MainHeader>
             <Contents>
-                <div>
-                    로고 자리
-                </div>
+                <h1>
+                    <NavLink to="/" style={{ color: "white", textDecoration: "none" }}>로고 자리</NavLink>
+                </h1>
                 <Navigation>
                     <ul>
                         <li>
