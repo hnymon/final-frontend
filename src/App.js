@@ -1,25 +1,19 @@
-import logo from './logo.svg';
-import './App.css';
-
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import BoardCreate from './conponents/board/BoardCreate';
+import Main from './conponents/Main';
+import BoardList from './conponents/board/BoardList';
+import BoardDetail from './conponents/board/BoardDetail';
 function App() {
   return (
-    <div className="App">
-      <h1>다시 한 번 테스트testff</h1>
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+        <BrowserRouter>
+          <Routes>
+
+            <Route index element={<Main/>}/>
+            <Route path='/board/BoardCreate' element={<BoardCreate/>}></Route>
+            <Route path='/board/BoardList' element={<BoardList/>}></Route>
+            <Route path='/board/BoardDetail/:boardSeq' element={<BoardDetail/>}></Route>
+          </Routes>
+        </BrowserRouter>
   );
 }
 
