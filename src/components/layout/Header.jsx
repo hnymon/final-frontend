@@ -79,6 +79,12 @@ const Header = () => {
         localStorage.removeItem("token");
         setIsLoggedIn(false);
     };
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+    // Toggle the dropdown menu visibility
+    const toggleDropdown = () => {
+      setIsDropdownOpen(!isDropdownOpen);
+    };
 
     return (
         <MainHeader>
@@ -113,8 +119,15 @@ const Header = () => {
                             </>
                         )}
                         <li>
-                            <NavLink to="/customer-service">고객센터</NavLink>
-                        </li>
+                            <NavLink to="/customer-service"onClick={()=>toggleDropdown("")}>고객센터</NavLink>
+                            {isDropdownOpen && (
+                            <div className="dropdown">
+                             {/* You can include additional dropdown items or categories here */}
+                                <NavLink to="/board/BoardList">게시판</NavLink><br></br>
+                                <NavLink to="/category2">카테고리 2</NavLink>
+                            </div>
+                            )}
+                       </li>
                     </ul>
                 </Navigation>
             </Contents>

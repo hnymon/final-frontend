@@ -3,7 +3,7 @@ import axios from "axios";
 import styled from "styled-components";
 import { NavLink, useNavigate } from "react-router-dom";
 import Logo from '../../img/Logo_n.png';
-import ka2 from '../../img/kakaoLogin2.png'
+
 
 const PageContainer = styled.div`
     display: flex;
@@ -135,7 +135,7 @@ const Login = () => {
                     <StyledButton type="submit" value="로그인" />
                 </form>
             </FormContainer>
-            <img src={ka2} alt="img" />
+           
             <StyledNavLink to="/signup" activeClassName="active">
                 회원가입
             </StyledNavLink>
