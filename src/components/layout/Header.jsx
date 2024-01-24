@@ -1,5 +1,6 @@
 import styled from "styled-components";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 const MainHeader = styled.header`
     position: fixed;
@@ -36,7 +37,7 @@ const Navigation = styled.div`
     ul {
         display: flex;
         list-style: none;
-        margin: 0; // 수정: 기본 마진 제거
+        margin: 0;
 
         li + li {
             margin-left: 30px;
@@ -44,38 +45,73 @@ const Navigation = styled.div`
 
         a {
             text-decoration: none;
-            color: white; // 수정: 네비게이션 링크 글자 색상 변경
+            color: white;
             font-weight: bold;
 
             &:hover {
-                color: #ffee58; // 수정: 링크에 마우스를 올렸을 때의 색상
+                color: #ffee58;
             }
         }
     }
 `;
-
+const LogoutLink = styled.div`
+    cursor: pointer;
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    &:hover {
+        color: #ffee58;
+    }
+`;
 const Header = () => {
+    const location = useLocation();
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    useEffect(() => {
+        // localStorage에서 토큰을 가져와 isLoggedIn 상태를 업데이트합니다.
+        const token = localStorage.getItem("token");
+        setIsLoggedIn(!!token);
+    }, [location.pathname]); // 페이지 경로가 변경될 때마다 실행
+
+    const handleLogout = () => {
+        // 로그아웃 버튼을 클릭할 때 실행되는 함수
+        // 로컬 스토리지에서 토큰을 삭제하고, isLoggedIn 상태를 업데이트합니다.
+        localStorage.removeItem("token");
+        setIsLoggedIn(false);
+    };
+
     return (
         <MainHeader>
             <Contents>
                 <h1>
-                    <NavLink to="/" style={{ color: "white", textDecoration: "none" }}>로고 자리</NavLink>
+                    <NavLink to="/" style={{ color: "white", textDecoration: "none" }}>
+                        로고 자리
+                    </NavLink>
                 </h1>
                 <Navigation>
                     <ul>
-                        <li>
-                            <NavLink to="/signup">회원가입</NavLink>
-                        </li>
-                        <li>
-                            <NavLink to="/login">로그인</NavLink>
-                        </li>
-                        <li>
-                            <NavLink to="/mypage">마이페이지</NavLink>
-                        </li>
-                        <li>
-                            {/* 장바구니에 넣어 논 리스트 수 출력 */}
-                            <NavLink to="/cart">장바구니(0)</NavLink>
-                        </li>
+                        {isLoggedIn ? (
+                            <>
+                                <li>
+                                    <NavLink to="/mypage">마이페이지</NavLink>
+                                </li>
+                                <li>
+                                    <NavLink to="/cart">장바구니(0)</NavLink>
+                                </li>
+                                <li>
+                                    <LogoutLink onClick={handleLogout}>로그아웃</LogoutLink>
+                                </li>
+                            </>
+                        ) : (
+                            <>
+                                <li>
+                                    <NavLink to="/signup">회원가입</NavLink>
+                                </li>
+                                <li>
+                                    <NavLink to="/login">로그인</NavLink>
+                                </li>
+                            </>
+                        )}
                         <li>
                             <NavLink to="/customer-service">고객센터</NavLink>
                         </li>
