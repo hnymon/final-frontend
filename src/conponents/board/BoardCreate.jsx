@@ -100,7 +100,7 @@ const ButtonContainer = styled.div`
 `;
 
 const BoardCreate = () => {
-  const [board, setboard] = useState({
+  const [board, setBoard] = useState({
     admin: "",
     boardTitle: "",
     boardContent: "",
@@ -117,6 +117,7 @@ const BoardCreate = () => {
       // Assuming you have a valid endpoint for posting data
      const response= await axios.post("/board/BoardCreate", board);
       console.log("성공");
+      alert("작성이 완료되었습니다");
       console.log(response.data);
       navigate('/board/BoardList');
     } catch (error) {
@@ -138,7 +139,7 @@ const BoardCreate = () => {
             type="text"
             id="writer"
             value={board.admin}
-            onChange={(e) => setboard({ ...board, admin: e.target.value })}
+            onChange={(e) => setBoard({ ...board, admin: e.target.value })}
             required
           />
         </ResponsiveFormGroup>
@@ -148,7 +149,7 @@ const BoardCreate = () => {
             type="text"
             id="boardTitle"
             value={board.boardTitle}
-            onChange={(e) => setboard({ ...board, boardTitle: e.target.value })}
+            onChange={(e) => setBoard({ ...board, boardTitle: e.target.value })}
             required
           />
         </ResponsiveFormGroup>
@@ -157,7 +158,7 @@ const BoardCreate = () => {
           <textarea
             id="boardContent"
             value={board.boardContent}
-            onChange={(e) => setboard({ ...board, boardContent: e.target.value })}
+            onChange={(e) => setBoard({ ...board, boardContent: e.target.value })}
             required
           />
         </ResponsiveFormGroup>
