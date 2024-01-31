@@ -7,10 +7,10 @@ import Cart from './components/pages/Cart';
 import CustomerService from './components/pages/CustomerService';
 import Layout from './components/layout/Layout';
 import HomePage from './components/pages/HomePage';
-import BoardList from './conponents/board/BoardList';
-import BoardDetail from './conponents/board/BoardDetail';
-import BoardCreate from './conponents/board/BoardCreate';
-import Edit from './conponents/board/Edit';
+import BoardList from './components/board/BoardList';
+import BoardDetail from './components/board/BoardDetail';
+import BoardCreate from './components/board/BoardCreate';
+import Edit from './components/board/Edit';
 import SearchBook from './components/pages/SearchBook';
 import BookDetail from './components/pages/BookDetail';
 
