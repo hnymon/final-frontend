@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-
+import Logo from '../../img/Logo_n.png';
 const FormContainer = styled.div`
     margin: 50px auto;
     max-width: 600px;
@@ -32,6 +32,11 @@ const StyledInput = styled.input`
     padding: 8px;
     box-sizing: border-box;
 `;
+const StyledIdInput = styled.input`
+    width: 60%;
+    padding: 8px;
+    box-sizing: border-box;
+`;
 
 const StyledSelect = styled.select`
     width: 100%;
@@ -48,10 +53,15 @@ const StyledButton = styled.input`
     border-radius: 4px;
     cursor: pointer;
 `;
+const LogoImage = styled.img`
+    width: 150px; /* 적절한 크기로 조절 */
+    margin: 0 auto; /* 가운데 정렬을 위한 margin 추가 */
+    display: block; /* 가운데 정렬을 위해 block 요소로 설정 */
+`;
 // 중복확인 버튼
 const StyledCheckButton = styled.button`
-    margin-left: 10px;
-    margin-right: 10px;
+    margin-left: 15px;
+    margin-right: 20px;
     padding: 8px;
     height: 100%;
     background-color: ${props => (props.disabled ? "#888" : "#4caf50")};
@@ -81,13 +91,17 @@ const SignUp = () => {
         email: "",
         domain: "@naver.com",
         phoneNum: "",
+        socialNum1:"",
+        socialNum2:""
     });
 
     const [userPasswordCheck, setUserPasswordCheck] = useState("");
     const [isUsernameValid, setIsUsernameValid] = useState(true);
     const [isPasswordValid, setIsPasswordValid] = useState(true);
     const [isNameValid, setIsNameValid] = useState(true);
-
+    
+   
+   
     const handleChange = (field, value) => {
         if (field === 'username') {
             const usernameRegex = /^[a-zA-Z0-9]{6,12}$/;
@@ -103,6 +117,7 @@ const SignUp = () => {
             const nameRegex = /^[가-힣]{2,5}$/;
             setIsNameValid(nameRegex.test(value));
         }
+        
 
         setMember({ ...member, [field]: value });
     };
@@ -125,7 +140,64 @@ const SignUp = () => {
         // 형식 적용하여 state 업데이트
         setMember({ ...member, phoneNum: formatPhoneNumber(truncatedValue) });
     };
-
+    // 주민번호 유효성검사
+    const handleSocialNum1Change = (event) => {
+        // 입력된 값에서 숫자만 추출
+        const newValue = event.target.value.replace(/[^0-9]/g, '');
+        // 최대 6자리까지만 받음
+        const truncatedValue = newValue.slice(0, 6);
+    
+        // 형식 및 유효성 검사
+        if (truncatedValue.length === 6) {
+            const year = parseInt(truncatedValue.substring(0, 2), 10);
+            const month = parseInt(truncatedValue.substring(2, 4), 10);
+            const day = parseInt(truncatedValue.substring(4, 6), 10);
+    
+            // 연도는 00~99 사이의 값이어야 함
+            if (year < 0 || year > 99) {
+                alert("올바른 연도 형식이 아닙니다.");
+                return;
+            }
+    
+            // 월은 1~12 사이의 값이어야 함
+            if (month < 1 || month > 12) {
+                alert("올바른 월 형식이 아닙니다.");
+                return;
+            }
+    
+            // 일은 1~31 사이의 값이어야 함 (해당 월에 따라 조정 필요)
+            if (day < 1 || day > 31) {
+                alert("올바른 일 형식이 아닙니다.");
+                return;
+            }
+        }
+    
+        // 형식 적용하여 state 업데이트
+        setMember((prevMember) => ({ ...prevMember, socialNum1: truncatedValue }));
+    };
+    
+    
+    const handleSocialNum2Change = (event) => {
+        // 입력된 값에서 숫자만 추출
+        const newValue = event.target.value.replace(/[^0-9]/g, '');
+        // 최대 7자리까지만 받음
+        const truncatedValue = newValue.slice(0, 7);
+    
+        // 형식 및 유효성 검사
+        if (truncatedValue.length === 7) {
+            const firstDigit = parseInt(truncatedValue.charAt(0), 10);
+    
+            // 첫 번째 숫자는 1~4 사이의 값이어야 함
+            if (firstDigit < 1 || firstDigit > 4) {
+                alert("뒷자리 첫 번째 숫자는 1~4까지만 가능합니다.");
+                return;
+            }
+        }
+    
+        // 형식 적용하여 state 업데이트
+        setMember((prevMember) => ({ ...prevMember, socialNum2: truncatedValue }));
+    };
+    
     const handleSubmit = async (event) => {
         event.preventDefault();
         // 이름 유효성 검사
@@ -177,6 +249,8 @@ const SignUp = () => {
         }
         console.log("폼 제출됨:", member);
     };
+
+    // 아이디 중복검사
     const [isCheckButtonDisabled, setIsCheckButtonDisabled] = useState(false);
     const checkId = async (event) => {
         event.preventDefault();
@@ -205,6 +279,8 @@ const SignUp = () => {
             console.log("Error sending data: ", error);
         } 
     }
+
+    // 다시작성
     const handleReset = () => {
         setMember((prevMember) => ({
             ...prevMember,
@@ -217,12 +293,13 @@ const SignUp = () => {
     
     return (
         <FormContainer>
+            <LogoImage src={Logo} alt="logo Img" />
             <FormHeader>회원 가입</FormHeader>
             <form onSubmit={handleSubmit}>
                 <StyledTable>
                     <tbody>
                         <tr>
-                            <td>Name</td>
+                            <td>이름</td>
                             <td>
                                 <StyledInput
                                     type="text"
@@ -231,13 +308,12 @@ const SignUp = () => {
                                     }
                                     value={member.memberName}
                                 />
-                                
                             </td>
                         </tr>
                         <tr>
-                            <td>ID</td>
+                            <td>아이디</td>
                             <td style={{ display: 'flex', alignItems: 'center' }}> {/* 아이디 입력란과 중복체크 버튼을 가로로 정렬 */}
-                                <StyledInput
+                                <StyledIdInput
                                     type="text"
                                     onChange={(event) =>
                                         handleChange("username", event.target.value)
@@ -252,13 +328,13 @@ const SignUp = () => {
                                     onClick={checkId}
                                     disabled={isCheckButtonDisabled}
                                 >
-                                    CheckId
+                                    중복확인
                                 </StyledCheckButton>
-                                <StyledResetButton type="button" onClick={handleReset}>reset</StyledResetButton>
+                                <StyledResetButton type="button" onClick={handleReset}>다시작성</StyledResetButton>
                             </td>
                         </tr>
                         <tr>
-                            <td>Password</td>
+                            <td>비밀번호</td>
                             <td>
                                 <StyledInput
                                     type="password"
@@ -270,7 +346,7 @@ const SignUp = () => {
                             </td>
                         </tr>
                         <tr>
-                            <td>Password Check</td>
+                            <td>비밀번호 확인</td>
                             <td>
                                 <StyledInput
                                     type="password"
@@ -280,7 +356,24 @@ const SignUp = () => {
                             </td>
                         </tr>
                         <tr>
-                            <td>E-mail</td>
+                            <td>주민등록번호</td>
+                            <td style={{ display: 'flex' }}>
+                                <StyledInput
+                                type="text"
+                                onChange={handleSocialNum1Change}
+                                value={member.socialNum1}
+                                style={{ marginRight: '5px' }}
+                                />
+                                <span style={{fontWeight:"bold"}}>-&nbsp;</span>
+                                <StyledInput
+                                type="password"
+                                onChange={handleSocialNum2Change}
+                                value={member.socialNum2}
+                                />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>이메일</td>
                             <td>
                                 <StyledInput
                                     type="text"
@@ -301,7 +394,7 @@ const SignUp = () => {
                             </td>
                         </tr>
                         <tr>
-                            <td>Phone</td>
+                            <td>전화번호</td>
                             <td>
                                 <StyledInput
                                     type="text"
