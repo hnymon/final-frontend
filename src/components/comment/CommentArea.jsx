@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import styled from "styled-components";
-import CommentList from "./CommentList";
+import { useNavigate } from "react-router-dom";
 
 const CommentWrapper = styled.div`
   display: flex;
@@ -38,13 +38,16 @@ const CommentButton = styled.button`
   cursor: pointer;
 `;
 
-const CommentArea = () => {
+const CommentArea = (props) => {
+  const isbn = props.isbn;
+  const navigate = useNavigate();
   // 상태 정의
+  // console.log(isbn);
   const [comment, setComment] = useState({
     commentContent: "",
     username: "",
+    isbn: isbn,
   });
-
   // 댓글 내용 변경 핸들러
   const handleCommentChange = (e) => {
     setComment({ ...comment, commentContent: e.target.value });
@@ -55,8 +58,7 @@ const CommentArea = () => {
     e.preventDefault();
     try {
       // --------------
-      // axios를 사용하여 서버로 데이터 전송
-
+      // axios를 사용하여 서버로 데이터 전송 
       const token = localStorage.getItem("token"); // localStorage 에 토큰 저장 로그인시생성
       console.log(token);
       const responseC = await axios.post("/getIdRole", null, {
@@ -74,17 +76,22 @@ const CommentArea = () => {
         const response = await axios.post("/comment/CommentArea", comment);
         // 서버 응답에 따른 처리
         console.log("댓글 전송 성공", response.data);
+        if (response.data === "success") {
+          // 댓글이 성공적으로 전송되면 commentContent를 초기화
+          setComment({ ...comment, commentContent: "" });
+        }
       } else {
         console.log(responseC.data.result);
       }
     } catch (error) {
       // 에러 발생 시 처리
-      alert("전송실패");
+      alert("로그인페이지로 이동합니다");
+      navigate('/Login');
       console.error("댓글 전송 에러", error);
       // 필요한 에러 핸들링 로직 추가
     }
   };
-
+ 
   return (
     <>
       <CommentWrapper>
