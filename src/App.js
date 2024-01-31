@@ -11,6 +11,8 @@ import BoardList from './conponents/board/BoardList';
 import BoardDetail from './conponents/board/BoardDetail';
 import BoardCreate from './conponents/board/BoardCreate';
 import Edit from './conponents/board/Edit';
+import SearchBook from './components/pages/SearchBook';
+import BookDetail from './components/pages/BookDetail';
 
 function App() {
   return (
@@ -23,6 +25,9 @@ function App() {
           <Route path='/mypage' element={<Mypage />}/>
           <Route path='/cart' element={<Cart/>}/>
           <Route path='/customer-service' element={<CustomerService/>}/>
+          {/* 책 검색 */}
+          <Route path='/book-search/:keyword' element={<SearchBook />}/>   
+          <Route path='/book-detail/:isbn' element={<BookDetail/>}/>   
           {/* 게시판 */}
           <Route path='/board/BoardList' element={<BoardList/>}/>   
           <Route path='/board/BoardDetail/:boardSeq' element={<BoardDetail/>}/> 

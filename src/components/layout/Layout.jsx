@@ -6,7 +6,8 @@ import styled from 'styled-components';
 import SearchBar from '../SearchBar';
 
 const LayoutDiv = styled.div`
-    padding-top: 80px;
+    padding-top:80px; /* Header의 높이(80px) + SearchBar의 높이(40px) */
+    
 `
 
 const Layout = (props) => {

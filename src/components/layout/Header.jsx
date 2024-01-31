@@ -7,15 +7,25 @@ const MainHeader = styled.header`
     left: 0;
     top: 0;
     width: 100%;
-    height: 50px;
-    background-color: #FFEDED; // 수정: 헤더 배경 색상 변경
+    height: 80px;
+    background-color: #4caf50; // 수정: 헤더 배경 색상 변경
     color: white; // 수정: 글자 색상 변경
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); // 수정: 그림자 효과 추가
     z-index: 1000; // 수정: 다른 요소 위에 헤더를 배치
+
+    h1 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: bold;
+        line-height: 80px;
+        color: white; // 수정: 로고 글자 색상 변경
+        text-decoration: none;
+    }
 `;
 
 const Contents = styled.div`
     display: flex;
-    width: 100%;
+    width: 96%;
     max-width: 1100px;
     height: 100%;
     margin: 0 auto;
@@ -35,11 +45,11 @@ const Navigation = styled.div`
 
         a {
             text-decoration: none;
-            color: #A191A1;
+            color: white;
             font-weight: bold;
 
             &:hover {
-                color: #FF5573;
+                color: #ffee58;
             }
         }
     }
@@ -47,19 +57,12 @@ const Navigation = styled.div`
 const LogoutLink = styled.div`
     cursor: pointer;
     text-decoration: none;
-    color: #A191A1;
+    color: white;
     font-weight: bold;
     &:hover {
-        color: #FF5573;
+        color: #ffee58;
     }
 `;
-
-const NavigationWrapper = styled.div`
-    flex: 1;
-    display: flex;
-    justify-content: flex-end;
-`;
-
 const Header = () => {
     const location = useLocation();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -76,17 +79,15 @@ const Header = () => {
         localStorage.removeItem("token");
         setIsLoggedIn(false);
     };
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
-    // Toggle the dropdown menu visibility
-    const toggleDropdown = () => {
-      setIsDropdownOpen(!isDropdownOpen);
-    };
 
     return (
         <MainHeader>
             <Contents>
-            <NavigationWrapper>
+                <h1>
+                    <NavLink to="/" style={{ color: "white", textDecoration: "none" }}>
+                        로고 자리
+                    </NavLink>
+                </h1>
                 <Navigation>
                     <ul>
                         {isLoggedIn ? (
@@ -112,18 +113,10 @@ const Header = () => {
                             </>
                         )}
                         <li>
-                            <NavLink to="/customer-service"onClick={()=>toggleDropdown("")}>고객센터</NavLink>
-                            {isDropdownOpen && (
-                            <div className="dropdown">
-                             {/* You can include additional dropdown items or categories here */}
-                                <NavLink to="/board/BoardList">게시판</NavLink><br></br>
-                                <NavLink to="/category2">카테고리 2</NavLink>
-                            </div>
-                            )}
-                       </li>
+                            <NavLink to="/customer-service">고객센터</NavLink>
+                        </li>
                     </ul>
-                    </Navigation>
-                </NavigationWrapper>
+                </Navigation>
             </Contents>
         </MainHeader>
     );
