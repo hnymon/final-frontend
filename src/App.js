@@ -13,6 +13,7 @@ import BoardCreate from './components/board/BoardCreate';
 import Edit from './components/board/Edit';
 import SearchBook from './components/pages/SearchBook';
 import BookDetail from './components/pages/BookDetail';
+import LoginCallback from './components/oauth/Logincallback';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route index element={<HomePage/>}/>
           <Route path='/signup' element={<SignUp/>}/>
           <Route path='/login' element={<Login />}/>
+          <Route path='/login/callback' element={<LoginCallback />}/>
           <Route path='/mypage' element={<Mypage />}/>
           <Route path='/cart' element={<Cart/>}/>
           <Route path='/customer-service' element={<CustomerService/>}/>

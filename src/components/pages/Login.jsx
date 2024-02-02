@@ -3,6 +3,9 @@ import axios from "axios";
 import styled from "styled-components";
 import { NavLink, useNavigate } from "react-router-dom";
 import Logo from '../../img/Logo_n.png';
+import NaverLoginButton from "../oauth/NaverLoginButton";
+import KakaoLoginButton from "../oauth/KakaoLoginButton";
+import GoogleLoginButton from "../oauth/GoogleLogin";
 
 const PageContainer = styled.div`
     display: flex;
@@ -57,10 +60,17 @@ const StyledNavLink = styled(NavLink)`
     background-color: white;
     text-decoration: none;
 `;
+
+
+const SocialLogo = styled.div`
+    display: flex;
+    margin-bottom: 30px;
+`
 const Login = () => {
     const navigate = useNavigate();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+
     const handleSubmit = async (event) => {
         event.preventDefault();
         
@@ -68,7 +78,8 @@ const Login = () => {
             // axios를 사용하여 서버로 데이터 전송
             const response = await axios.post("/login", { username, password });
             const token = response.headers.authorization.split(" ")[1];
-            // console.log(axios.defaults.headers.common.Authorization = `Bearer ${token}`); 
+
+
 
             // 추가적으로 서버로부터의 응답을 처리하거나 상태를 업데이트할 수 있음
             if (response) {
@@ -104,6 +115,9 @@ const Login = () => {
             console.log("Error sending data: ", error);
         }
     };
+
+
+
     return (
         <PageContainer>
             <LogoImage src={Logo} alt="logo Img" />
@@ -134,8 +148,11 @@ const Login = () => {
                     <StyledButton type="submit" value="로그인" />
                 </form>
             </FormContainer>
-            
-           
+            <SocialLogo>
+                <NaverLoginButton/>
+                <KakaoLoginButton/>
+                <GoogleLoginButton/>
+            </SocialLogo>
             <StyledNavLink to="/signup">
                 회원가입
             </StyledNavLink>
