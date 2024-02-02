@@ -10,12 +10,19 @@ const LayoutDiv = styled.div`
     padding-bottom:100px; /* Header의 높이(80px) + SearchBar의 높이(40px) */
 `
 
+const SearchBarWrapper = styled.div`
+    margin-top: 10px; 
+    margin-left: 20px; 
+    margin-bottom:10px;
+`;
 const Layout = (props) => {
     return (
         <LayoutDiv>
             <Header />
             <main>
-                <SearchBar/>
+                <SearchBarWrapper>
+                    <SearchBar />
+                </SearchBarWrapper>
                 {props.children}
                 <Outlet />
             </main>

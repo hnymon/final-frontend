@@ -1,13 +1,14 @@
 import styled from "styled-components";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import logo from "../../img/Logo_n.png";
 
 const MainHeader = styled.header`
     position: fixed;
     left: 0;
     top: 0;
     width: 100%;
-    height: 50px;
+    height: 80px;
     background-color: #FFEDED; // 수정: 헤더 배경 색상 변경
     color: white; // 수정: 글자 색상 변경
     z-index: 1000; // 수정: 다른 요소 위에 헤더를 배치
@@ -22,7 +23,16 @@ const Contents = styled.div`
     align-items: center;
     justify-content: space-between;
 `;
-
+const Logo = styled.div`
+    img {
+        width: 100px; // 이미지의 너비를 조절합니다.
+        height: auto; // 높이는 자동으로 조절됩니다.
+    }
+    margin-right:20px;
+    &:hover {
+        cursor:pointer
+    }
+`;
 const Navigation = styled.div`
     ul {
         display: flex;
@@ -41,6 +51,10 @@ const Navigation = styled.div`
             &:hover {
                 color: #FF5573;
             }
+        }
+
+        li {
+            font-size: 20px;
         }
     }
 `;
@@ -63,6 +77,7 @@ const NavigationWrapper = styled.div`
 const Header = () => {
     const location = useLocation();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         // localStorage에서 토큰을 가져와 isLoggedIn 상태를 업데이트합니다.
@@ -82,10 +97,13 @@ const Header = () => {
     const toggleDropdown = () => {
       setIsDropdownOpen(!isDropdownOpen);
     };
-
+    const toHome = () => {
+        navigate("/")
+    }
     return (
         <MainHeader>
             <Contents>
+            <Logo><img src={logo} alt="" onClick={toHome}/></Logo>
             <NavigationWrapper>
                 <Navigation>
                     <ul>

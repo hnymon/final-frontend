@@ -1,4 +1,3 @@
-// import './App.css';
 import {Route, Routes } from 'react-router-dom';
 import SignUp from './components/pages/SignUp';
 import Login from './components/pages/Login';
@@ -20,7 +19,6 @@ function App() {
       <Routes>
         <Route element={<Layout />} >
           <Route index element={<HomePage/>}/>
-          <Route index element={<HomePage/>}/>
           <Route path='/signup' element={<SignUp/>}/>
           <Route path='/login' element={<Login />}/>
           <Route path='/login/callback' element={<LoginCallback />}/>
@@ -28,7 +26,7 @@ function App() {
           <Route path='/cart' element={<Cart/>}/>
           <Route path='/customer-service' element={<CustomerService/>}/>
           {/* 책 검색 */}
-          <Route path='/book-search/:keyword' element={<SearchBook />}/>   
+          <Route path='/book-search/:selectedOption/:keyword' element={<SearchBook />}/>   
           <Route path='/book-detail/:isbn' element={<BookDetail/>}/>   
           {/* 게시판 */}
           <Route path='/board/BoardList' element={<BoardList/>}/>   
