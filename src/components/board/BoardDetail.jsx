@@ -12,8 +12,7 @@ const Container = styled.div`
 `;
 
 const Card = styled.div`
-  background-color: #f5f5f5;
-  border: 1px solid #ddd;
+  border: 1px block solid #ddd;
   padding: 20px;
   margin-top: 20px;
   max-width: 600px;
@@ -21,7 +20,7 @@ const Card = styled.div`
 `;
 
 const Admin = styled.p`
-  font-weight: bold;
+  font-weight: 1px bold;
 `;
 
 const Title = styled.h2`
@@ -63,7 +62,7 @@ const BoardDetail = () => {
     };
     getBoard();
   }, [boardSeq]);
-
+                               
   const handleHome = () => {
     navigate("/board/BoardList");
   };
@@ -78,13 +77,15 @@ const BoardDetail = () => {
   };
 
   const handleDelete = async () => {
-    alert("삭제하시겠습니까?");
-    try {
-      await axios.delete(`/board/BoardDelete/${boardSeq}`);
-      alert("삭제되었습니다");
-      navigate('/board/BoardList');
-    } catch (error) {
-      console.error('글 삭제 실패', error);
+    const confirmDelete = window.confirm("삭제하시겠습니까?");
+    if(confirmDelete){
+      try {
+        await axios.delete(`/board/BoardDelete/${boardSeq}`);
+        alert("삭제되었습니다");
+        navigate('/board/BoardList');
+      } catch (error) {
+        console.error('글 삭제 실패', error);
+      }
     }
   };
 
@@ -92,10 +93,12 @@ const BoardDetail = () => {
     <Container>
       {board.map((boardItem, index) => (
         <div key={index}>
-          <h1>게시글 상세페이지</h1>
+          
           <Card>
-            <Admin>작성자: {boardItem.admin}</Admin>
-            <Title>제목: {boardItem.boardTitle}</Title>
+            <Title>{boardItem.boardTitle}</Title>
+            <Admin>{boardItem.admin} {boardItem.boardDate}</Admin>
+            <hr />
+            <br />
             <p>{boardItem.boardContent}</p>
           </Card>
           <ButtonContainer>

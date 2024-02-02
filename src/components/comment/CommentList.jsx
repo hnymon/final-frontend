@@ -1,6 +1,5 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import styled from "styled-components";
 
 const CenteredCommentList = styled.div`
@@ -11,6 +10,9 @@ const CenteredCommentList = styled.div`
 
 const CommentContainer = styled.div`
   border: 1px solid #ddd;
+  border-left : none; 
+  border-right : none; 
+  border-bottom : none; 
   padding: 10px;
   margin: 10px 0;
   width: 70%; /* Adjust the width as needed */
@@ -91,10 +93,10 @@ const CommentList = (props) => {
             <strong>작성자:</strong> {comment.username}
           </div>
           <div>
-            <strong>내용:</strong> {comment.commentContent}
+             {comment.commentContent}
           </div>
           <div>
-            <strong>날짜:</strong> {comment.commentDate}
+             {comment.commentDate}
             <button onClick={() => handleDelete(comment.commentId)}>삭제</button>
            
           </div>
@@ -110,6 +112,7 @@ const CommentList = (props) => {
             {page + 1}
           </PageButton>
         ))}
+        
       </PaginationContainer>
     </CenteredCommentList>
   );

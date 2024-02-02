@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import CommentArea from "../comment/CommentArea";
+import CommentList from "../comment/CommentList";
+import KakaoMap from "./KakaoMap";
 
 const BookDetail = () => {
   const { isbn } = useParams();
@@ -64,6 +67,7 @@ const BookDetail = () => {
         console.error("Error submitting data:", error);
       });
   }; 
+  
   return (
     <div>
       {loading ? (
@@ -77,11 +81,12 @@ const BookDetail = () => {
             <h3>도서 정가 : {bookInfo.price}</h3>
             <h3>도서 판매가 : {bookInfo.salePrice}</h3>
             <h3>도서 출판날짜 : {bookInfo.datetime}</h3>
-            <h3>도서 출판사 : {bookInfo.publisher}</h3>
+            <h3>도서 출판사 : {bookInfo.publisher}</h3> 
             <h3>도서 번역가 : {bookInfo.translators}</h3>
             <h3>도서 isbn : {bookInfo.isbn}</h3>
             <img src={bookInfo.thumbnail ? bookInfo.thumbnail : 'http://via.placeholder.com/120X150'} alt="" />
           </div>
+          
         ) : (
           <h1>No book details available.</h1>
         )
@@ -91,8 +96,12 @@ const BookDetail = () => {
                     onChange={event => {setNum(event.target.value)}}
                     value={num} />
         <input type="submit" value="submit" />
+       
       </form>
+      {bookInfo && <CommentArea isbn={bookInfo.isbn} />}
+      {bookInfo && <CommentList isbn={bookInfo.isbn}/>}
     </div>
+    
   );
 };
 
