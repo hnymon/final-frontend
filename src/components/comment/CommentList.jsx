@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import styled from "styled-components";
 
 const CenteredCommentList = styled.div`
@@ -31,13 +32,13 @@ const PageButton = styled.button`
   border-radius: 3px;
 `;
 
-const CommentList = () => {
+const CommentList = (props) => {
   const [list, setCommentList] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [pageSize, setPageSize] = useState(10);
-  const [username, setUsername] = useState(""); // Add state for username
-
+  const [isbn, setIsbn] = useState(props.isbn); // Set initial value for isbn
+  const [updateFlag, setUpdateFlag] = useState(false); // 추가
   useEffect(() => {
     const fetchPagedComments = async () => {
       try {
@@ -45,10 +46,11 @@ const CommentList = () => {
           params: {
             page: currentPage,
             size: pageSize,
-            username: username,
+            isbn: isbn,
           },
         });
-        const { content, totalPages } = response.data;
+        console.log(response);
+        const { content, totalPages } = response.data; // Assuming the structure is { content: [], totalPages: 0 }
         setCommentList(content);
         setTotalPages(totalPages);
       } catch (error) {
@@ -57,11 +59,29 @@ const CommentList = () => {
     };
 
     fetchPagedComments();
-  }, [currentPage, pageSize, username]);
+  }, [currentPage, pageSize, isbn,updateFlag]);
 
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
   };
+  //삭제 
+ 
+  const handleDelete = async (commentId) => {
+    const confirmDelete = window.confirm("삭제하시겠습니까?");
+    if(confirmDelete){
+      try {
+        const response = await axios.delete(`/comment/CommentDelete/${commentId}`)
+        alert(response.data+"삭제되었습니다")
+        if(response.data==="success"){
+          setUpdateFlag((prevFlag) => !prevFlag); // updateFlag를 토글하여 강제 재랜더링
+        }
+      } catch (error) {
+        console.log(commentId);
+        console.error("에러",error)
+      }
+    } 
+  }
+
 
   return (
     <CenteredCommentList>
@@ -75,6 +95,8 @@ const CommentList = () => {
           </div>
           <div>
             <strong>날짜:</strong> {comment.commentDate}
+            <button onClick={() => handleDelete(comment.commentId)}>삭제</button>
+           
           </div>
         </CommentContainer>
       ))}
