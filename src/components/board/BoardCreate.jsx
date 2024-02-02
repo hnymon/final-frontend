@@ -131,20 +131,26 @@ const BoardCreate = () => {
 
   return (
     <FormContainer>
-      <h2>Create a New Post</h2>
+      <h2>글작성</h2>
       <ResponsiveForm onSubmit={handleSubmit}>
         <ResponsiveFormGroup>
-          <label htmlFor="admin">admin</label>
-          <input
+          <label htmlFor="admin">관리자 &nbsp;
+          {/* <input
             type="text"
             id="writer"
-            value={board.admin}
+            // value={board.admin}
+            value="고객센터"
             onChange={(e) => setBoard({ ...board, admin: e.target.value })}
             required
-          />
+          /> */}
+          <select name="check" id="writer" onChange={(e) => setBoard({ ...board, admin: e.target.value })}>
+          <option value="고객센터">고객센터</option>
+          <option value="핫트랙스">핫트랙스</option>
+          </select>
+          </label>
         </ResponsiveFormGroup>
         <ResponsiveFormGroup>
-          <label htmlFor="boardTitle">Title</label>
+          <label htmlFor="boardTitle">제목</label>
           <input
             type="text"
             id="boardTitle"
@@ -154,7 +160,7 @@ const BoardCreate = () => {
           />
         </ResponsiveFormGroup>
         <ResponsiveFormGroup>
-          <label htmlFor="boardContent">Content</label>
+          <label htmlFor="boardContent">내용</label>
           <textarea
             id="boardContent"
             value={board.boardContent}
