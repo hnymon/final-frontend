@@ -8,10 +8,12 @@ import SearchIcon from '@mui/icons-material/Search';
 
 export default function SearchBar() {
   const navigate = useNavigate();
-
+  const [search, setSearch] = React.useState({
+    keyword:"",
+  });
   const handleSearch = (event) => {
     event.preventDefault();
-    const keyword = event.target.elements.search.value;
+    const {keyword} = search;
     if(keyword ===""){
       alert("검색어를 입력하세요")
       return;
@@ -19,17 +21,23 @@ export default function SearchBar() {
     navigate(`/book-search/${keyword}`);
   };
 
+  const handleKeywordChange = (event) => {
+    const keyword = event.target.value;
+    setSearch((prevSearch) => ({ ...prevSearch, keyword }));
+  };
   return (
     <Paper
       component="form"
-      sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: 400 }}
+      sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: 400, border: '2px solid pink', borderRadius: '8px',}}
       onSubmit={handleSearch}
     >
       <IconButton sx={{ p: '10px' }} aria-label="menu">
       </IconButton>
       <InputBase
         name="search"
-        sx={{ ml: 1, flex: 1 }}
+        value={search.keyword}
+        onChange={handleKeywordChange}
+        sx={{ ml: 1, flex: 1}}
         placeholder="책 검색"
         inputProps={{ 'aria-label': 'search google maps' }}
       />
