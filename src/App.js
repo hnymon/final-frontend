@@ -26,7 +26,7 @@ function App() {
           <Route path='/cart' element={<Cart/>}/>
           <Route path='/customer-service' element={<CustomerService/>}/>
           {/* 책 검색 */}
-          <Route path='/book-search/:selectedOption/:keyword' element={<SearchBook />}/>   
+          <Route path='/book-search/:keyword' element={<SearchBook />}/>   
           <Route path='/book-detail/:isbn' element={<BookDetail/>}/>   
           {/* 게시판 */}
           <Route path='/board/BoardList' element={<BoardList/>}/>   

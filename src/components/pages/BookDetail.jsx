@@ -3,7 +3,6 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import CommentArea from "../comment/CommentArea";
 import CommentList from "../comment/CommentList";
-import KakaoMap from "./KakaoMap";
 
 const BookDetail = () => {
   const { isbn } = useParams();
@@ -13,30 +12,24 @@ const BookDetail = () => {
   useEffect(() => {
     const fetchBookDetail = async () => {
       try {
-        let [firstPart] = isbn.split(' ');
-        if(firstPart===""){
-          firstPart = isbn.trim();
-        }
-        console.log(firstPart)
-        const url = `https://dapi.kakao.com/v3/search/book?target=isbn&query=${firstPart}`;
-        const config = {
-          headers: { Authorization: "KakaoAK 05377ae946110607a0d89dae94e81960" },
-        };
-        const result = await axios(url, config);
-
-        if (result.data.documents.length > 0) {
-          const bookData = result.data.documents[0];
+        const response = await axios.post("/testBook4", {
+          isbn
+        });
+        const data = JSON.parse(response.data.detail).items[0];
+        console.log(data)
+        console.log(data.title)
+        if (data && data.title) {
           setBookInfo({
-            title: bookData.title,
-            contents: bookData.contents,
-            authors: bookData.authors,
-            price: bookData.price,
-            salePrice: bookData.sale_price,
-            datetime: bookData.datetime,
-            publisher: bookData.publisher,
-            translators: bookData.translators,
-            thumbnail: bookData.thumbnail,
-            isbn: bookData.isbn,
+            authors: data.author,
+            contents: data.description,
+            salePrice: data.discount,
+            thumbnail: data.image,
+            isbn: data.isbn,
+            datetime: data.pubdate,
+            title: data.title,
+            publisher: data.publisher,
+            price: data.price,
+            translators: data.translators,
           });
         } else {
           console.error("No book details found.");
@@ -47,7 +40,6 @@ const BookDetail = () => {
         setLoading(false);
       }
     };
-
     fetchBookDetail();
   }, [isbn]);
   console.log(bookInfo)
@@ -78,11 +70,9 @@ const BookDetail = () => {
             <h1>도서 제목 : {bookInfo.title}</h1>
             <p>{bookInfo.contents}</p>
             <h3>도서 저자 : {bookInfo.authors}</h3>
-            <h3>도서 정가 : {bookInfo.price}</h3>
             <h3>도서 판매가 : {bookInfo.salePrice}</h3>
             <h3>도서 출판날짜 : {bookInfo.datetime}</h3>
             <h3>도서 출판사 : {bookInfo.publisher}</h3> 
-            <h3>도서 번역가 : {bookInfo.translators}</h3>
             <h3>도서 isbn : {bookInfo.isbn}</h3>
             <img src={bookInfo.thumbnail ? bookInfo.thumbnail : 'http://via.placeholder.com/120X150'} alt="" />
           </div>
