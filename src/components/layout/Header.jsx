@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import logo from "../../img/Logo_n.png";
+import SearchBar from "../SearchBar";
 
 const MainHeader = styled.header`
     position: fixed;
@@ -28,11 +29,20 @@ const Logo = styled.div`
         width: 100px; // 이미지의 너비를 조절합니다.
         height: auto; // 높이는 자동으로 조절됩니다.
     }
-    margin-right:20px;
+    margin-right:30px;
+
     &:hover {
         cursor:pointer
     }
+
+    @media screen and (max-width: 768px) {
+        img {
+            width: 80px; // 화면 크기가 768px 이하일 때 로고 크기를 줄입니다.
+        }
+        margin-left: -100px; // 화면 크기가 768px 이하일 때 로고 위치를 조정합니다.
+    }
 `;
+
 const Navigation = styled.div`
     ul {
         display: flex;
@@ -104,6 +114,7 @@ const Header = () => {
         <MainHeader>
             <Contents>
             <Logo><img src={logo} alt="" onClick={toHome}/></Logo>
+            <SearchBar />
             <NavigationWrapper>
                 <Navigation>
                     <ul>
