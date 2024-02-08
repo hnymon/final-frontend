@@ -64,6 +64,7 @@ const BoardList = () => {
 
   return (
     <StyledBoardList>
+      
       <h1>공지사항</h1>
       <table>
         <thead>
@@ -94,10 +95,6 @@ const BoardList = () => {
         글 작성
       </Link>
       <Link to="/">홈</Link>
-        <div>
-            <KakaoMap/>
-        </div>
-          
     </StyledBoardList>
   );
 }

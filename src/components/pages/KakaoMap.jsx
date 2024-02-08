@@ -1,206 +1,343 @@
 import axios from "axios";
-import "../../KakaoMap.css";
 import React, { useEffect, useState } from "react";
-import { Map, MapMarker } from "react-kakao-maps-sdk";
+import Modal from "react-modal";
 
 const KakaoMap = () => {
-  const kakao = window.kakao;
-  const [keyword, setKeyword] = useState("");
-  const [markers, setMarkers] = useState([]);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
   const [map, setMap] = useState(null);
-  const [info, setInfo] = useState(null);
-  const [state, setState] = useState({
-    center: {
-      lat: 33.450701,
-      lng: 126.570667,
-    },
-    errMsg: null,
-    isLoading: true,
-  })
+  const [marker, setMarker] = useState(null);
+  const [clickedAddress, setClickedAddress] = useState("");
+  const openModal = () => {
+    setModalIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalIsOpen(false);
+  };
+
   useEffect(() => {
-    if (navigator.geolocation) {
-      // GeoLocation을 이용해서 접속 위치를 얻어옵니다
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setState((prev) => ({
-            ...prev,
-            center: {
-              lat: position.coords.latitude, // 위도
-              lng: position.coords.longitude, // 경도
-            },
-            isLoading: false,
-          }))
-        },
-        (err) => {
-          setState((prev) => ({
-            ...prev,
-            errMsg: err.message,
-            isLoading: false,
-          }))
-        }
-      )
-    } else {
-      // HTML5의 GeoLocation을 사용할 수 없을때 마커 표시 위치와 인포윈도우 내용을 설정합니다
-      setState((prev) => ({
-        ...prev,
-        errMsg: "geolocation을 사용할수 없어요..",
-        isLoading: false,
-      }))
-    }
-  }, [])
+    Modal.setAppElement("#root");
+  }, []);
+
   useEffect(() => {
-    if (!map || !keyword) return;
+    if (modalIsOpen) {
+      const loadKakaoMapsSDK = () => {
+        return new Promise((resolve, reject) => {
+          const script = document.createElement("script");
+          script.src =
+            "https://dapi.kakao.com/v2/maps/sdk.js?appkey=e06a12caf9f1479fb96a03f060d86d4c&libraries=services&autoload=false";
 
-    const ps = new kakao.maps.services.Places();
+          script.onload = () => {
+            window.kakao.maps.load(() => {
+              initMap(); // Kakao 지도 SDK 로드 후 지도 초기화 함수 호출
+              resolve();
+            });
+          };
 
-    ps.keywordSearch(keyword, (data, status, _pagination) => {
-      if (status === kakao.maps.services.Status.OK) {
-        const bounds = new kakao.maps.LatLngBounds();
-        let markers = [];
+          script.onerror = () => {
+            reject(new Error("Failed to load Kakao Maps SDK."));
+          };
 
-        for (var i = 0; i < data.length; i++) {
-          markers.push({
-            position: {
-              lat: data[i].y,
-              lng: data[i].x,
-            },
-            content: data[i].place_name,
-          });
-          bounds.extend(new kakao.maps.LatLng(data[i].y, data[i].x));
-        }
-        setMarkers(markers);
-
-        // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
-        map.setBounds(bounds);
-      }
-    });
-  }, [map, keyword]);
-
-  const handleKeywordChange = (e) => {
-    setKeyword(e.target.value);
-  };
-
-  const handleSearch = () => {
-    // 검색 버튼 클릭에 대한 추가 로직을 여기에 추가할 수 있습니다.
-  };
-
-  // 자식 노드를 모두 제거하는 함수
-  const removeAllChildNods = (el) => {
-    while (el.hasChildNodes()) {
-      el.removeChild(el.lastChild);
-    }
-  };
-
-  // 검색 결과 항목을 가져오는 함수
-  const getListItem = (index, places) => {
-    // 여기에 검색 결과 항목 생성 로직을 추가하세요.
-  };
-
-   // 서점 정보 가지고오기 api
-   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const apiKey = '7074597a68726a733636776a574653';
-        const apiUrl = `http://openapi.seoul.go.kr:8088/${apiKey}/json/SeoulLibraryBookRentNumInfo/1/5/`;
-        const response = await axios.get(apiUrl); 
-        const bookstoreData = response.data;// 가져온 데이터를 이용하여 처리
-        // console.log(bookstoreData); // 데이터 잘찍히는지 확인
-        //서점 데이터를 가지고 마커 데이터 형식으로 변환
-        const data = bookstoreData.SeoulLibraryBookRentNumInfo.row;
-          if(data){
-            const marker = data.map((item)=>{
-            const position = {
-              lat: parseFloat(item.LAT),
-              lng: parseFloat(item.LNG),
-            };
-
-          const content = item.STORE_NAME // 또는 다른 필드에 맞게 수정
-
-          return { position, content };
-        }); 
-          setMarkers(marker);
-          console.log(data);
-          console.log(marker);
-        const bounds = new kakao.maps.LatLngBounds();
-        marker.forEach((marker)=>{
-          bounds.extend(new kakao.maps.LatLng(marker.position.lat,marker.position.lng));
+          document.head.appendChild(script);
         });
-        map.setBounds(bounds);
-        }else{
-          console.error("error");
+      };
+
+      loadKakaoMapsSDK().catch((error) => {
+        console.error(error);
+      });
+    }
+  }, [modalIsOpen]);
+
+  const initMap = () => {
+    const container = document.getElementById("map");
+    const options = {
+      center: new window.kakao.maps.LatLng(33.450701, 126.570667),
+      level: 3,
+    };
+
+    const map = new window.kakao.maps.Map(container, options);
+    setMap(map);
+
+    displayCurrentLocationMarker(map);
+
+    fetchDataAndDisplayMarkers(map);
+
+    window.kakao.maps.event.addListener(map, "click", (mouseEvent) => {
+      moveCurrentLocationMarker(mouseEvent.latLng);
+    });
+  };
+  // 도서관 마커를 찍어주는 const
+  //  도서관 위치
+  // const [dataList, setDataList] = useState([]);
+  // console.log(dataList);
+ const fetchDataAndDisplayMarkers = async (map) => {
+  try {
+    const response = await axios.get("/Library");
+    const dataList = response.data.csvList; // 서버에서 받아온 데이터
+    console.log(dataList);
+    const markers = [];
+    dataList.forEach((data) => {
+      const markerPosition = new window.kakao.maps.LatLng(
+        data.latitude,
+        data.longitude
+      );
+      // // 마커 구분짓기 // 좀있다가 범헌
+      let markerImage;
+
+      switch (data.lbrrySe) {
+        case "어린이도서관":
+          markerImage = "/children1.png"; // 어린이도서관 마커 
+          break;
+        case "공공도서관":
+          markerImage = "/publicLibrary.png"; // 공공도서관 마커 
+          break;
+        case "작은도서관":
+          markerImage = "/small.png"; // 작은도서관 마커 이미지 
+          break;
+        case "학교도서관":
+          markerImage = "/school.png";
+        default:
+          markerImage = "/default_library_marker.png"; 
+      }
+      const marker = new window.kakao.maps.Marker({
+        position: markerPosition,
+        image: new window.kakao.maps.MarkerImage(markerImage, new window.kakao.maps.Size(30, 30)) // 마커 표시
+      });
+      marker.setMap(map);
+      // 마커 클러스트
+      
+      const content = `
+        <div class="wrap" style="background-color: white; border: 1px solid #ccc; padding: 10px;">
+          <div class="info">
+            <div class="title" style="font-size: 18px; font-weight: bold; color: #666; margin-bottom: 10px;">${data.lbrryNm}</div>
+            <hr style="border-top: 1px solid #ccc; margin: 10px 0;"/>
+            <div class="body" style="display: flex; align-items: center;">
+              <div class="img" style="margin-right: 10px;">
+                <img src="https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/thumnail.png" width="73" height="70"/>
+              </div>
+              <div class="desc" style="flex-grow: 1;">
+                <div class="ellipsis" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">${data.rdnmadr}</div>
+                <div class="jibun ellipsis" style="color: #666;">${data.phoneNumber}</div>
+                <div><a href="${data.homepageUrl}" target="_blank" class="link" style="color: blue; text-decoration: none;">홈페이지</a></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+     const overlay = new window.kakao.maps.CustomOverlay({
+        clickable: true,
+        content: content,
+        map: null,
+        position: marker.getPosition(),
+        yAnchor: 0,
+      });
+      
+      window.kakao.maps.event.addListener(marker, "click", function () {
+        if (overlay.getMap() === null) {
+          overlay.setMap(map);
+        } else {
+          overlay.setMap(null);
         }
+      });
+      // markers.push(marker);
+    });
+
+    // var clusterer = new window.kakao.maps.MarkerClusterer({
+    //   map: map,
+    //   averageCenter: true,
+    //   disableClickZoom: true,
+    //   minClusterSize: 2
+    // });
+  
+    // clusterer.addMarkers(markers);
+  
+    // window.kakao.maps.event.addListener(clusterer, 'clusterclick', function(cluster) {
+    //   console.log('클러스터 클릭', cluster);
+    // });
+  
+  
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+};
+
+
+  //  도서관 위치
+  // 현재위치를 직어주는 const
+  const displayCurrentLocationMarker = (map) => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const currentPos = new window.kakao.maps.LatLng(
+          position.coords.latitude,
+          position.coords.longitude
+        );
+
+        // 현재 위치 마커에 이미지 적용
+        const currentLocationMarkerImage = new window.kakao.maps.MarkerImage(
+          "/Logo_n.png", // 현재 위치 마커 이미지 파일 경로
+          new window.kakao.maps.Size(60, 60) // 마커 이미지 크기 설정
+        );
+
+        const currentLocationMarker = new window.kakao.maps.Marker({
+          position: currentPos,
+          image: currentLocationMarkerImage, // 현재위치 마커 이미지 적용
+        });
+        currentLocationMarker.setMap(map);
+
+        setMarker(currentLocationMarker);
+      },
+      (error) => {
+        console.error("Error getting current location:", error);
+      }
+    );
+  };
+
+  const moveCurrentLocationMarker = (latLng) => {
+    if (marker) {
+      marker.setMap(null);
+      marker.setPosition(latLng);
+      marker.setMap(map);
+    }
+  };
+  // 현재위치 맵클릭시 마커이동 useEffect()
+  useEffect(() => {
+    if (map && marker) {
+      const clickListener = window.kakao.maps.event.addListener(
+        map,
+        "click",
+        (mouseEvent) => {
+          const geocoder = new window.kakao.maps.services.Geocoder();
+
+          geocoder.coord2Address(
+            mouseEvent.latLng.getLng(),
+            mouseEvent.latLng.getLat(),
+            (result, status) => {
+              if (status === window.kakao.maps.services.Status.OK) {
+                const addr =
+                  result[0]?.road_address?.address_name ||
+                  result[0]?.address?.address_name;
+
+                console.log("클릭한 위치의 주소:", addr);
+
+                setClickedAddress(addr);
+                if (marker) {
+                  marker.setMap(null);
+                  marker.setPosition(mouseEvent.latLng);
+                  marker.setMap(map);
+                }
+              }
+            }
+          );
+        }
+      );
+
+      return () => {
+        if (clickListener) {
+          window.kakao.maps.event.removeListener(clickListener);
+        }
+      };
+    }
+  }, [map, marker]);
+  // 현재위치 geolocation
+  useEffect(() => {
+    const getCurrentLocation = async () => {
+      try {
+        const position = await new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject);
+        });
+
+        const currentPos = new window.kakao.maps.LatLng(
+          position.coords.latitude,
+          position.coords.longitude
+        );
+
+        if (map) {
+          map.panTo(currentPos);
+
+          if (marker) {
+            marker.setMap(null);
+            marker.setPosition(currentPos);
+            marker.setMap(map);
+          }
+        }
+
+        setClickedAddress("");
       } catch (error) {
-        console.log(error);
+        console.error("현재 위치를 가져오는 데 실패했습니다:", error);
       }
     };
-    fetchData();
-  },[map]);
-//  
 
+    getCurrentLocation();
+  }, [map, marker]);
 
   return (
     <div>
-      <input
-        type="text"
-        value={keyword}
-        onChange={handleKeywordChange}
-        placeholder="검색어를 입력하세요"
-      />
-      <button onClick={handleSearch}>검색</button>
-
-      <div style={{ display: "flex" }}>
-        <Map
-          center={state.center}
-          id="map_id"
-          style={{
-            width: "40%",
-            height: "440px",
-            position: "relative",
-            overflow: "hidden",
-            zIndex: 0, // 숫자가 높으면 높을수록 화면에 높게 표시됨 안쪽에 배치할려면 -1해주면된다
-          }}
-          level={3}
-          onCreate={setMap}
-        >
-          {/* {markers.map((marker, index) => (
-            <MapMarker
-              key={`marker-${index}`}
-              position={marker.position}
-              onClick={() => setInfo(marker)}
-              image={{
-                src: "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png", // 마커이미지의 주소입니다
-                size: {
-                  width: 24,
-                  height: 35
-                }, // 마커이미지의 크기입니다
-                options: {
-                  offset: {
-                    x: 27,
-                    y: 69,
-                  }, // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
-                },
+      
+      {/* <button onClick={openModal}>지도 보기</button> */}
+      <button style={{
+          backgroundColor: '#FFC0CB',
+          border: 'none',
+          color: 'white',
+          padding: '10px 20px',
+          borderRadius: '5px',
+          cursor: 'pointer',
+          fontSize: '16px',
+          fontWeight: 'bold',
+          outline: 'none',
+        }} onClick={openModal}>지도 보기</button>
+      <Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        style={{
+          content: {
+            margin:0,
+            padding:0,
+            paddingTop:30,
+            width: "80%", // 모달 창의 너비
+            height: "60%", // 모달 창의 높이
+            top: "50%", // 모달 상단의 위치 (50%는 중앙)
+            left: "50%", // 모달 좌측의 위치 (50%는 중앙)
+            transform: "translate(-50%, -50%)", // 정중앙 정렬을 위한 변환
+            backgroundColor: '#FFC0CB' // 색 주변
+          },
+        }}
+      >
+       <> 
+          <div
+            id="map"
+            style={{
+              margin:0,
+              padding:0,
+              marginRight:100,
+              width: "60%",
+              height: "100%",
+              left: "10px",
+              top: "-20px",
+            }}
+          ></div>
+          {clickedAddress && (
+            <p
+              style={{
+                position: "absolute",
+                top: "440px",
+                left: "125px",
+                margin: "0",
+                padding: "0",
               }}
             >
-              {info && info.content === marker.content && (
-                <div style={{ color: "#" }}>{marker.content}</div>
-              )}
-            </MapMarker>
-          ))} */}
-          {/* 현재위치 찍어줌 */}
-          {!state.isLoading && (
-          <MapMarker position={state.center}> 
-          </MapMarker> //현재위치 찍어주는놈
-        )}
-        </Map>
-        
-        <div id="menu_wrap" className="bg_white" >
-          <ul id="placesList">
-            {markers.map((marker, index) => (
-              <li key={index}>{marker.content}</li>
-            ))}
-          </ul>
-        </div>
-      </div>
+              {" "}
+              현재위치 주소: {clickedAddress}
+            </p>
+          )}
+        </>
+        <button
+          onClick={closeModal}
+          style={{ position: "absolute", top: "10px", right: "10px" }}
+        >
+          X
+        </button>
+      </Modal>
     </div>
   );
 };
