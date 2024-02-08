@@ -15,4 +15,4 @@ const getAccessToken = () =>{
   return localStorage.getItem('token');
 }
 
-export default GetTokenToHeader();
+export default GetTokenToHeader;
