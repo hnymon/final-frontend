@@ -18,11 +18,11 @@ function CartList() {
   const [paymentTotal, setPaymentTotal] = useState(0);
   const [selectedBooks, setSelectedBooks] = useState([]);
 
-
+  
   const fetchCartInfo = async () => {
-
+    const headers = GetTokenToHeader();  
     try {
-      const response = await axios.get("/cart", GetTokenToHeader);
+      const response = await axios.get("/cart", headers);
       console.log(response.data);
 
       await fetchBookDetail(response.data);

@@ -98,8 +98,10 @@ const Header = () => {
     const handleLogout = () => {
         // 로그아웃 버튼을 클릭할 때 실행되는 함수
         // 로컬 스토리지에서 토큰을 삭제하고, isLoggedIn 상태를 업데이트합니다.
-        localStorage.removeItem("token");
+        localStorage.removeItem("token");        // 엑세스 토큰
+        localStorage.removeItem("refreshToken"); // 리프레시 토큰
         setIsLoggedIn(false);
+        toHome();
     };
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
