@@ -13,6 +13,7 @@ import Edit from './components/board/Edit';
 import SearchBook from './components/pages/SearchBook';
 import BookDetail from './components/pages/BookDetail';
 import LoginCallback from './components/oauth/Logincallback';
+import Order from './components/order/order';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path='/login/callback' element={<LoginCallback />}/>
           <Route path='/mypage' element={<Mypage />}/>
           <Route path='/cart' element={<Cart/>}/>
+          <Route path='/order' element={<Order/>}/>
           <Route path='/customer-service' element={<CustomerService/>}/>
           {/* 책 검색 */}
           <Route path='/book-search/:keyword' element={<SearchBook />}/>   

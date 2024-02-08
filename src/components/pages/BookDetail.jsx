@@ -8,7 +8,9 @@ const BookDetail = () => {
   const { isbn } = useParams();
   const [bookInfo, setBookInfo] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [num, setNum] = useState(1);
+  const [count, setCount] = useState(1);
+  const [isbn13, setIsbn13] = useState(null);
+
   useEffect(() => {
     const fetchBookDetail = async () => {
       try {
@@ -31,6 +33,7 @@ const BookDetail = () => {
             price: data.price,
             translators: data.translators,
           });
+          setIsbn13(data.isbn);
         } else {
           console.error("No book details found.");
         }
@@ -45,16 +48,25 @@ const BookDetail = () => {
   console.log(bookInfo)
   const handleSubmit = (event) => {
     event.preventDefault();
-    alert(`수량 : ${num}`);
+    alert(`수량 : ${count}`);
     // 필요한 데이터를 적절하게 전송하도록 수정
-    axios.post("/bookTest", { num, bookInfo })
+    const token = localStorage.getItem("token");
+    console.log(token+" 토큰");
+    axios.post("/cart/add", { count, isbn13 },{
+      headers: {
+              Authorization: `Bearer ${token}`,
+            },
+    })
       .then((response) => {
         console.log(response.data);
-        const quantity = response.data.num
-        const book = response.data.bookInfo
-        console.log("수량 : " + quantity)
-        console.log("책 정보 : " + book.title)
+        const quantity = response.data.count;
+        const book = response.data.isbn13;
+        console.log("수량 : " + quantity);
+        console.log("책 정보 : " + book.title);
+        alert('장바구니 추가 완료');
+
       })
+
       .catch((error) => {
         console.error("Error submitting data:", error);
       });
@@ -83,8 +95,8 @@ const BookDetail = () => {
       )}
       <form onSubmit={handleSubmit}>
         <input type="number"
-                    onChange={event => {setNum(event.target.value)}}
-                    value={num} />
+                    onChange={event => {setCount(event.target.value)}}
+                    value={count} />
         <input type="submit" value="submit" />
        
       </form>
