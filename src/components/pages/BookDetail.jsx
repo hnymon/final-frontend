@@ -3,6 +3,7 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import CommentArea from "../comment/CommentArea";
 import CommentList from "../comment/CommentList";
+import KakaoMap from "./KakaoMap";
 
 const BookDetail = () => {
   const { isbn } = useParams();
@@ -100,6 +101,7 @@ const BookDetail = () => {
         <input type="submit" value="submit" />
        
       </form>
+      <KakaoMap/>
       {bookInfo && <CommentArea isbn={bookInfo.isbn} />}
       {bookInfo && <CommentList isbn={bookInfo.isbn}/>}
     </div>
