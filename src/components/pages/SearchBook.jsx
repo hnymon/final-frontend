@@ -69,6 +69,8 @@ const SailPrice = styled.span`
 const BookWrapper = styled.div`
   display:flex;
   margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #aaaaaa;
 `;
 const BookThumbDiv = styled.div`
   margin-right: 30px;
