@@ -140,12 +140,14 @@ const Order = () =>{
         />
     </Books>
     <H2>결제 수단</H2>
+    <ButtonDiv>
     <Button onClick={() => handlePaymentMethodChange('html5_inicis')} selected={selectedPaymentMethod === 'html5_inicis'}>
         신용/체크카드 결제
     </Button>
     <Button onClick={() => handlePaymentMethodChange('kakaopay')} selected={selectedPaymentMethod === 'kakaopay'}>
         카카오페이
     </Button>
+    </ButtonDiv>
         </>
     )
 }
@@ -162,9 +164,12 @@ const PersonInfo = styled.div`
         margin-top:3px;
     }
 `
-
+const ButtonDiv = styled.div`
+    margin-left: 20%;
+`
 const Button = styled.button`
-  margin-top: 40px;
+  margin-top: 30px;
+  margin-left: 20px;
   background-color: ${({ selected }) => (selected ? '#FEC4C4' : 'white')};
   color: ${({ selected }) => (selected ? 'white' : 'black')};
   border: 3px solid #FEC4C4;
@@ -180,7 +185,7 @@ const ProductInformation = styled.div`
     text-align: left;
     font-size: 20px;
     font-weight: bold;
-    margin: 15px 0 10px 0px;
+    margin: 15px 0 10px 10px;
 `
 
 const Display = styled.div`

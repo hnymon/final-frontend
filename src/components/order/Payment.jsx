@@ -74,6 +74,7 @@ const Payment = ({cartInfoList,bookCount, totalPrice, selectedPaymentMethod, del
               }
               const response = await axios.post(`order/add`, orderDTO, headers);
               alert('결제 성공');
+              navigate('/order/success');
               
 
             } catch (error) {
