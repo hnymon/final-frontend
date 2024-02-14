@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import CommentArea from "../comment/CommentArea";
 import CommentList from "../comment/CommentList";
 import KakaoMap from "./KakaoMap";
+import styled from "styled-components";
+import CartItemDto from "../order/CartItemDto";
 
 const BookDetail = () => {
   const { isbn } = useParams();
@@ -11,6 +13,8 @@ const BookDetail = () => {
   const [loading, setLoading] = useState(true);
   const [count, setCount] = useState(1);
   const [isbn13, setIsbn13] = useState(null);
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     const fetchBookDetail = async () => {
@@ -47,31 +51,56 @@ const BookDetail = () => {
     fetchBookDetail();
   }, [isbn]);
   console.log(bookInfo)
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    alert(`수량 : ${count}`);
-    // 필요한 데이터를 적절하게 전송하도록 수정
-    const token = localStorage.getItem("token");
+  const handleSubmit = () => {
     console.log(token+" 토큰");
-    axios.post("/cart/add", { count, isbn13 },{
-      headers: {
-              Authorization: `Bearer ${token}`,
-            },
-    })
+    if(token !== null){
+      axios.post("/cart/add", { count, isbn13 },{
+        headers: {
+                Authorization: `Bearer ${token}`,
+              },
+      })
       .then((response) => {
         console.log(response.data);
         const quantity = response.data.count;
         const book = response.data.isbn13;
         console.log("수량 : " + quantity);
         console.log("책 정보 : " + book.title);
-        alert('장바구니 추가 완료');
-
+        const confirmed = window.confirm('장바구니에 상품이 추가되었습니다. 장바구니로 이동하시겠습니까?');
+        if (confirmed) {
+          navigate('/cart');
+        }
       })
 
       .catch((error) => {
         console.error("Error submitting data:", error);
       });
+
+      }else{
+        alert('로그인 해주세요');
+        navigate('/login');
+      }
   }; 
+
+  const decrease = () =>{
+    if(count > 1){
+      setCount(count - 1);
+    }
+  }
+
+  const increase = () =>{
+    setCount(count + 1);
+  }
+
+  const goOrder = () =>{
+    if(token !== null){
+      const cartItem = new CartItemDto(bookInfo.isbn, count);
+      const cartArray = [cartItem];
+      navigate('/order', {state: {cartArray: cartArray}})
+    }else{
+        alert('로그인 해주세요');
+        navigate('/login');
+      }
+  }
   
   return (
     <div>
@@ -79,29 +108,42 @@ const BookDetail = () => {
         <h1>Loading...</h1>
       ) : (
         bookInfo ? (
-          <div>
-            <h1>도서 제목 : {bookInfo.title}</h1>
-            <p>{bookInfo.contents}</p>
-            <h3>도서 저자 : {bookInfo.authors}</h3>
-            <h3>도서 판매가 : {bookInfo.salePrice}</h3>
-            <h3>도서 출판날짜 : {bookInfo.datetime}</h3>
-            <h3>도서 출판사 : {bookInfo.publisher}</h3> 
-            <h3>도서 isbn : {bookInfo.isbn}</h3>
+          <BookInfo>
             <img src={bookInfo.thumbnail ? bookInfo.thumbnail : 'http://via.placeholder.com/120X150'} alt="" />
-          </div>
+            <ul>
+              <Title>
+                <h1>{bookInfo.title}</h1>
+              </Title>
+                <Info>{bookInfo.authors} | {bookInfo.publisher} | {bookInfo.datetime}</Info>
+              <Price>
+                판매가 <span>{bookInfo.salePrice}</span><span>원</span>
+              </Price>
+              <Contents>{bookInfo.contents}</Contents>
+              <BookCount>
+                    <span>수량</span>
+                    <Button onClick={() => decrease()}>-</Button> {count}{" "}
+                    <Button onClick={() => increase()}>+</Button>
+                    <TotalPrice>
+                      총 상품 금액 <span>{bookInfo.salePrice*count}</span><span>원</span>
+                    </TotalPrice>
+                    <ButtonCart onClick={handleSubmit}>장바구니</ButtonCart>
+                    <ButtonCart onClick={goOrder}>바로 주문하기</ButtonCart>
+              </BookCount>
+                    <KakaoMap/>
+            </ul>
+          </BookInfo>
           
         ) : (
           <h1>No book details available.</h1>
         )
       )}
-      <form onSubmit={handleSubmit}>
+      {/* <form onSubmit={handleSubmit}>
         <input type="number"
                     onChange={event => {setCount(event.target.value)}}
                     value={count} />
         <input type="submit" value="submit" />
        
-      </form>
-      <KakaoMap/>
+      </form> */}
       {bookInfo && <CommentArea isbn={bookInfo.isbn} />}
       {bookInfo && <CommentList isbn={bookInfo.isbn}/>}
     </div>
@@ -110,3 +152,81 @@ const BookDetail = () => {
 };
 
 export default BookDetail;
+
+const BookInfo = styled.div`
+  margin : 50px auto;
+  display: flex;
+  img {
+    width: 350px;
+    margin: 30px 100px;
+  }
+`
+
+const Title = styled.li`
+  margin: 50px 0 10px 0;
+`
+
+const Info = styled.li`
+  color: #808080;
+`
+
+const Price = styled.li`
+  margin: 20px 0;
+  span:first-child{
+    color: #FF6868;
+    font-size: 25px;
+    font-weight: bold;
+  }
+  span:last-child{
+    color: #FF6868;
+  }
+`
+
+const Contents = styled.li`
+  margin : 30px 100px 0 0 ;
+  height: 150px;
+  overflow: scroll;
+`
+const BookCount = styled.li`
+  margin: 30px 0;
+  font-size: 17px;
+  span:first-child{
+    margin-right: 10px;
+  }
+`
+
+const Button =styled.button`
+  font-weight: bold;
+  margin: 0 3px;
+  width: 15px;
+  height: 20px;
+  background-color: #FFEDED;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+`
+
+const TotalPrice = styled.span`
+  margin-left: 40px;
+  margin-right: 100px;
+  span:first-child{
+
+    font-size: 25px;
+    font-weight: bold;
+  }
+  span:last-child{
+  }
+`
+
+const ButtonCart = styled.button`
+    margin: 0 0 0 40px;
+    background-color: #FFC0CB;
+    border: none;
+    color: white;
+    padding: 10px 40px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    outline: none;
+`

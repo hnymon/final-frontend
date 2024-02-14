@@ -9,9 +9,9 @@ const LoginCallback = () =>{
         if(token){
             localStorage.setItem("token", token)
             localStorage.setItem("refreshToken", refreshToken)
+
             alert("소셜 로그인 성공!");
             navigate("/");
-            console.log("왜안가냐?")
         }else{
             alert("소셜 로그인 실패...");
         }

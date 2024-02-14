@@ -1,20 +1,53 @@
 import styled from "styled-components";
 import XButton from "./XButton";
+import { useEffect } from "react";
+import { Divider } from "@mui/material";
 
 
-const CartListInfo = ({ cartInfoList, bookCount, bookPrice, selectedBooks, decrease, increase, removeFromCart, CheckedBook }) => {
-    
+const CartListInfo = ({cartInfoList, bookCount,setBookCount, bookPrice,setBookPrice, checkItems, setCheckItems,removeFromCart,calculateTotalPrice,productTotal }) => {
+
+  useEffect(()=>{
+
+  },[cartInfoList]);
+
+  const decrease = (index) =>{
+    if(bookCount[index] > 1){
+      const updateCount = [...bookCount];
+      updateCount[index] -= 1;
+      setBookCount(updateCount);
+    }
+  }
+
+  const increase = (index) =>{
+    const updateCount = [...bookCount]
+    updateCount[index] += 1;
+    console.log(updateCount);
+    setBookCount(updateCount);
+  }
+
+  const handleSingleCheck = (isbn, price, checked) =>{
+    if(checked){
+      setCheckItems(prev => [...prev,isbn]);
+      setBookPrice({...bookPrice, [isbn]:price});
+    }else{
+      setCheckItems(checkItems.filter((el) => el !== isbn));
+      setBookPrice({...bookPrice, [isbn]: 0});
+    }
+  }
+
+
     return (
       <CartWrapper>
         {cartInfoList.map((book, index) => {
-          const totalPrice = bookCount[index] * bookPrice[index];
+          const totalPrice = bookCount[index] * book.salePrice;
   
           return (
             <CartContainer key={index}>
               <CheckBox
                 type="checkbox"
-                checked={selectedBooks.includes(book.isbn) ? true : false}
-                onChange={(e) => CheckedBook(book.isbn, e.target.checked)}
+                name={`select-${book.isbn}`}
+                onChange={(e) => handleSingleCheck(book.isbn, totalPrice, e.target.checked)}
+                checked={checkItems.includes(book.isbn) ? true : false}
               />
               <Img>
                 <img src={book.thumbnail ? book.thumbnail : 'http://via.placeholder.com/120X150'} alt="" />
@@ -40,7 +73,7 @@ const CartListInfo = ({ cartInfoList, bookCount, bookPrice, selectedBooks, decre
     );
   }
 
-  const CartContainer = styled.div`
+const CartContainer = styled.div`
   display: flex;
   margin: 10px;
   width: 80%;
@@ -48,7 +81,7 @@ const CartListInfo = ({ cartInfoList, bookCount, bookPrice, selectedBooks, decre
   font-weight: 500;
 `
 
-  const CheckBox = styled.input`
+const CheckBox = styled.input`
   margin: 5px 20px 0 5px;
   vartical-align: text-top;
 `
@@ -74,10 +107,21 @@ const BookInfo = styled.ul`
 const BookTotalPrice = styled.ul`
   margin: 10px 0 0 50px;
   width: 150px;
+
+  button{
+    font-weight: bold;
+    margin: 10px 5px;
+    width: 15px;
+    height: 20px;
+    background-color: #FFEDED;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+  }
 `
 const CartWrapper = styled.div`
   width: 60%;
 `
 
   
-  export default CartListInfo;
+export default CartListInfo;
