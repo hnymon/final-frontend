@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import PopupDom from './PopupDom';
 import DaumPost from './DaumPost';
@@ -81,18 +81,19 @@ const RequiredText = styled.span`
     font-size: 0.9em;
 `;
 
-const AddAdr = (props) => {
+const EditAdr = ({ onClose, onSuccess, address }) => {
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [addressInfo, setAddressInfo] = useState({
-        daName:"",
-        recipientName: "",
-        recipientTel: "",
-        zipcode: "",
-        address: "",
-        addrDetail: "",
-        deliveryRequest: ""
+        addrNum: address.addrNum,
+        daName: address.daName,
+        recipientName: address.recipientName,
+        recipientTel: address.recipientTel,
+        zipcode: address.zipcode,
+        address: address.address,
+        addrDetail: address.addrDetail,
+        deliveryRequest: address.deliveryRequest,
+        isDefault:address.isDefault,
     });
-
     const openPostCode = () => {
         setIsPopupOpen(true);
     }
@@ -138,7 +139,7 @@ const AddAdr = (props) => {
         }
         try {
             const token = localStorage.getItem("token");
-            const response = await axios.post("/addAddress", addressInfo, {
+            const response = await axios.post("/editAdr", addressInfo, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -146,9 +147,9 @@ const AddAdr = (props) => {
             console.log("Address added successfully:", response.data);
             if(response.data.result === "Save"){
                 // 주소 추가 성공 후 로직 추가
-                props.onClose();
-                props.onSuccess();
-                alert("배송지 추가 성공")
+                onClose();
+                onSuccess();
+                alert("배송지 수정 성공")
             }
         } catch (error) {
             console.error("Error adding address:", error);
@@ -160,23 +161,23 @@ const AddAdr = (props) => {
             <AdrContainer>
                 <Form onSubmit={handleSubmit}>
                     <Label>배송지 이름<RequiredText></RequiredText></Label>
-                    <Input type="text" name="daName" value={addressInfo.daName} onChange={handleChange} />
+                    <Input type="text" name="daName" value={addressInfo.daName || ''} onChange={handleChange} />
                     <Label>수령인<RequiredText>(필수)</RequiredText></Label>
-                    <Input type="text" name="recipientName" value={addressInfo.recipientName} onChange={handleChange} />
+                    <Input type="text" name="recipientName" value={addressInfo.recipientName || ''} onChange={handleChange} />
                     <Label>수령인 연락처<RequiredText>(필수)</RequiredText></Label>
-                    <Input type="text" name="recipientTel" value={addressInfo.recipientTel} onChange={handlePhoneNumChange} />
+                    <Input type="text" name="recipientTel" value={addressInfo.recipientTel || ''} onChange={handlePhoneNumChange} />
                     <Label>우편번호<RequiredText>(필수)</RequiredText></Label>
                     <div style={{ display: 'flex', width: '100%' }}>
-                        <Input type="text" name="zipcode" value={addressInfo.zipcode} onChange={handleChange} style={{ width: "50%", marginLeft:"2.4%"}} />
+                        <Input type="text" name="zipcode" value={addressInfo.zipcode || ''} onChange={handleChange} style={{ width: "50%", marginLeft:"2.4%"}} />
                         <CodeButton type='button' onClick={openPostCode}>우편번호 검색</CodeButton>
                     </div>
                     <Label>주소<RequiredText>(필수)</RequiredText></Label>
-                    <Input type="text" name="address" value={addressInfo.address} onChange={handleChange} />
+                    <Input type="text" name="address" value={addressInfo.address || ''} onChange={handleChange} />
                     <Label>상세주소</Label>
-                    <Input type="text" name="addrDetail" value={addressInfo.addrDetail} onChange={handleChange} />
+                    <Input type="text" name="addrDetail" value={addressInfo.addrDetail || ''} onChange={handleChange} />
                     <Label>배송시요청사항</Label>
-                    <Input type="text" name="deliveryRequest" value={addressInfo.deliveryRequest} onChange={handleChange} />
-                    <AddAdrButton type="submit">추가하기</AddAdrButton>
+                    <Input type="text" name="deliveryRequest" value={addressInfo.deliveryRequest || ''} onChange={handleChange} />
+                    <AddAdrButton type="submit">수정하기</AddAdrButton>
                 </Form>
                 <div id='popupDom'>
                     {isPopupOpen && (
@@ -186,10 +187,10 @@ const AddAdr = (props) => {
                     )}
                 </div>
             </AdrContainer>
-            <CloseButton type='button' onClick={() => {props.onClose()}} >닫기</CloseButton>
+            <CloseButton type='button' onClick={() => {onClose()}} >닫기</CloseButton>
         </>
     )
 
 }
 
-export default AddAdr;
+export default EditAdr;

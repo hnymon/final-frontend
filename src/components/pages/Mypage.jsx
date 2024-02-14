@@ -3,10 +3,9 @@ import styled from "styled-components";
 import DeliveryAdr from "../mypageComponents/DeliveryAdr";
 import EditMemberInfo from "../mypageComponents/EditMemberInfo";
 import MembershipInfo from "../mypageComponents/MembershipInfo";
-import EditMemberInfo2 from "../mypageComponents/EditMemberInfo2";
 
 const MainDiv = styled.div`
-
+    height:100vh;
 `
 
 const HeaderDiv = styled.div`
@@ -44,6 +43,8 @@ const Mypage = () => {
     const handleTabClick = (tabIndex) => {
         setSelectedTab(tabIndex);
     };
+    const [flag, setFlag] = useState(false);
+    
     return(
         <MainDiv>
             <HeaderDiv>
@@ -61,7 +62,7 @@ const Mypage = () => {
                 >나의 회원등급 혜택</SelectDiv>
             </HeaderDiv>
             <InnerDiv>
-                {selectedTab === 1 && <EditMemberInfo />}
+                {selectedTab === 1 && <EditMemberInfo flag={flag} setFlag={setFlag} />}
                 {selectedTab === 2 && <DeliveryAdr />}
                 {selectedTab === 3 && <MembershipInfo />}
             </InnerDiv>
