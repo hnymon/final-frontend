@@ -1,96 +1,259 @@
 import styled from "styled-components";
-import React, { useEffect, useState, useCallback } from "react";
-import { Link, useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import CartList from "../cart/CartList";
+import Divider from '@mui/material/Divider';
+import GetTokenToHeader from "../../token/GetTokenToHeader";
+import { useNavigate } from "react-router-dom";
+import CartListInfo from "../cart/CartListInfo";
+import FetchBookDetail from "../cart/FetchBookDetail";
+import CartItemDto from "../order/CartItemDto";
 
 const Cart = () => {
 
-    const Display = styled.div`
-        width : 100%;
-        margin : 20px;
-        display: flex;
-        justify-content: space-between;
-    `
+  const [cartInfoList, setCartInfoList] = useState([]);
+  const [checkItems, setCheckItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [bookCount, setBookCount] = useState([]);
+  const [bookPrice, setBookPrice] = useState({});
+  const [productTotal, setProductTotal] = useState(0);
+  const [deliveryFee, setDeliveryFee] = useState(3000);
 
-    const HeadLine = styled.h1`
-        color: #525252;
-    `
+  const fetchCartInfo = async () => {
+    const headers = GetTokenToHeader();
+    setLoading(true);  
+    try {
+      const response = await axios.get("/cart", headers);
+      console.log(response.data);
 
-    const ToOrder = styled.div`
-        display: flex;
-        justify-content: flex-end;
-        margin-right: 40px;
+      const { cartInfoList, bookCount } = await FetchBookDetail(response.data);
+      setCartInfoList(cartInfoList);
+      setBookCount(bookCount);
+    } catch (error) {
+      console.error('토큰으로 장바구니 불러오기 오류', error);
+    }finally{
+      setLoading(false);
+    };
+  };
+
+  const handleAllCheck = (checked) =>{
+    let total = 0;
+    if(checked){
+        const isbnArray = cartInfoList.map(item => item.isbn);
+        setCheckItems(isbnArray);
+        const bookPriceArray = cartInfoList.reduce((acc, item) => {
+          acc[item.isbn] = item.salePrice;
+          return acc;
+        }, {});
+        setBookPrice(bookPriceArray);
         
-    `
+        for(let i=0; i<cartInfoList.length;i++){
+            total += bookCount[i] * cartInfoList[i].salePrice;
+        }
+        setProductTotal(total);
+    }else{
+      setCheckItems([]);
+      setBookPrice({});
+      setProductTotal(0);
+    }
+  }; 
 
-    const Circle = styled.div`
-        width:30px;
-        height: 30px;
-        display:grid;
-        border-radius: 50%;
-        display: flex;
-        justify-content: center;
-        align-items: center; 
-        background-color: #D9D9D9;   
-    `
+  useEffect(() => {
+    fetchCartInfo();
+  }, []);
+      
+  useEffect(() => {
+    const total = Object.values(bookPrice).reduce((acc, curr) => acc + curr, 0);
+    setProductTotal(total);
+  },[bookCount]); 
+      
+  useEffect(() => {
+    calculateTotalPrice();
+  }, [bookPrice]);
+     
+  const calculateTotalPrice = () => {
+    let total = 0;
+    console.log(bookPrice);
+    for (const key in bookPrice) {
+      total += parseInt(bookPrice[key]);
+    }
+    setProductTotal(total);
+    console.log(total);
+  };
+    
+  //주문 페이지 이동
+  const navigate = useNavigate();
+  const toOrder = () =>{
+    if(checkItems.length>0){
+      const cartArray = checkItems.map((isbn, index) => new CartItemDto(isbn, bookCount[index]));
+      navigate('/order', {state: {cartArray: cartArray}});
+    }else{
+      alert('한 개 이상의 상품을 선택하세요');
 
-    const CircleSelected = styled.div`
-        display:grid;
-        width:30px;
-        height: 30px;
-        border-radius: 50%;
-        display: flex;
-        justify-content: center;
-        align-items: center; 
-        background-color: #FEC4C4;
-    `
+    }
+  }
 
-    const ToOrderNum = styled.p`
-        position:relative;
-        top: 3px;
-        margin: 0 30px 0 3px;
-    `
+  // 장바구니 항목 삭제
+  const removeFromCart = (isbnToRemove) => {
+    const updatedCartItems = cartInfoList.filter(item => item.isbn !== isbnToRemove);
+    setCartInfoList(updatedCartItems);
+  };
 
-    const MenuBar = styled.div`
-        margin: 10px;
-        width : 800px;
-        height : 35px;
-        border-radius: 15px;
-        background-color: #FEC4C4;
-        color : #FCFCFC;
-
-    `
-
-    const OrderLine = styled.div`
-        width : 100%;
-        margin : 20px;
-        display: flex;
-        justify-content: space-between;
-    `
-
-
-
-
-    return(
-        <>
-        <Display>
-            <HeadLine>장바구니()</HeadLine>
-            <ToOrder>
-                <CircleSelected>1</CircleSelected>
-                <ToOrderNum>장바구니</ToOrderNum>
-                <Circle>2</Circle>
-                <ToOrderNum>주문/결제</ToOrderNum>
-                <Circle>3</Circle>
-                <ToOrderNum>주문완료</ToOrderNum>
-            </ToOrder>
-        </Display>
-        <MenuBar></MenuBar>
-        <OrderLine>
-            <CartList/>
-        </OrderLine>
-        </>
-    )
+  return(
+    <>
+    <Display>
+        <HeadLine>장바구니({cartInfoList.length})</HeadLine>
+        <ToOrder>
+            <CircleSelected>1</CircleSelected>
+            <ToOrderNum>장바구니</ToOrderNum>
+            <Circle>2</Circle>
+            <ToOrderNum>주문/결제</ToOrderNum>
+            <Circle>3</Circle>
+            <ToOrderNum>주문완료</ToOrderNum>
+        </ToOrder>
+    </Display>
+    <MenuBar>
+    <input type='checkbox' name='select-all'
+          onChange={(e) => handleAllCheck(e.target.checked)}
+          // 데이터 개수와 체크된 아이템의 개수가 다를 경우 선택 해제 (하나라도 해제 시 선택 해제)
+          checked={checkItems.length === cartInfoList.length ? true : false} />
+    </MenuBar>
+    <OrderLine>
+        <CartListInfo
+        cartInfoList={cartInfoList}
+        bookCount={bookCount}
+        setBookCount={setBookCount}
+        bookPrice={bookPrice}
+        setBookPrice={setBookPrice}
+        checkItems={checkItems}
+        setCheckItems={setCheckItems}
+        removeFromCart={removeFromCart}
+        calculateTotalPrice={calculateTotalPrice}
+        productTotal={productTotal}
+        />
+        <OrderContainer>
+        <OrderPrice>
+        <ul>
+            <li>주문 합계</li>
+            <li>상품 합계<span>{productTotal} 원</span></li>
+            <li>배송비<span>+{deliveryFee} 원</span></li>
+        </ul>
+        <Divider sx={{ height: 40, m: 0.5 }} orientation='horizontal' />
+        <ul>
+            <li>결제 예정 금액<span>{productTotal+deliveryFee} 원</span></li>
+        </ul>
+        </OrderPrice>
+        <OrderButton onClick={toOrder}>주문하기({checkItems.length})</OrderButton>
+        </OrderContainer>
+    </OrderLine>
+    </>
+  )
 }
+
+const Display = styled.div`
+    width : 100%;
+    margin : 20px;
+    display: flex;
+    justify-content: space-between;
+`
+
+const HeadLine = styled.h1`
+    color: #525252;
+`
+
+const ToOrder = styled.div`
+    display: flex;
+    justify-content: flex-end;
+    margin-right: 40px;
+
+`
+
+const Circle = styled.div`
+    width:30px;
+    height: 30px;
+    display:grid;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    background-color: #D9D9D9;   
+`
+
+const CircleSelected = styled.div`
+    display:grid;
+    width:30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    background-color: #FEC4C4;
+`
+
+const ToOrderNum = styled.p`
+    position:relative;
+    top: 3px;
+    margin: 0 30px 0 3px;
+`
+
+const MenuBar = styled.div`
+    margin: 10px;
+    width : 800px;
+    height : 35px;
+    border-radius: 15px;
+    background-color: #FEC4C4;
+    color : #FCFCFC;
+
+`
+
+const OrderLine = styled.div`
+    width : 100%;
+    margin : 20px;
+    display: flex;
+    justify-content: space-between;
+`
+
+const OrderButton = styled.button`
+  margin-top: 40px;
+  background-color: white;
+  border: 3px solid #FEC4C4;
+  border-radius: 30px;
+  width: 100%;
+  height: 50px;
+  font-size: 20px;
+  cursor: pointer;
+
+`
+
+const OrderPrice = styled.div`
+  border: 2px solid #DDDDDD;
+  border-radius: 10px;
+
+  ul{
+    margin: 20px;
+  }
+  
+  ul:first-child{
+    margin-top: 50px;
+  }
+  
+  li{
+    margin: 5px;
+  }
+  
+  span{
+    float:right;
+  }
+`
+
+const OrderContainer = styled.div`
+  position: fixed;
+  left: 65%;
+  float: right;
+  margin: 10px auto;
+  width: 22%;
+  height: 300px;
+  font-size:20px;
+
+`
 
 export default Cart;
