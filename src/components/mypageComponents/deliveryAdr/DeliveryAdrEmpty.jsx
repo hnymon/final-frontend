@@ -14,30 +14,32 @@ const AddAdrButton = styled.button`
 const EmptyMsg = styled.span`
 `;
 
-const DeliveryAdrEmpty = () => {
-    	// 다음 팝업창 상태 관리
-        const [isPopupOpen, setIsPopupOpen] = useState(false)
- 
-        // 다음 팝업창 열기
-        const openPostCode = () => {
-            setIsPopupOpen(true)
-        }
-        // 다음 팝업창 닫기
-        const closePostCode = () => {
-            setIsPopupOpen(false)
-        }
+const DeliveryAdrEmpty = ({onSuccess}) => {
+    
+    
+    // 다음 팝업창 상태 관리
+    const [isPopupOpen, setIsPopupOpen] = useState(false)
 
-    	// 다음 팝업창 상태 관리
-        const [isPopupOpen2, setIsPopupOpen2] = useState(false)
- 
-        // 다음 팝업창 열기
-        const openPostCode2 = () => {
-            setIsPopupOpen2(true)
-        }
-        // 다음 팝업창 닫기
-        const closePostCode2 = () => {
-            setIsPopupOpen2(false)
-        }
+    // 다음 팝업창 열기
+    const openPostCode = () => {
+        setIsPopupOpen(true)
+    }
+    // 다음 팝업창 닫기
+    const closePostCode = () => {
+        setIsPopupOpen(false)
+    }
+
+    // 다음 팝업창 상태 관리
+    const [isPopupOpen2, setIsPopupOpen2] = useState(false)
+
+    // 다음 팝업창 열기
+    const openPostCode2 = () => {
+        setIsPopupOpen2(true)
+    }
+    // 다음 팝업창 닫기
+    const closePostCode2 = () => {
+        setIsPopupOpen2(false)
+    }
     return(
         <Wrapper>
             <ImageDiv>
@@ -48,7 +50,7 @@ const DeliveryAdrEmpty = () => {
             <div id='popupDom2'>
                 {isPopupOpen2 && (
                     <PopupDom>
-                        <AddAdr onClose={closePostCode2} />
+                        <AddAdr onClose={closePostCode2} onSuccess={onSuccess}/>
                     </PopupDom>
                 )}
             </div>

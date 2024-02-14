@@ -1,5 +1,4 @@
 import React from 'react';
-import Footer from "./Footer";
 import Header from "./Header";
 import { Outlet } from 'react-router-dom';
 import styled from 'styled-components';
@@ -18,7 +17,6 @@ const Layout = (props) => {
                 {props.children}
                 <Outlet />
             </main>
-            <Footer />
         </LayoutDiv>
     );
 }

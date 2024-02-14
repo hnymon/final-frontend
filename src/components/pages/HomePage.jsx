@@ -44,9 +44,9 @@ const HomePage = () => {
   const onRun = () => setAnimate(true);
   
   const [newBookList, setNewBookList] = useState([]);
-  const [todayBookKyoboList, setTodayBookKyoboList] = useState([]);
-  const [nowThisBookKyoboList, setNowThisBookKyoboList] = useState([]);
-  const [popularBookKyoboList, setPopularBookKyoboList] = useState([]);
+  const [todayBookYes24List, setTodayBookYes24List] = useState([]);
+  const [nowThisBookYes24List, setNowThisBookYes24List] = useState([]);
+  const [popularBookYes24List, setPopularBookYes24List] = useState([]);
   const navigateToDetail = (isbn) => {
     navigate(`/book-detail/${isbn}`);
   };
@@ -55,9 +55,9 @@ const HomePage = () => {
       try {
         const response = await axios.get("/testCrawling");
         setNewBookList(response.data.newBookList);
-        setTodayBookKyoboList(response.data.todayBookKyoboList);
-        setNowThisBookKyoboList(response.data.nowThisBookKyoboList);
-        setPopularBookKyoboList(response.data.popularBookKyoboList);
+        setTodayBookYes24List(response.data.todayBookYes24List);
+        setNowThisBookYes24List(response.data.nowThisBookYes24List);
+        setPopularBookYes24List(response.data.popularBookYes24List);
       } catch (error) {
         console.error("Error fetching board data:", error);
       }
@@ -125,11 +125,11 @@ const HomePage = () => {
       )}
       <br />
      
-      {todayBookKyoboList.length === 0 ? (
+      {todayBookYes24List.length === 0 ? (
         <h2>로딩중...</h2>
       ) : (
         <GalleryContainer>
-          {todayBookKyoboList.map((d, index) => (
+          {todayBookYes24List.map((d, index) => (
             <GalleryItem 
               style={generateItemStyle(d.imgUrl)} 
               key={index}
@@ -139,11 +139,11 @@ const HomePage = () => {
         </GalleryContainer>
       )}
       <br />
-      {nowThisBookKyoboList.length === 0 ? (
+      {nowThisBookYes24List.length === 0 ? (
         <h2>로딩중...</h2>
       ) : (
         <ConDiv>
-          {nowThisBookKyoboList.map((d, index) => (
+          {nowThisBookYes24List.map((d, index) => (
             <div className="box" key={index}>
               <div className="ellipsis">{d.bookName}</div>
               <img src={d.imgUrl} alt="" style={{width:"100px"}} />
@@ -152,11 +152,11 @@ const HomePage = () => {
         </ConDiv>
       )}
       <br />
-      {popularBookKyoboList.length === 0 ? (
+      {popularBookYes24List.length === 0 ? (
         <h2>로딩중...</h2>
       ) : (
         <ConDiv>
-          {popularBookKyoboList.map((d, index) => (
+          {popularBookYes24List.map((d, index) => (
             <div className="box" key={index}>
               <div className="ellipsis">{d.bookName}</div>
               <img src={d.imgUrl} alt="" style={{width:"100px"}} />

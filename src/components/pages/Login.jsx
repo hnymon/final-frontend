@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import styled from "styled-components";
-import { NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import Logo from '../../img/Logo_n.png';
 import NaverLoginButton from "../oauth/NaverLoginButton";
 import KakaoLoginButton from "../oauth/KakaoLoginButton";
@@ -12,7 +12,8 @@ const PageContainer = styled.div`
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 70vh; /* 화면 세로 중앙 정렬을 위해 */
+    height: 81vh; /* 화면 세로 중앙 정렬을 위해 */
+    
 `;
 
 const LogoImage = styled.img`
@@ -20,7 +21,7 @@ const LogoImage = styled.img`
 `;
 
 const FormContainer = styled.div`
-    margin: 20px auto;
+    margin: 10px auto 0 auto;
     max-width: 400px; /* 최대 넓이 설정 */
     width: 80%; /* 또는 다른 값을 설정하여 원하는 넓이로 조절 */
     padding: 10px;
@@ -66,6 +67,24 @@ const SocialLogo = styled.div`
     display: flex;
     margin-bottom: 30px;
 `
+
+const SaveAndFind = styled.div`
+    display: flex;
+    justify-content: space-between; /* 왼쪽과 오른쪽에 각각 배치 */
+    margin-bottom: 10px;
+    width:30%;
+`;
+
+const SaveId = styled.div`
+    flex: 1; /* 부모 요소 내에서 동적으로 공간을 할당받도록 설정 */
+`;
+
+const FindIdOrPwd = styled.div`
+    flex: 1; /* 부모 요소 내에서 동적으로 공간을 할당받도록 설정 */
+    text-align: right; /* 오른쪽 정렬 */
+`;
+
+
 const Login = () => {
     const navigate = useNavigate();
     const [username, setUsername] = useState("");
@@ -78,9 +97,6 @@ const Login = () => {
             // axios를 사용하여 서버로 데이터 전송
             const response = await axios.post("/login", { username, password });
             const token = response.headers.authorization.split(" ")[1];
-
-
-
             // 추가적으로 서버로부터의 응답을 처리하거나 상태를 업데이트할 수 있음
             if (response) {
                 // 토큰을 로컬 스토리지에 저장
@@ -148,6 +164,14 @@ const Login = () => {
                     <StyledButton type="submit" value="로그인" />
                 </form>
             </FormContainer>
+            <SaveAndFind>
+                <SaveId>
+                    <input type="checkbox"/>아이디 저장
+                </SaveId>
+                <FindIdOrPwd>
+                    <Link to={"/find"}><span>아이디/비밀번호 찾기</span></Link>
+                </FindIdOrPwd>
+            </SaveAndFind>
             <SocialLogo>
                 <NaverLoginButton/>
                 <KakaoLoginButton/>
