@@ -14,6 +14,10 @@ import SearchBook from './components/pages/SearchBook';
 import BookDetail from './components/pages/BookDetail';
 import LoginCallback from './components/oauth/Logincallback';
 import Order from './components/order/order';
+import OrderSuccess from './components/order/OrderSuccess';
+import InquiryArea from './components/board/InquiryArea';
+import InquiryList from './components/board/InquiryList';
+import InquiryDetail from './components/board/InquiryDetail';
 
 function App() {
   return (
@@ -26,6 +30,7 @@ function App() {
           <Route path='/mypage' element={<Mypage />}/>
           <Route path='/cart' element={<Cart/>}/>
           <Route path='/order' element={<Order/>}/>
+          <Route path='/order/success' element={<OrderSuccess/>}/>
           <Route path='/customer-service' element={<CustomerService/>}/>
           {/* 책 검색 */}
           <Route path='/book-search/:keyword' element={<SearchBook />}/>   
@@ -34,7 +39,11 @@ function App() {
           <Route path='/board/BoardList' element={<BoardList/>}/>   
           <Route path='/board/BoardDetail/:boardSeq' element={<BoardDetail/>}/> 
           <Route path='/board/BoardCreate' element={<BoardCreate/>}/> 
-          <Route path='/board/Edit/:boardSeq' element={<Edit/>}/> 
+          <Route path='/board/Edit/:boardSeq' element={<Edit/>}/>
+          {/* 1대1문의 */}
+          <Route path='/board/InquiryArea' element={<InquiryArea/>}/> 
+          <Route path='/board/InquiryList' element={<InquiryList/>}/> 
+          <Route path='/board/InquiryDetail/:inquiryId' element={<InquiryDetail/>}/> 
         </Route>
       </Routes>
   );
