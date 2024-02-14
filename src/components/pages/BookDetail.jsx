@@ -60,11 +60,6 @@ const BookDetail = () => {
               },
       })
       .then((response) => {
-        console.log(response.data);
-        const quantity = response.data.count;
-        const book = response.data.isbn13;
-        console.log("수량 : " + quantity);
-        console.log("책 정보 : " + book.title);
         const confirmed = window.confirm('장바구니에 상품이 추가되었습니다. 장바구니로 이동하시겠습니까?');
         if (confirmed) {
           navigate('/cart');
@@ -72,6 +67,7 @@ const BookDetail = () => {
       })
 
       .catch((error) => {
+        alert('이미 장바구니에 있는 상품입니다.');
         console.error("Error submitting data:", error);
       });
 
