@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Logo from '../../img/Logo_n.png';
 import arrow from '../../img/down_arrow.png';
-
+import DatePicker from "react-datepicker";
+import { ko } from "date-fns/esm/locale";
+import "react-datepicker/dist/react-datepicker.css";
 
 const FormContainer = styled.div`
     margin: 50px auto;
@@ -41,6 +43,15 @@ const StyledInput = styled.input`
     box-sizing: border-box;
     
 `;
+const StyledBirthdayInput = styled.input`
+    width: 80%;
+    padding: 8px;
+    box-sizing: border-box;
+`;
+
+const DatePickerDiv = styled.div`
+
+`;
 
 const StyledEmailInput = styled.input`
     width: 48%;
@@ -48,20 +59,6 @@ const StyledEmailInput = styled.input`
     margin-right: 5px;
     box-sizing: border-box;
 `;
-
-const StyledSocialInput = styled.input`
-    width: 55%;
-    padding: 8px;
-    margin-right: 5px;
-    box-sizing: border-box;
-`;
-const StyledSocial2Input = styled.input`
-    width: 8%;
-    padding: 8px;
-    box-sizing: border-box;
-    margin-right: 5px;
-`;
-
 
 const StyledSelect = styled.select`
     width: 50%;
@@ -174,17 +171,35 @@ const StyledResetButton2 = styled.button`
     cursor: pointer;
 `;
 
-const StyledMaskedSpan = styled.span`
-    letter-spacing: 10px; /* 원하는 간격으로 조절하세요 */
-    font-weight:bold;
-    padding-left: 10px;
-    font-size: 20px;
+const DatepickerViewDiv = styled.div`
+    position: absolute;
+    zIndex: 1000;
+    top: 30%;
+    left: 35%;
 `;
 
-
-
-
 const SignUp = () => {
+    // 달력 캘린더 Datepicker
+    const [startDate, setStartDate] = useState(new window.Date()); //default: 오늘 날짜
+    const [showDatePicker, setShowDatePicker] = useState(false); // DatePicker 모달 열기/닫기 상태
+    const toggleDatePicker = (event) => {
+        setShowDatePicker(!showDatePicker);
+    };
+    const onDatePickHandler = (date) => {
+        setStartDate(date);
+        //highlightDates에 선택한 날짜가 있는지 검색
+        dateToStringForSearch(date)
+    }
+    //검색용: highlighted인 날짜를 찾기 위해 date 객체를 highlighted에 저장되는 날짜 형식인 
+    //(월.일.연도)로 변환
+    const dateToStringForSearch = (d) => {
+        const year = d.getFullYear();
+        const month = d.getMonth() + 1;
+        const date = d.getDate();
+        setMember({...member, birthday:year+"-"+(month >= 10 ? month : "0" + month)+"-"+(date >= 10 ? date : "0"+date)})
+        toggleDatePicker();
+        return `${month >= 10 ? month : "0" + month}.${date >= 10 ? date : "0"+date}.${year}`;
+    };
     const navigate = useNavigate();
     const [member, setMember] = useState({
         memberName: "",
@@ -193,10 +208,9 @@ const SignUp = () => {
         email: "",
         domain: "",
         phoneNum: "",
-        socialNum1:"",
-        socialNum2:""
+        birthday:"",
+        
     });
-
     const [userPasswordCheck, setUserPasswordCheck] = useState("");
     const [isUsernameValid, setIsUsernameValid] = useState(true);
     const [isPasswordValid, setIsPasswordValid] = useState(true);
@@ -346,25 +360,38 @@ const SignUp = () => {
         // 형식 적용하여 state 업데이트
         setMember({ ...member, phoneNum: formatPhoneNumber(truncatedValue) });
     };
-    // 주민번호 유효성검사
+    // 생년월일
+    const currentYear = new Date().getFullYear(); // 현재 년도 구하기
+    const currentMonth = new Date().getMonth() + 1; // 현재 월 구하기 (0부터 시작하므로 1을 더함)
+    const currentDay = new Date().getDate(); // 현재 일 구하기
     const handleSocialNum1Change = (event) => {
         // 입력된 값에서 숫자만 추출
         const newValue = event.target.value.replace(/[^0-9]/g, '');
-        // 최대 6자리까지만 받음
-        const truncatedValue = newValue.slice(0, 6);
+        // 최대 8자리까지만 받음
+        const truncatedValue = newValue.slice(0, 8);
+        const year = truncatedValue.substring(0, 4);
+        const month = truncatedValue.substring(4, 6);
+        const day = truncatedValue.substring(6, 8);
     
         // 형식 및 유효성 검사
-        if (truncatedValue.length === 6) {
-            const year = parseInt(truncatedValue.substring(0, 2), 10);
-            const month = parseInt(truncatedValue.substring(2, 4), 10);
-            const day = parseInt(truncatedValue.substring(4, 6), 10);
-    
-            // 연도는 00~99 사이의 값이어야 함
-            if (year < 0 || year > 99) {
+        if (truncatedValue.length === 8) { 
+            // 연도는 00~현재 년도 사이의 값이어야 함
+            if (year < 1900 || year > currentYear) {
                 alert("올바른 연도 형식이 아닙니다.");
                 return;
             }
-    
+            if (year === currentYear) {
+                // 현재 월 이후의 날짜인 경우
+                if (month > currentMonth) {
+                    alert("현재 날짜 이후의 날짜는 입력할 수 없습니다.");
+                    return;
+                }
+                // 현재 월과 같은 경우에는 현재 일을 확인
+                if (month === currentMonth && day > currentDay) {
+                    alert("현재 날짜 이후의 날짜는 입력할 수 없습니다.");
+                    return;
+                }
+            }
             // 월은 1~12 사이의 값이어야 함
             if (month < 1 || month > 12) {
                 alert("올바른 월 형식이 아닙니다.");
@@ -376,34 +403,14 @@ const SignUp = () => {
                 alert("올바른 일 형식이 아닙니다.");
                 return;
             }
+            // 형식 적용하여 state 업데이트
         }
-    
-        // 형식 적용하여 state 업데이트
-        setMember((prevMember) => ({ ...prevMember, socialNum1: truncatedValue }));
+        setMember((prevMember) => ({ ...prevMember, birthday: formatBirthday(truncatedValue) }));
     };
-    
-    
-    const handleSocialNum2Change = (event) => {
-        // 입력된 값에서 숫자만 추출
-        const newValue = event.target.value.replace(/[^0-9]/g, '');
-        // 최대 7자리까지만 받음
-        const truncatedValue = newValue.slice(0, 1);
-    
-        // 형식 및 유효성 검사
-        if (truncatedValue.length === 1) {
-            const firstDigit = parseInt(truncatedValue.charAt(0), 10);
-    
-            // 첫 번째 숫자는 1~4 사이의 값이어야 함
-            if (firstDigit < 1 || firstDigit > 4) {
-                alert("뒷자리 첫 번째 숫자는 1~4까지만 가능합니다.");
-                return;
-            }
-        }
-    
-        // 형식 적용하여 state 업데이트
-        setMember((prevMember) => ({ ...prevMember, socialNum2: truncatedValue }));
+    const formatBirthday = (birthday) => {
+        // 생년월일 형식 변환 (0000-00-00)
+        return birthday.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3");
     };
-    
     const handleSubmit = async (event) => {
         event.preventDefault();
         // 이름 유효성 검사
@@ -424,16 +431,20 @@ const SignUp = () => {
             alert("비밀번호가 일치하지 않습니다.");
             return; 
         }
-        
+        if (startDate > new Date()) {
+            alert("유효하지 않은 날짜입니다.");
+            return;
+        }
         if (!isPasswordValid) {
             alert("비밀번호는 최소 8자리, 대문자1, 소문자1, 숫자1로 이루어져야 합니다. (!@#$%^&* 만 가능)");
             return;
         }
+
         if (!isEmailCheckButton3Disabled) {
             alert("이메일 인증을 완료해주세요.");
             return;
         }
-        if (!member.memberName || !member.username || !member.password || !member.email || !member.phoneNum) {
+        if (!member.memberName || !member.username || !member.password || !member.email || !member.phoneNum||!member.birthday) {
             alert("모든 필드를 채워주세요.");
             return;
         }
@@ -507,6 +518,16 @@ const SignUp = () => {
     
     return (
         <FormContainer>
+            {showDatePicker && (
+                <DatepickerViewDiv>
+                    <DatePicker
+                        onChange={onDatePickHandler}
+                        selected={startDate}
+                        locale={ko}
+                        inline
+                    />
+                </DatepickerViewDiv>
+            )}
             <LogoImage src={Logo} alt="logo Img" />
             <form onSubmit={handleSubmit}>
                 <StyledTable>
@@ -520,6 +541,7 @@ const SignUp = () => {
                                         handleChange("memberName", event.target.value)
                                     }
                                     value={member.memberName}
+                                    placeholder="한글 2 ~ 5 글자"
                                 />
                             </td>
                         </tr>
@@ -532,6 +554,7 @@ const SignUp = () => {
                                         handleChange("username", event.target.value)
                                     }
                                     value={member.username}
+                                    placeholder="영문과 숫자로 이루어진 6~12글자"
                                     disabled={isCheckButtonDisabled} // 중복 확인 버튼이 활성화되면 ID 입력란 비활성화
                                     style={{
                                         backgroundColor: isCheckButtonDisabled ? "#ddd" : "white",
@@ -556,6 +579,7 @@ const SignUp = () => {
                                         handleChange("password", event.target.value)
                                     }
                                     value={member.password}
+                                    placeholder="8자리 이상, 대문자, 숫자. (!@#$%^&* 가능)"
                                 />
                             </td>
                         </tr>
@@ -570,21 +594,22 @@ const SignUp = () => {
                             </td>
                         </tr>
                         <tr>
-                            <td>주민등록번호</td>
+                            <td>생년월일 8자리</td>
                             <td >
-                                <StyledSocialInput
-                                type="text"
-                                onChange={handleSocialNum1Change}
-                                value={member.socialNum1}
-                                />
-                                <span style={{fontWeight:"bold"}}>-&nbsp;</span>
-                                <StyledSocial2Input
-                                style={{fontWeight:"bold"}}
-                                type="text"
-                                onChange={handleSocialNum2Change}
-                                value={member.socialNum2}
-                                />
-                                <StyledMaskedSpan >******</StyledMaskedSpan>
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                    <StyledBirthdayInput
+                                    type="text"
+                                    onChange={handleSocialNum1Change}
+                                    value={member.birthday}
+                                    placeholder="0000-00-00"
+                                    />
+                                    <DatePickerDiv
+                                        onClick={toggleDatePicker}
+                                        style={{ marginLeft: "10px", cursor: "pointer" }}
+                                    >
+                                        달력
+                                    </DatePickerDiv>
+                                </div>
                             </td>
                         </tr>
                         <tr>
@@ -597,6 +622,7 @@ const SignUp = () => {
                                     }
                                     disabled={isEmailCheckButtonDisabled}
                                     value={member.email}
+                                    placeholder="직접입력 : xxx@xxx.xxx"
                                 />
                                 <StyledSelect
                                     name="domain"
@@ -626,6 +652,7 @@ const SignUp = () => {
                                     type="text"
                                     onChange={handlePhoneNumChange}
                                     value={member.phoneNum}
+                                    placeholder="' - ' 없이 000-0000-0000  11개 입력시 자동으로 ' - ' 입력됩니다."
                                 />
                             </td>
                         </tr>

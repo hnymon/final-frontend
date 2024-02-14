@@ -131,7 +131,8 @@ const StyledResetButton2 = styled.button`
     cursor: pointer;
 `;
 
-const EditMemberInfo = () => {
+const EditMemberInfo = (props) => {
+    
     const navigate = useNavigate();
     const [member, setMember] = useState({
         memberNum: "",
@@ -152,6 +153,7 @@ const EditMemberInfo = () => {
     const [randomInitial, setRandomInitial]= useState("");
     const [userId, setUserId] = useState("");
     console.log(member)    
+    
     useEffect(() => {
         console.log("useEffect")
         const fetchMemberInfo = async () => {
@@ -193,7 +195,8 @@ const EditMemberInfo = () => {
             }
         };
         fetchMemberInfo();
-    }, []);
+        setUserPasswordCheck("");
+    }, [props.flag]);
 
     
     // 이메일 중복확인
@@ -383,7 +386,8 @@ const EditMemberInfo = () => {
             if (response.data === "Success") {
                 console.log(response.data);
                 alert("회원정보 수정 완료!");
-                navigate("/")
+                // 재랜더링 되도록 
+                props.setFlag(prevFlag => !prevFlag);
             }else if (response.data === "Equal Password"){
                 alert("전과 동일한 비밀번호 입니다.");
                 return;

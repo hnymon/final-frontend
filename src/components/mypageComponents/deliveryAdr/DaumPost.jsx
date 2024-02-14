@@ -1,3 +1,5 @@
+// DaumPost.js
+
 import axios from 'axios';
 import React from 'react';
 import DaumPostcode from "react-daum-postcode";
@@ -9,10 +11,8 @@ const CloseButton = styled.button`
     right: 34.4%; /* 원하는 위치로 조정 */
 `;
 
-
-
 const DaumPost = (props) => {
-	// 우편번호 검색 후 주소 클릭 시 실행될 함수, data callback 용
+    // 우편번호 검색 후 주소 클릭 시 실행될 함수, data callback 용
     const handlePostCode = async (data) => {
         let fullAddress = data.address;
         let extraAddress = ''; 
@@ -29,7 +29,7 @@ const DaumPost = (props) => {
         console.log(data)
         console.log(fullAddress)
         console.log(data.zonecode)
-        props.onClose()
+        props.onAddressSelected({ fullAddress, zonecode: data.zonecode }); // 주소 정보 전달
         try {
           const response = await axios.post("/testAdr");
           console.log(response.data);
