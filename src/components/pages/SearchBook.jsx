@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState, useCallback } from "react";
 import { Link, useParams } from "react-router-dom";
 import styled from "styled-components";
-
+import StarRatings from 'react-star-ratings';
 const StyledContainer = styled.div`
   display: flex;
   align-items: center;
@@ -116,13 +116,17 @@ const SearchBook = () => {
         target: search.selectedOption,
         sort,
       });
-      console.log(JSON.parse(response.data.booksList).total)
-      const data = JSON.parse(response.data.booksList);
-      const items = data.items;
-      setDocuments(items);
-      console.log(documents)
-      const total = JSON.parse(response.data.booksList).total;
-      setBookCnt(total);
+      console.log(response.data)
+      setDocuments(response.data.books);
+      const total = response.data.total;
+      setBookCnt(response.data.total);
+      // console.log(JSON.parse(response.data.booksList).total)
+      // const data = JSON.parse(response.data.booksList);
+      // const items = data.items;
+      // setDocuments(items);
+      // console.log(documents)
+      // const total = JSON.parse(response.data.booksList).total;
+      // setBookCnt(total);
       if(total/10 >100){
         setLast(100);
       } else{
@@ -281,6 +285,15 @@ const SearchBook = () => {
                         <ul>
                           <BookTitle>{d.title}</BookTitle>
                           <BookInfoLi>
+                            <div>
+                              <StarRatings
+                                rating={d.starAvg}
+                                starRatedColor="#ffd700"
+                                numberOfStars={5}
+                                starDimension="24px"
+                                starSpacing="2px"
+                              />({d.starAvg})
+                            </div>
                             <BookInfo1>{d.author}</BookInfo1>
                             <BookInfo1>{d.publisher}</BookInfo1>
                             <BookInfo1>{d.pubdate}</BookInfo1>

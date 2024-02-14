@@ -6,6 +6,7 @@ import CommentList from "../comment/CommentList";
 import KakaoMap from "./KakaoMap";
 import styled from "styled-components";
 import CartItemDto from "../order/CartItemDto";
+import StarRatings from "react-star-ratings";
 
 const BookDetail = () => {
   const { isbn } = useParams();
@@ -13,18 +14,16 @@ const BookDetail = () => {
   const [loading, setLoading] = useState(true);
   const [count, setCount] = useState(1);
   const [isbn13, setIsbn13] = useState(null);
+  const [updateFlag, setUpdateFlag] = useState(false);
+  const [avg, setAvg] = useState(0);
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
   useEffect(() => {
     const fetchBookDetail = async () => {
       try {
-        const response = await axios.post("/testBook4", {
-          isbn
-        });
+        const response = await axios.post("/testBook4", { isbn });
         const data = JSON.parse(response.data.detail).items[0];
-        console.log(data)
-        console.log(data.title)
         if (data && data.title) {
           setBookInfo({
             authors: data.author,
@@ -39,6 +38,7 @@ const BookDetail = () => {
             translators: data.translators,
           });
           setIsbn13(data.isbn);
+          setAvg(response.data.starAvg);
         } else {
           console.error("No book details found.");
         }
@@ -49,8 +49,8 @@ const BookDetail = () => {
       }
     };
     fetchBookDetail();
-  }, [isbn]);
-  console.log(bookInfo)
+  }, [isbn, updateFlag]);
+  console.log(bookInfo);
   const handleSubmit = () => {
     console.log(token+" 토큰");
     if(token !== null){
@@ -113,6 +113,15 @@ const BookDetail = () => {
             <ul>
               <Title>
                 <h1>{bookInfo.title}</h1>
+                <div>
+                  <StarRatings 
+                    rating={avg}
+                    starRatedColor="#ffd700"
+                    numberOfStars={5}
+                    starDimension="24px"
+                    starSpacing="2px"
+                  />({avg})
+                </div>
               </Title>
                 <Info>{bookInfo.authors} | {bookInfo.publisher} | {bookInfo.datetime}</Info>
               <Price>
@@ -144,8 +153,8 @@ const BookDetail = () => {
         <input type="submit" value="submit" />
        
       </form> */}
-      {bookInfo && <CommentArea isbn={bookInfo.isbn} />}
-      {bookInfo && <CommentList isbn={bookInfo.isbn}/>}
+      {bookInfo && <CommentArea isbn={bookInfo.isbn} updateFlag={updateFlag} setUpdateFlag={setUpdateFlag} />}
+      {bookInfo && <CommentList isbn={bookInfo.isbn} updateFlag={updateFlag} setUpdateFlag={setUpdateFlag}/>}
     </div>
     
   );
