@@ -1,6 +1,28 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import styled from "styled-components";
+
+const AdminCommentContainer = styled.div`
+  margin-top: 20px;
+`;
+
+const CommentList = styled.ul`
+  list-style-type: none;
+  padding: 0;
+`;
+
+const CommentItem = styled.li`
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  padding: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
+const CommentContent = styled.p`
+  margin: 0;
+`;
 
 const AdminCommentList = () => {
     const {inquiryId} = useParams();
@@ -22,17 +44,18 @@ const AdminCommentList = () => {
     }, []); // 빈 배열을 전달하여 컴포넌트가 마운트될 때 한 번만 실행
 
     return (
-        <div>
+        <AdminCommentContainer>
             <h2>관리자 답변 목록</h2>
-            <ul>
+            <CommentList>
                 {adminComments.map((comment, index) => (
-                    <li key={index}>
-                        <strong>답변 내용:</strong> {comment.adminComment}<br />
-                        <strong>답변 날짜:</strong> {comment.adminCommentDate}<br />
-                    </li>
+                    <CommentItem key={index}>
+                        <strong>답변 내용:</strong>
+                        <CommentContent>{comment.adminComment}</CommentContent>
+                        <strong>답변 날짜:</strong> {comment.adminCommentDate}
+                    </CommentItem>
                 ))}
-            </ul>
-        </div>
+            </CommentList>
+        </AdminCommentContainer>
     );
 };
 

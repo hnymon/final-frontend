@@ -42,7 +42,7 @@ table {
     margin: 20px;
     display: inline-block;
     padding: 10px;
-    background-color: #4caf50;
+    background-color: #FFC0CB;
     color: #fff;
     text-decoration: none;
     margin-right: 10px;

@@ -2,76 +2,174 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
+import styled from 'styled-components';
+import GetTokenToHeader from '../../token/GetTokenToHeader';
+
+const InquiryContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  margin: 10%;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 50px;
+  box-shadow: 0 15px 20px rgba(0, 0, 0, 0.1);
+  min-height: 80vh;
+  position: relative;
+`;
+
+const Title = styled.h2`
+  font-size: 45px;
+  margin-bottom: 40px;
+`;
+
+const Button = styled.button`
+  background-color: #FFC0CB;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  cursor: pointer;
+`;
+
+const InquiryItemContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width:30%;
+`;
+
+const InquiryItem = styled.div`
+  margin-bottom: 20px;
+  background-color: transparent;
+  border-radius: 15px;
+  overflow: hidden;
+  width: 180%; /* 수정 필요한 부분 */
+  margin-bottom: 60px;
+  `;
+
+const InquriyItems = styled.div`
+  margin-bottom: 10px;
+  text-align: right; /* 수정된 부분 */
+  width: 95%; /* 수정 필요한 부분 */
+  padding: 5px;
+`;
+
+const InquiryContent = styled.div`
+  background-color: #fefdf1;
+  padding: 20px; /* 수정된 부분: 가로와 세로 모두 20px로 키움 */
+  height: 120px;
+  border-radius: 15px;
+  text-align: left;
+  overflow: auto;
+
+`;
+const PaginationContainer = styled.div`
+  margin-top: 20px;
+`;
+
+const PaginationButton = styled.button`
+  margin-right: 5px;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: ${({ active }) => (active ? '#FFC0CB' : '#ccc')};
+  color: ${({ active }) => (active ? '#fff' : '#000')};
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+`;
+
 const InquiryList = () => {
   const [inquiryList, setInquiryList] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
-  const pageSize = 10; // 페이지당 아이템 수
+  const pageSize = 5;
   const navigate = useNavigate();
+
   useEffect(() => {
-    
     const fetchInquiryList = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const headers = GetTokenToHeader();
         const response = await axios.post("/board/InquiryList", null, {
           params: {
-            page: currentPage, // 현재 페이지 번호
-            size: pageSize,    // 페이지 크기
+            page: currentPage,
+            size: pageSize,
           },
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers,
         });
         const { content, totalPages } = response.data.paging;
-        setInquiryList(content);
+        const formattedContent = content.map(inquiry => {
+          return {
+            ...inquiry,
+            inquiryDate: formatDate(inquiry.inquiryDate)
+          };
+        });
+        setInquiryList(formattedContent);
         setTotalPages(totalPages);
       } catch (error) {
+        
         console.error('Error fetching inquiry list:', error);
       }
     };
     fetchInquiryList();
-  }, [currentPage]); // currentPage가 변경될 때마다 useEffect가 실행되도록 설정
+  },[currentPage]);
+
+  const formatDate = (content) => {
+    const date = new Date(content);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
+
   const handleButtonClick = () => {
     navigate("/board/InquiryArea");
   };
+
   return (
-    <div>
-      <h2>Inquiry List</h2>
-      <button onClick={handleButtonClick}>1대1문의</button>
-      <div>
+    <InquiryContainer>
+      <Title>1대1문의 사항</Title>
+      <Button onClick={handleButtonClick}>1대1문의</Button>
+      <InquiryItemContainer>
         {inquiryList.map((inquiry) => (
-          <div key={inquiry.inquiryId}>
-            <br />
-            <p><strong>문의사항:</strong> <Link to={`/board/InquiryDetail/${inquiry.inquiryId}`}>{inquiry.inquiryType}</Link></p>
-            <p><strong>Q :</strong> {inquiry.inquirySubject}</p>
-            <div>
-            <p><strong></strong> {inquiry.inquiryContent}</p>
-            </div>
+          <InquiryItem key={inquiry.inquiryId}>
+            <p><strong>문의사항:</strong>  {inquiry.inquiryType} ({inquiry.inquiryStatus})</p>
+            <p><strong>Q :</strong> {inquiry.inquirySubject}</p> 
+            <InquriyItems>{inquiry.inquiryDate}</InquriyItems>
             <hr />
-          </div>
+            <InquiryContent>
+              <p>{inquiry.inquiryContent}</p>
+            </InquiryContent>
+            
+          </InquiryItem>
         ))}
-      </div>
-      <div>
-        <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
+      </InquiryItemContainer>
+      <PaginationContainer>
+        <PaginationButton onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 0}>
           이전페이지
-        </button>
+        </PaginationButton>
         {[...Array(totalPages).keys()].map((page) => (
-          <button key={page} onClick={() => handlePageChange(page + 1)} className={currentPage === page + 1 ? 'active' : ''}>
+          <PaginationButton
+            key={page}
+            onClick={() => handlePageChange(page)}
+            active={currentPage === page}
+            disabled={currentPage === page}
+          >
             {page + 1}
-          </button>
+          </PaginationButton>
         ))}
-        <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>
+        <PaginationButton onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages-1}>
           다음페이지
-        </button>
-      </div>
-    </div>
+        </PaginationButton>
+      </PaginationContainer>
+    </InquiryContainer>
   );
-  
-  
 };
 
 export default InquiryList;

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import GetTokenToHeader from "../../token/GetTokenToHeader";
 
 const CommentWrapper = styled.div`
   display: flex;
@@ -31,7 +32,7 @@ const CommentButton = styled.button`
   align-self: flex-end;
   margin-right: -27%;
   padding: 10px;
-  background-color: #4caf50;
+  background-color: #FFC0CB;
   color: white;
   border: none;
   border-radius: 4px;
@@ -66,11 +67,9 @@ const CommentArea = (props) => {
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem("token");
+      const headers = GetTokenToHeader();
       const response = await axios.post("/comment/CommentArea", comment, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers,
       });
       if (response.data.result === "Success") {
         console.log("리뷰 전송 성공", response.data);
