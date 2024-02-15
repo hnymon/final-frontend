@@ -7,6 +7,7 @@ import KakaoMap from "./KakaoMap";
 import styled from "styled-components";
 import CartItemDto from "../order/CartItemDto";
 import StarRatings from "react-star-ratings";
+import { getAccessCookie } from "../cookie/cookie";
 
 const BookDetail = () => {
   const { isbn } = useParams();
@@ -17,7 +18,7 @@ const BookDetail = () => {
   const [updateFlag, setUpdateFlag] = useState(false);
   const [avg, setAvg] = useState(0);
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
+  const token = getAccessCookie();
 
   useEffect(() => {
     const fetchBookDetail = async () => {
