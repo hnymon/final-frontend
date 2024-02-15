@@ -115,7 +115,7 @@ const Cart = () => {
     <input type='checkbox' name='select-all'
           onChange={(e) => handleAllCheck(e.target.checked)}
           // 데이터 개수와 체크된 아이템의 개수가 다를 경우 선택 해제 (하나라도 해제 시 선택 해제)
-          checked={checkItems.length === cartInfoList.length ? true : false} />
+          checked={checkItems.length === cartInfoList.length ? true : false} /> 전체 선택
     </MenuBar>
     <OrderLine>
         <CartListInfo
@@ -202,6 +202,11 @@ const MenuBar = styled.div`
     border-radius: 15px;
     background-color: #FEC4C4;
     color : #FCFCFC;
+
+    input{
+      margin-left: 14px;
+      margin-top: 10px;
+    }
 
 `
 

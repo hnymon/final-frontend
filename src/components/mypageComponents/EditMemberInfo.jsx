@@ -3,6 +3,7 @@ import axios from "axios";
 import styled from "styled-components";
 import arrow from '../../img/down_arrow.png';
 import { useNavigate } from "react-router-dom";
+import GetTokenToHeader from "../../token/GetTokenToHeader";
 
 const FormContainer = styled.div`
     display: flex;
@@ -158,12 +159,9 @@ const EditMemberInfo = (props) => {
         console.log("useEffect")
         const fetchMemberInfo = async () => {
             try {
-                const token = localStorage.getItem("token");
-                const response = await axios.post("/getMemberInfo", null, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
+                const headers = GetTokenToHeader();
+                const response = await axios.post("/getMemberInfo", null, headers,
+                );
                 if (response.data.result === "Success") {
                     setMemberInfo({
                         memberNum: response.data.currentMember.memberNum,

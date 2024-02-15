@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
+import GetTokenToHeader from "../../token/GetTokenToHeader";
 
 const Wrapper = styled.div`
 
@@ -49,12 +50,8 @@ const MembershipInfo = () => {
     useEffect(() => {
         const fetchMemberInfo = async () => {
             try {
-                const token = localStorage.getItem("token");
-                const response = await axios.post("/getMemberInfo", null, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
+                const headers = GetTokenToHeader();
+                const response = await axios.post("/getMemberInfo", null, headers);
                 if (response.data.result === "Success") {
                     setMemberInfo(response.data.currentMember);
                     
