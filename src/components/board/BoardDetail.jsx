@@ -34,7 +34,7 @@ const ButtonContainer = styled.div`
     margin-right: 10px;
     padding: 10px;
     cursor: pointer;
-    background-color: #3498db;
+    background-color: #FFC0CB;
     color: #fff;
     border: none;
     border-radius: 4px;
@@ -55,7 +55,7 @@ const BoardDetail = () => {
     const getBoard = async () => {
       try {
         const resp = await axios.get(`/board/BoardDetail/${boardSeq}`);
-        setBoard([resp.data]);
+        setBoard([resp.data]); 
       } catch (error) {
         console.error("Error fetching board data:", error);
       }

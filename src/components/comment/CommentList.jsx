@@ -58,9 +58,20 @@ const CommentDate = styled.div`
 const DeleteButton = styled.button`
   position: absolute;
   bottom: 5px;
-  right: 30px;
+  right: -10px;
   padding: 5px 10px;
-  background-color: #dc3545;
+  background-color: #FFC0CB;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+`;
+const UpdateButton = styled.button`
+  position: absolute;
+  bottom: 5px;
+  right: -60px;
+  padding: 5px 10px;
+  background-color: #FFC0CB;
   color: #fff;
   border: none;
   border-radius: 3px;
@@ -73,7 +84,9 @@ const CommentList = (props) => {
   const [totalPages, setTotalPages] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [isbn, setIsbn] = useState(props.isbn);
-  
+  const [editableCommentId, setEditableCommentId] = useState(null);
+  const [editedCommentContent, setEditedCommentContent] = useState('');
+
   useEffect(() => {
     const fetchPagedComments = async () => {
       try {
@@ -84,7 +97,6 @@ const CommentList = (props) => {
             isbn: isbn,
           },
         });
-        console.log(response.data)
         const { content, totalPages } = response.data;
   
         // content 배열의 각 요소들의 날짜 형식을 변경하여 새로운 배열 생성
@@ -94,7 +106,7 @@ const CommentList = (props) => {
             commentDate: formatDate(comment.commentDate) // 날짜 형식 변경
           };
         });
-        console.log(formattedContent)
+  
         setCommentList(formattedContent);
         setTotalPages(totalPages);
       } catch (error) {
@@ -132,6 +144,25 @@ const CommentList = (props) => {
     }
   };
 
+  const handleUpdate = (commentId, commentContent) => {
+    setEditableCommentId(commentId);
+    setEditedCommentContent(commentContent);
+  };
+
+  const handleSaveUpdate = async (commentId) => {
+    try {
+      console.log(editedCommentContent);
+      const response = await axios.post(`/comment/CommentUpdate/${commentId}`,editedCommentContent);
+      if (response.data === "success") {
+        // alert("수정되었습니다");
+        setEditableCommentId(null); // 수정 상태 종료
+        // props.setUpdateFlag(prevFlag => !prevFlag);
+      }
+    } catch (error) {
+      console.error("에러", error);
+    }
+  };
+
   return (
     <CenteredCommentList>
       {list.map((formattedContent, index) => (
@@ -148,8 +179,20 @@ const CommentList = (props) => {
             </StarRating>
             <CommentDate>{formattedContent.commentDate}</CommentDate>
           </StarContainer>
-          <div>{formattedContent.commentContent}</div>
+          {editableCommentId === formattedContent.commentId ? (
+            <textarea
+              value={editedCommentContent}
+              onChange={(e) => setEditedCommentContent(e.target.value)}
+            />
+          ) : (
+            <div>{formattedContent.commentContent}</div>
+          )}
           <DeleteButton onClick={() => handleDelete(formattedContent.commentId)}>삭제</DeleteButton>
+          {editableCommentId === formattedContent.commentId ? (
+            <button onClick={() => handleSaveUpdate(formattedContent.commentId)}>저장</button>
+          ) : (
+            <UpdateButton onClick={() => handleUpdate(formattedContent.commentId, formattedContent.commentContent)}>수정</UpdateButton>
+          )}
         </CommentContainer>
       ))}
       <PaginationContainer>

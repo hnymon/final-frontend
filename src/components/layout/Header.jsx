@@ -166,7 +166,8 @@ const Header = () => {
                             <div className="dropdown">
                              {/* You can include additional dropdown items or categories here */}
                                 <NavLink to="/board/BoardList">게시판</NavLink><br></br>
-                                <NavLink to="/board/InquiryList">1대1문의</NavLink><br></br>
+                                <NavLink to="/board/Inquiry">문의</NavLink><br></br>
+                                <NavLink to="/board/InquiryAllList">문의게시판</NavLink><br></br>
                             </div>
                             )}
                        </li>
