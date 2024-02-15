@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import DeliveryAdrEmpty from "./deliveryAdr/DeliveryAdrEmpty"
 import DeliveryAdrExist from "./deliveryAdr/DeliveryAdrExist";
 import axios from "axios";
+import GetTokenToHeader from "../../token/GetTokenToHeader";
 
 const DeliveryAdr = () => {
     const [addrs, setAddrs] = useState([]);
@@ -12,12 +13,8 @@ const DeliveryAdr = () => {
     useEffect(() => {
         const fetchMemberInfo = async () => {
             try {
-                const token = localStorage.getItem("token");
-                const response = await axios.post("/getMemberInfo", null, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
+                const headers = GetTokenToHeader();
+                const response = await axios.post("/getMemberInfo", null, headers);
                 console.log(response.data.currentMember.addr)
                 setAddrs(prevAddrs => {
                     // 새로운 상태를 반환하는 로직 작성
