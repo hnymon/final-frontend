@@ -1,6 +1,23 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
+import styled from "styled-components";
+const LegendContainer = styled.div`
+  position: absolute;
+  top: 20px;
+  right: 4%;
+  padding: 10px;
+
+  p {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    img {
+      margin-right: 10px;
+    }
+  }
+`;
 
 const KakaoMap = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -285,7 +302,7 @@ const KakaoMap = () => {
           fontSize: '16px',
           fontWeight: 'bold',
           outline: 'none',
-        }} onClick={openModal}>지도 보기</button>
+        }} onClick={openModal}>가까운 도서관 찾기</button>
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
@@ -294,7 +311,7 @@ const KakaoMap = () => {
             margin:0,
             padding:0,
             paddingTop:30,
-            width: "80%", // 모달 창의 너비
+            width: "70%", // 모달 창의 너비
             height: "60%", // 모달 창의 높이
             top: "50%", // 모달 상단의 위치 (50%는 중앙)
             left: "50%", // 모달 좌측의 위치 (50%는 중앙)
@@ -310,26 +327,18 @@ const KakaoMap = () => {
               margin:0,
               padding:0,
               marginRight:100,
-              width: "60%",
+              width: "70%",
               height: "100%",
               left: "10px",
               top: "-20px",
             }}
           ></div>
-          {clickedAddress && (
-            <p
-              style={{
-                position: "absolute",
-                top: "440px",
-                left: "125px",
-                margin: "0",
-                padding: "0",
-              }}
-            >
-              {" "}
-              현재위치 주소: {clickedAddress}
-            </p>
-          )}
+          <LegendContainer>
+            <p><img src="/school.png" alt="" height={"50px"} />&nbsp;&nbsp;대학교 도서관입니다</p>
+            <p><img src="/small.png" alt="" height={"50px"} />&nbsp;&nbsp;작은도서관입니다</p>
+            <p><img src="/children1.png" alt="" height={"50px"} />&nbsp;&nbsp;어린이도서관입니다</p>
+            <p><img src="/publicLibrary.png" alt="" height={"45px"} />&nbsp;&nbsp;&nbsp;공공도서관입니다</p>
+          </LegendContainer>
         </>
         <button
           onClick={closeModal}

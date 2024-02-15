@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
+import GetTokenToHeader from '../../token/GetTokenToHeader';
 
 const Container = styled.div`
   display: flex;
@@ -48,7 +49,7 @@ const SubmitButton = styled.button`
   margin-left: 80%;
   width: 20%;
   padding: 10px;
-  background-color: #007bff;
+  background-color: #FFC0CB;
   color: #fff;
   border: none;
   border-radius: 4px;
@@ -65,20 +66,24 @@ const InquiryArea = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+      if(!inquiryEntity.inquirySubject || !inquiryEntity.inquiryType|| !inquiryEntity.inquiryContent){
+        alert("입력란에 입력해주세요.");
+        return ;
+    }
     try {
-      const token = localStorage.getItem("token");
+      const headers = GetTokenToHeader();
       const response = await axios.post("/board/InquiryArea", inquiryEntity, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers,
       });
       console.log('서버 응답:', response.data);
-
+      
       // 제출 후 필드를 초기화합니다.
       setFormData({ inquirySubject: '', inquiryContent: '', inquiryType: '' });
-      navigate('/board/InquiryList');
+      navigate('/board/Inquiry');
     } catch (error) {
+        alert("로그인후 작성하실수있습니다");
+        alert("로그인페이지로 이동합니다");
+        navigate("/login");
       console.error('문의 제출 실패:', error);
     }
   };
@@ -94,7 +99,7 @@ const InquiryArea = () => {
               name="inquirySubject"
               value={inquiryEntity.inquiryType}
               onChange={(e) => setFormData({ ...inquiryEntity, inquiryType: e.target.value })}
-              required
+              // required
             >
               <option value="">선택해주세요</option>
               <option value="제품 관련 문의">제품 관련 문의</option>
@@ -121,6 +126,7 @@ const InquiryArea = () => {
               type="text" 
               value={inquiryEntity.inquirySubject}
               onChange={(e) => setFormData({...inquiryEntity, inquirySubject: e.target.value })}
+              // required
               placeholder='제목을 입력하세요.'
             />
           </FormGroup>
@@ -129,7 +135,7 @@ const InquiryArea = () => {
               name="inquiryContent"
               value={inquiryEntity.inquiryContent}
               onChange={(e) => setFormData({ ...inquiryEntity, inquiryContent: e.target.value })}
-              required
+              // required
               placeholder='내용을 입력하세요.'
             />
           </FormGroup>
