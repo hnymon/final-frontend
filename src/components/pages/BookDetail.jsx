@@ -7,6 +7,7 @@ import KakaoMap from "./KakaoMap";
 import styled from "styled-components";
 import CartItemDto from "../order/CartItemDto";
 import StarRatings from "react-star-ratings";
+import { getAccessCookie } from "../cookie/cookie";
 
 const BookDetail = () => {
   const { isbn } = useParams();
@@ -17,7 +18,7 @@ const BookDetail = () => {
   const [updateFlag, setUpdateFlag] = useState(false);
   const [avg, setAvg] = useState(0);
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
+  const token = getAccessCookie();
 
   useEffect(() => {
     const fetchBookDetail = async () => {
@@ -60,11 +61,6 @@ const BookDetail = () => {
               },
       })
       .then((response) => {
-        console.log(response.data);
-        const quantity = response.data.count;
-        const book = response.data.isbn13;
-        console.log("수량 : " + quantity);
-        console.log("책 정보 : " + book.title);
         const confirmed = window.confirm('장바구니에 상품이 추가되었습니다. 장바구니로 이동하시겠습니까?');
         if (confirmed) {
           navigate('/cart');
@@ -72,6 +68,7 @@ const BookDetail = () => {
       })
 
       .catch((error) => {
+        alert('이미 장바구니에 있는 상품입니다.');
         console.error("Error submitting data:", error);
       });
 

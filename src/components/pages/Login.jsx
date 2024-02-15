@@ -6,6 +6,7 @@ import Logo from '../../img/Logo_n.png';
 import NaverLoginButton from "../oauth/NaverLoginButton";
 import KakaoLoginButton from "../oauth/KakaoLoginButton";
 import GoogleLoginButton from "../oauth/GoogleLogin";
+import { setAccessCookie, setRefreshCookie } from "../cookie/cookie";
 
 const PageContainer = styled.div`
     display: flex;
@@ -97,12 +98,16 @@ const Login = () => {
             // axios를 사용하여 서버로 데이터 전송
             const response = await axios.post("/login", { username, password });
             const token = response.headers.authorization.split(" ")[1];
+            const refreshToken = response.headers["Authorization-Refresh"].split(" ")[1];
             // 추가적으로 서버로부터의 응답을 처리하거나 상태를 업데이트할 수 있음
             if (response) {
                 // 토큰을 로컬 스토리지에 저장
-                localStorage.setItem("token", token);
+                // localStorage.setItem("token", token);
+                setAccessCookie('accessToken', token);
+                setRefreshCookie('refreshToken', token);
                 console.log("로그인 성공");
                 console.log(token);
+                console.log("리프레시 토큰", refreshToken);
                 // 로그인 성공
                 alert("로그인 성공!");
                 navigate("/");

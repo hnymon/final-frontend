@@ -3,6 +3,9 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import logo from "../../img/Logo_n.png";
 import SearchBar from "../SearchBar";
+import { getAccessCookie, removeAccessCookie, removeRefreshCookie } from "../cookie/cookie";
+import axios from "axios";
+import GetTokenToHeader from "../../token/GetTokenToHeader";
 
 const MainHeader = styled.header`
     position: fixed;
@@ -88,19 +91,34 @@ const Header = () => {
     const location = useLocation();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const navigate = useNavigate();
+    const [cartItemCount, setCartItemCount] = useState(0);
 
     useEffect(() => {
         // localStorage에서 토큰을 가져와 isLoggedIn 상태를 업데이트합니다.
-        const token = localStorage.getItem("token");
+        const token = getAccessCookie();
+        const headers = GetTokenToHeader();
+        console.log('헤더', token);
         setIsLoggedIn(!!token);
-    }, [location.pathname]); // 페이지 경로가 변경될 때마다 실행
+        if(isLoggedIn){
+            axios.get("/cart/count",headers)
+                .then(response =>{
+                    setCartItemCount(response.data);
+                    console.log('장바구니 데이타', response.data);
+                })
+                .catch(error =>{
+                    console.error('장바구니 아이템 개수 조회 오류:', error);
+                });
+        }
+    }, [location.pathname, cartItemCount]); // 페이지 경로가 변경될 때마다 실행
 
     const handleLogout = () => {
         // 로그아웃 버튼을 클릭할 때 실행되는 함수
         // 로컬 스토리지에서 토큰을 삭제하고, isLoggedIn 상태를 업데이트합니다.
-        localStorage.removeItem("token");        // 엑세스 토큰
-        localStorage.removeItem("refreshToken"); // 리프레시 토큰
+        removeAccessCookie();
+        console.log('로그아웃', removeAccessCookie(), getAccessCookie());
+        removeRefreshCookie();
         setIsLoggedIn(false);
+        alert('로그아웃 되었습니다');
         toHome();
     };
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -126,7 +144,7 @@ const Header = () => {
                                     <NavLink to="/mypage">마이페이지</NavLink>
                                 </li>
                                 <li>
-                                    <NavLink to="/cart">장바구니(0)</NavLink>
+                                    <NavLink to="/cart">장바구니({cartItemCount})</NavLink>
                                 </li>
                                 <li>
                                     <LogoutLink onClick={handleLogout}>로그아웃</LogoutLink>

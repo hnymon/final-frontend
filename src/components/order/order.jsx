@@ -1,12 +1,15 @@
 import styled from "styled-components";
-import GetTokenToHeader from "../../token/GetTokenToHeader";
-import axios from "axios";
 import FetchBookDetail from "../cart/FetchBookDetail";
 import { useEffect, useState } from "react";
 import OrderInfo from "./OrderInfo";
 import { useLocation } from "react-router-dom";
 import Payment from "./Payment";
 import { Divider } from "@mui/material";
+import DaumPost from "../mypageComponents/deliveryAdr/DaumPost"
+import PopupDom from "../mypageComponents/deliveryAdr/PopupDom";
+import PopupPostCode from "./PopupPostCode";
+import axios from "axios";
+import GetTokenToHeader from "../../token/GetTokenToHeader";
 
 const Order = () =>{
     const location = useLocation();
@@ -14,11 +17,14 @@ const Order = () =>{
     const [bookCount, setBookCount] = useState([]);
     const deliveryFee = 3000;
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
+    const [isPopupOpen, setIsPopupOpen] = useState(false)
+    // const [deliveryAddress, setDeliveryAddress] = useState('');
     const [deliveryInfo, setDeliveryInfo] = useState({
         name: "",
         phone: "",
-        email: "",
         address: "",
+        addrDetail:"",
+        zipcode:"",
     });
 
     const productTotal = () =>{
@@ -58,6 +64,59 @@ const Order = () =>{
         }));
         console.log(deliveryInfo);
       };
+
+      const formatPhoneNumber = (phoneNumber) => {
+        // 전화번호 형식 변환 (000-0000-0000)
+        return phoneNumber.replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3");
+    };
+
+      const handlePhoneNumChange = (e) => {
+        const { name, value } = e.target;
+
+        const newValue = e.target.value.replace(/[^0-9]/g, '');
+        const truncatedValue = newValue.slice(0, 11);
+        // 형식 적용하여 state 업데이트
+        setDeliveryInfo((prevInfo) => ({
+            ...prevInfo,
+            [name]: formatPhoneNumber(truncatedValue),
+          }));
+    };
+
+    // 다음 팝업창 열기
+    const openPostCode = () => {
+        setIsPopupOpen(true)
+    }
+    // 다음 팝업창 닫기
+    const closePostCode = () => {
+        setIsPopupOpen(false);
+    }
+
+    const postCode = (data) => {
+        // 받은 주소 정보 처리
+        const fullAddress = data.address;
+        const zipcode = data.zonecode;
+        console.log(fullAddress, zipcode);
+        setDeliveryInfo((prevInfo) => ({
+            ...prevInfo,
+            address: fullAddress,
+            zipcode: zipcode,
+          }));
+          console.log(deliveryInfo);
+    };
+
+    const loadDeliveryAddr = (e) =>{
+        const {name, value} = e.target;
+        const headers = GetTokenToHeader();
+        if(name === "deliveryAddr" && value === "default") {
+            axios.get('/order/loadDefaultDelivery', headers)
+            .then(response =>{
+                console.log(response.data);
+                setDeliveryInfo(response.data);
+            })
+        }else{
+
+        }
+    };
 
 
 
@@ -102,30 +161,40 @@ const Order = () =>{
         </ProductInformation>
         <ul>
             <li>
-                배송지 
-                <input type="radio" /> 기본배송지
-                <input type="radio" /> 다른 거
+                <lable style={{marginRight:'15px'}}>배송지 불러오기</lable>
+                <input type="radio" name="deliveryAddr" value="default" onChange={loadDeliveryAddr} /> <span>기본배송지</span>
+                <input type="radio" name="deliveryAddr" value="others" onChange={loadDeliveryAddr}/> <span>배송지 목록</span>
             </li>
             <li>
-                배송주소
-                <input name="address" value={deliveryInfo.address} onChange={deliveryInfoChange}></input>
+                <label>배송주소</label>
+                <input style={{width:'50px'}} name="zipcode" value={deliveryInfo.zipcode} onChange={deliveryInfoChange} readOnly></input>
+                <button type='button' onClick={openPostCode}>도로명주소 검색</button>
+                <div id='popupDom'>
+                    {isPopupOpen && (
+                        <PopupDom>
+                            <PopupPostCode onClose={closePostCode} onPostCode={postCode} />
+                        </PopupDom>
+                    )}
+                </div>
+                <input type="text" name="address" value={deliveryInfo.address} onChange={deliveryInfoChange} readOnly></input>
+                <br></br>
+                <label>상세주소</label><input name="addrDetail" value={deliveryInfo.addrDetail} onChange={deliveryInfoChange}></input>
             </li>
         </ul>
         </Addr>
         <Divider sx={{ height: 120, m: 1 }} orientation='vertical' />
         <PersonInfo>
-        <ProductInformation>주문자 정보</ProductInformation>
-        <ul>
-            <li>
-                주문자명 <input name="name" value={deliveryInfo.name} onChange={deliveryInfoChange}></input>
-            </li>
-            <li>
-                휴대번호 <input name="phone" value={deliveryInfo.phone} onChange={deliveryInfoChange}></input>
-            </li>
-            <li>
-                이메일 <input name="email" value={deliveryInfo.email} onChange={deliveryInfoChange}></input>
-            </li>
-        </ul>
+            <ProductInformation>수령인 정보</ProductInformation>
+            <Table>
+                <tr>
+                    <td>수령인</td> <td><input name="name" value={deliveryInfo.name} onChange={deliveryInfoChange}></input></td>
+                </tr>
+                <tr>
+                    <td>휴대번호</td> <td><input name="phone" 
+                                            value={deliveryInfo.phone} type="text"
+                                            onChange={handlePhoneNumChange}></input></td>
+                </tr>
+            </Table>
         </PersonInfo>
     </Delivery>
     <H2>결제 상품</H2>
@@ -140,12 +209,14 @@ const Order = () =>{
         />
     </Books>
     <H2>결제 수단</H2>
+    <ButtonDiv>
     <Button onClick={() => handlePaymentMethodChange('html5_inicis')} selected={selectedPaymentMethod === 'html5_inicis'}>
         신용/체크카드 결제
     </Button>
     <Button onClick={() => handlePaymentMethodChange('kakaopay')} selected={selectedPaymentMethod === 'kakaopay'}>
         카카오페이
     </Button>
+    </ButtonDiv>
         </>
     )
 }
@@ -154,17 +225,40 @@ export default Order;
 
 const Addr = styled.div`
     margin-left: 4%;
+    ul{
+        margin: 10px;
+    }
+    label{
+        margin-right: 15px;
+    }
+    button{
+        margin-left: 10px;
+    }
+    span{
+        margin-right: 5px;
+    }
+`
+
+const Table = styled.table`
+
+    td{
+        padding-left: 10px;
+    }
+
+    input{
+        width: 150px;
+    }
 `
 
 const PersonInfo = styled.div`
     margin-right: 10%;
-    li{
-        margin-top:3px;
-    }
 `
-
+const ButtonDiv = styled.div`
+    margin-left: 20%;
+`
 const Button = styled.button`
-  margin-top: 40px;
+  margin-top: 30px;
+  margin-left: 20px;
   background-color: ${({ selected }) => (selected ? '#FEC4C4' : 'white')};
   color: ${({ selected }) => (selected ? 'white' : 'black')};
   border: 3px solid #FEC4C4;

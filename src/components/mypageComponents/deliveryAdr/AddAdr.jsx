@@ -4,6 +4,7 @@ import PopupDom from './PopupDom';
 import DaumPost from './DaumPost';
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import GetTokenToHeader from "../../../token/GetTokenToHeader";
 
 const CloseButton = styled.button`
     position: absolute;
@@ -137,12 +138,8 @@ const AddAdr = (props) => {
             return;
         }
         try {
-            const token = localStorage.getItem("token");
-            const response = await axios.post("/addAddress", addressInfo, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+            const headers = GetTokenToHeader();
+            const response = await axios.post("/addAddress", addressInfo, headers);
             console.log("Address added successfully:", response.data);
             if(response.data.result === "Save"){
                 // 주소 추가 성공 후 로직 추가

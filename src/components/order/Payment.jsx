@@ -33,7 +33,7 @@ const Payment = ({cartInfoList,bookCount, totalPrice, selectedPaymentMethod, del
     console.log(totalPrice);
     console.log(bookPrice);
 
-    if (!deliveryInfo || !deliveryInfo.name || !deliveryInfo.phone || !deliveryInfo.email || !deliveryInfo.address) {
+    if (!deliveryInfo || !deliveryInfo.name || !deliveryInfo.phone || !deliveryInfo.addr) {
       alert('배송 정보를 모두 입력해주세요');
       return;
     };
@@ -54,7 +54,6 @@ const Payment = ({cartInfoList,bookCount, totalPrice, selectedPaymentMethod, del
       merchant_uid: new Date().getTime(),
       name: `${cartInfoList[0].title} 외 ${cartInfoList.length}건`,
       amount: `${totalPrice}`,
-      buyer_email: `${deliveryInfo.email}`,
       buyer_name: `${deliveryInfo.name}`,
       buyer_tel: `${deliveryInfo.phone}`,
       buyer_addr: `${deliveryInfo.address}`,
@@ -74,6 +73,7 @@ const Payment = ({cartInfoList,bookCount, totalPrice, selectedPaymentMethod, del
               }
               const response = await axios.post(`order/add`, orderDTO, headers);
               alert('결제 성공');
+              navigate('/order/success');
               
 
             } catch (error) {
