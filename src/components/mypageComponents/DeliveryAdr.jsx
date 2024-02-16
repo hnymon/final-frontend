@@ -14,11 +14,11 @@ const DeliveryAdr = () => {
         const fetchMemberInfo = async () => {
             try {
                 const headers = GetTokenToHeader();
-                const response = await axios.post("/getMemberInfo", null, headers);
-                console.log(response.data.currentMember.addr)
+                const response = await axios.post("/getMemberAdr", null, headers);
+                console.log(response.data.addrs)
                 setAddrs(prevAddrs => {
                     // 새로운 상태를 반환하는 로직 작성
-                    return response.data.currentMember.addr;
+                    return response.data.addrs;
                 });
             } catch (error) {
                 
