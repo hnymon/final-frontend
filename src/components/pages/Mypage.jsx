@@ -3,6 +3,7 @@ import styled from "styled-components";
 import DeliveryAdr from "../mypageComponents/DeliveryAdr";
 import EditMemberInfo from "../mypageComponents/EditMemberInfo";
 import MembershipInfo from "../mypageComponents/MembershipInfo";
+import OrderList from "../mypageComponents/OrderList";
 
 const MainDiv = styled.div`
     height:100vh;
@@ -59,12 +60,12 @@ const Mypage = () => {
                 <SelectDiv
                     selected={selectedTab === 3}
                     onClick={() => handleTabClick(3)}
-                >나의 회원등급 혜택</SelectDiv>
+                >주문 내역</SelectDiv>
             </HeaderDiv>
             <InnerDiv>
                 {selectedTab === 1 && <EditMemberInfo flag={flag} setFlag={setFlag} />}
                 {selectedTab === 2 && <DeliveryAdr />}
-                {selectedTab === 3 && <MembershipInfo />}
+                {selectedTab === 3 && <OrderList />}
             </InnerDiv>
         </MainDiv>
     )

@@ -1,11 +1,12 @@
 import styled from "styled-components";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import logo from "../../img/Logo_n.png";
 import SearchBar from "../SearchBar";
 import { getAccessCookie, removeAccessCookie, removeRefreshCookie } from "../cookie/cookie";
 import axios from "axios";
 import GetTokenToHeader from "../../token/GetTokenToHeader";
+import { CartCountContext } from "./Layout";
 
 const MainHeader = styled.header`
     position: fixed;
@@ -105,7 +106,7 @@ const Header = () => {
     const location = useLocation();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const navigate = useNavigate();
-    const [cartItemCount, setCartItemCount] = useState(0);
+    const { cartCount, setCartCount } = useContext(CartCountContext);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
     const toggleDropdown = () => {
@@ -121,14 +122,14 @@ const Header = () => {
         if(isLoggedIn){
             axios.get("/cart/count",headers)
                 .then(response =>{
-                    setCartItemCount(response.data);
+                    setCartCount(response.data);
                     console.log('장바구니 데이타', response.data);
                 })
                 .catch(error =>{
                     console.error('장바구니 아이템 개수 조회 오류:', error);
                 });
         }
-    }, [location.pathname, cartItemCount]); // 페이지 경로가 변경될 때마다 실행
+    }, [location.pathname]); // 페이지 경로가 변경될 때마다 실행
 
     const handleLogout = () => {
         // 로그아웃 버튼을 클릭할 때 실행되는 함수
@@ -161,7 +162,7 @@ const Header = () => {
                                     <NavLink to="/mypage">마이페이지</NavLink>
                                 </li>
                                 <li>
-                                    <NavLink to="/cart">장바구니({cartItemCount})</NavLink>
+                                    <NavLink to="/cart">장바구니({cartCount})</NavLink>
                                 </li>
                                 <li>
                                     <LogoutLink onClick={handleLogout}>로그아웃</LogoutLink>

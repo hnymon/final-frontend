@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import axios from "axios";
 import styled from "styled-components";
 import { Link, NavLink, useNavigate } from "react-router-dom";
@@ -7,6 +7,8 @@ import NaverLoginButton from "../oauth/NaverLoginButton";
 import KakaoLoginButton from "../oauth/KakaoLoginButton";
 import GoogleLoginButton from "../oauth/GoogleLogin";
 import { setAccessCookie, setRefreshCookie } from "../cookie/cookie";
+import GetTokenToHeader from "../../token/GetTokenToHeader";
+import { CartCountContext } from "../layout/Layout";
 
 const PageContainer = styled.div`
     display: flex;
@@ -90,6 +92,20 @@ const Login = () => {
     const navigate = useNavigate();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const { cartCount, setCartCount } = useContext(CartCountContext);
+    const headers = GetTokenToHeader();
+    
+    const getCartCount = () =>{
+        axios
+          .get("/cart/count", headers)
+          .then((response) => {
+            setCartCount(response.data);
+            console.log('장바구니 데이타', response.data);
+          })
+          .catch((error) => {
+            console.error('장바구니 아이템 개수 조회 오류:', error);
+          });
+    }
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -109,6 +125,8 @@ const Login = () => {
                 // setRefreshCookie('refreshToken', token);
                 console.log("로그인 성공");
                 console.log(token);
+
+                getCartCount();
                 // console.log("리프레시 토큰", refreshToken);
                 // 로그인 성공
                 alert("로그인 성공!");
