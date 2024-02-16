@@ -35,7 +35,7 @@ const AdminComment = ({ inquiryId }) => {
       console.log(adminComment);
       await axios.post(`/board/AdminComment/${inquiryId}`, { adminComment });
       // 답변 작성 후 필드 초기화
-      setAdminComment("");
+      setAdminComment(""); 
     } catch (error) {
       console.error("Error submitting admin comment:", error);
     }

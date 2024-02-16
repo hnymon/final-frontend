@@ -92,12 +92,11 @@ const InquiryList = () => {
     const fetchInquiryList = async () => {
       try {
         const headers = GetTokenToHeader();
-        const response = await axios.post("/board/InquiryList", null, {
+        const response = await axios.post("/board/InquiryList", null, headers,{
           params: {
             page: currentPage,
             size: pageSize,
           },
-          headers,
         });
         const { content, totalPages } = response.data.paging;
         const formattedContent = content.map(inquiry => {

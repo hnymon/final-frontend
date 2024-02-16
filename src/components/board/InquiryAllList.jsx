@@ -132,7 +132,7 @@ const InquiryAllList = () => {
                 </PaginationContainer>
             </TableContainer>
         </div>
-    );
+    ); 
 };
 
 export default InquiryAllList;
