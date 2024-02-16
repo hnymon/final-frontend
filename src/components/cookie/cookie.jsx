@@ -12,6 +12,10 @@ export const setRefreshCookie = (value) => {
   return cookies.set(refreshToken, value, { maxAge: 60 * 60 * 24 * 14, path: '/' });
 };
 
+export const setCookie = (key, value) => {
+  return cookies.set(key, value, { maxAge: 60 * 60 * 24 * 14, path: '/' });
+};
+
 export const getAccessCookie = () => {
   return cookies.get(accessToken);
 };
