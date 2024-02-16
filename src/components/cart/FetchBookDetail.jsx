@@ -16,7 +16,7 @@ const FetchBookDetail = async (cartData) =>{
         const isbn13 = cartItem.isbn13;
         const count = cartItem.count;
         console.log(isbn13, count);
-        const response = await axios.post("/testBook4", {
+        const response = await axios.post("/naver_book_adv_Api", {
           isbn: cartItem.isbn13
         });
         const data = JSON.parse(response.data.detail).items[0];

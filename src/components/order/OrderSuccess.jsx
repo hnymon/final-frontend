@@ -2,10 +2,6 @@ import styled from "styled-components";
 import { useEffect, useState } from "react";
 
 const OrderSuccess = () =>{
-    const [cartInfoList, setCartInfoList] = useState([]);
-
-
-
 
     return(
         <>
@@ -22,9 +18,9 @@ const OrderSuccess = () =>{
         </Display>
         <Div>
             <Books>
-                <div>결제가 성공했다~</div>
+                <div>결제가 성공적으로 완료되었습니다.</div>
             </Books>
-            <Button>배송조회 바로가기</Button>
+            <Button>주문내역 바로가기</Button>
         </Div>
     </>
     )
@@ -39,7 +35,7 @@ const Div = styled.div`
 
 
 const Button = styled.button`
-  margin: 40px auto;
+  margin: 10px auto;
   background-color: white;
   color: black;
   border: 3px solid #FEC4C4;
@@ -101,7 +97,7 @@ const ToOrderNum = styled.p`
 
 const Books = styled.div`
     width: 60%;
-    margin: 50px auto;
+    margin: 50px auto 20px auto;
     text-align: center;
     border: 1px solid #B8B8B8;
     border-radius: 10px;

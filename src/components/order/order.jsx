@@ -5,13 +5,14 @@ import OrderInfo from "./OrderInfo";
 import { useLocation } from "react-router-dom";
 import Payment from "./Payment";
 import { Divider } from "@mui/material";
-import DaumPost from "../mypageComponents/deliveryAdr/DaumPost"
 import PopupDom from "../mypageComponents/deliveryAdr/PopupDom";
 import PopupPostCode from "./PopupPostCode";
 import axios from "axios";
 import GetTokenToHeader from "../../token/GetTokenToHeader";
+import DeliveryListModal from "./DeliveryListModal";
 
 const Order = () =>{
+    const headers = GetTokenToHeader();
     const location = useLocation();
     const [cartInfoList, setCartInfoList] = useState([]);
     const [bookCount, setBookCount] = useState([]);
@@ -20,12 +21,17 @@ const Order = () =>{
     const [isPopupOpen, setIsPopupOpen] = useState(false)
     // const [deliveryAddress, setDeliveryAddress] = useState('');
     const [deliveryInfo, setDeliveryInfo] = useState({
+        addrName: "",
         name: "",
         phone: "",
         address: "",
         addrDetail:"",
         zipcode:"",
     });
+    const [open, setOpen] = useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+    const [deliveryAddresses, setDeliveryAddresses] = useState([]);
 
     const productTotal = () =>{
         let totalPrice = 0;
@@ -104,9 +110,18 @@ const Order = () =>{
           console.log(deliveryInfo);
     };
 
+    const fetchDeliveryAddresses = async () => {
+        try {
+        // 배송지 목록을 불러오는 API 호출
+        const response = await axios.get('/order/loadDeliveryList', headers);
+        setDeliveryAddresses(response.data);
+        } catch (error) {
+        console.error('배송지 목록 불러오기 실패:', error);
+        }
+    };
+
     const loadDeliveryAddr = (e) =>{
         const {name, value} = e.target;
-        const headers = GetTokenToHeader();
         if(name === "deliveryAddr" && value === "default") {
             axios.get('/order/loadDefaultDelivery', headers)
             .then(response =>{
@@ -114,14 +129,24 @@ const Order = () =>{
                 setDeliveryInfo(response.data);
             })
         }else{
+            fetchDeliveryAddresses();
+            handleOpen();
 
         }
+
+    
     };
 
 
 
     return(
         <>
+        <DeliveryListModal
+            open = {open}
+            handleClose = {handleClose}
+            deliveryAddresses = {deliveryAddresses}
+            setDeliveryInfo = {setDeliveryInfo}
+        />
         <Display>
         <HeadLine>주문하기</HeadLine>
         <ToOrder>
@@ -176,7 +201,7 @@ const Order = () =>{
                         </PopupDom>
                     )}
                 </div>
-                <input type="text" name="address" value={deliveryInfo.address} onChange={deliveryInfoChange} readOnly></input>
+                <input style={{width:'400px'}} type="text" name="address" value={deliveryInfo.address} onChange={deliveryInfoChange} readOnly></input>
                 <br></br>
                 <label>상세주소</label><input name="addrDetail" value={deliveryInfo.addrDetail} onChange={deliveryInfoChange}></input>
             </li>
@@ -210,7 +235,7 @@ const Order = () =>{
     </Books>
     <H2>결제 수단</H2>
     <ButtonDiv>
-    <Button onClick={() => handlePaymentMethodChange('html5_inicis')} selected={selectedPaymentMethod === 'html5_inicis'}>
+    <Button onClick={() => handlePaymentMethodChange('html5_inicis.INIpayTest')} selected={selectedPaymentMethod === 'html5_inicis.INIpayTest'}>
         신용/체크카드 결제
     </Button>
     <Button onClick={() => handlePaymentMethodChange('kakaopay')} selected={selectedPaymentMethod === 'kakaopay'}>
@@ -274,7 +299,7 @@ const ProductInformation = styled.div`
     text-align: left;
     font-size: 20px;
     font-weight: bold;
-    margin: 15px 0 10px 0px;
+    margin: 15px 0 10px 10px;
 `
 
 const Display = styled.div`

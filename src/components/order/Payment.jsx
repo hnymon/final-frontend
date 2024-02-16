@@ -33,7 +33,7 @@ const Payment = ({cartInfoList,bookCount, totalPrice, selectedPaymentMethod, del
     console.log(totalPrice);
     console.log(bookPrice);
 
-    if (!deliveryInfo || !deliveryInfo.name || !deliveryInfo.phone || !deliveryInfo.addr) {
+    if (!deliveryInfo || !deliveryInfo.name || !deliveryInfo.phone || !deliveryInfo.address) {
       alert('배송 정보를 모두 입력해주세요');
       return;
     };
@@ -54,10 +54,11 @@ const Payment = ({cartInfoList,bookCount, totalPrice, selectedPaymentMethod, del
       merchant_uid: new Date().getTime(),
       name: `${cartInfoList[0].title} 외 ${cartInfoList.length}건`,
       amount: `${totalPrice}`,
+      // amount: 1,
       buyer_name: `${deliveryInfo.name}`,
       buyer_tel: `${deliveryInfo.phone}`,
-      buyer_addr: `${deliveryInfo.address}`,
-      buyer_postcode: '123-456',
+      buyer_addr: `${deliveryInfo.address} ${deliveryInfo.addressDetail}`,
+      buyer_postcode: `${deliveryInfo.zipcode}`,
     }, async (rsp) => {
       try {
         const { data } = await axios.post(`/payment/validation/${rsp.imp_uid}`);
@@ -72,8 +73,12 @@ const Payment = ({cartInfoList,bookCount, totalPrice, selectedPaymentMethod, del
                 deliveryInfo: deliveryInfo,
               }
               const response = await axios.post(`order/add`, orderDTO, headers);
-              alert('결제 성공');
-              navigate('/order/success');
+              if(response.status === 200){
+                alert('결제 성공');
+                navigate('/order/success');
+              }else{
+                alert('결제 도중 오류 발생');
+              }
               
 
             } catch (error) {
@@ -82,7 +87,6 @@ const Payment = ({cartInfoList,bookCount, totalPrice, selectedPaymentMethod, del
             }
         } else {
           alert('결제 실패');
-          navigate('/order/success');
         }
       } catch (error) {
         console.error('Error while verifying payment:', error);

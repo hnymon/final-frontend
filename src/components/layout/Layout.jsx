@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { createContext, useState } from 'react';
 import Header from "./Header";
 import { Outlet } from 'react-router-dom';
 import styled from 'styled-components';
@@ -9,8 +9,12 @@ const LayoutDiv = styled.div`
 `
 
 
+export const CartCountContext = createContext();
 const Layout = (props) => {
+    const [cartCount, setCartCount] = useState(0);
+
     return (
+        <CartCountContext.Provider value={{ cartCount, setCartCount }}>
         <LayoutDiv>
             <Header />
             <main>
@@ -18,6 +22,7 @@ const Layout = (props) => {
                 <Outlet />
             </main>
         </LayoutDiv>
+        </CartCountContext.Provider>
     );
 }
 
