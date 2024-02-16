@@ -67,10 +67,11 @@ const CommentArea = (props) => {
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
     try {
+      
       const headers = GetTokenToHeader();
-      const response = await axios.post("/comment/CommentArea", comment, {
+      const response = await axios.post("/comment/CommentArea", comment,
         headers,
-      });
+      );
       if (response.data.result === "Success") {
         console.log("리뷰 전송 성공", response.data);
         setComment({ ...comment, commentContent: "" });
@@ -80,8 +81,8 @@ const CommentArea = (props) => {
         alert("이미 작성된 리뷰가 있습니다.");
       }
     } catch (error) {
-      alert("로그인페이지로 이동합니다");
-      navigate("/login");
+      // alert("로그인페이지로 이동합니다");
+      // navigate("/login");
       console.error("댓글 전송 에러", error);
     }
   };
@@ -136,7 +137,7 @@ const StarRating = ({ initialRating, onRatingChange }) => {
         >
           &#9733;
         </span>
-      ))}
+      ))} 
     </StarRatingContainer>
   );
 };

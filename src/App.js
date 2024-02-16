@@ -28,6 +28,8 @@ import Inquiry from './components/board/Inquiry';
 import OkInquiryList from './components/board/OkInquiryList';
 import UnInquiryList from './components/board/UnInquiryList';
 import InquiryAllList from './components/board/InquiryAllList';
+import AdminBoardDetail from './components/board/AdminBoardDetail';
+import AdminBoardList from './components/board/AdminBoardList';
 function App() {
   return (
       <Routes>
@@ -47,6 +49,8 @@ function App() {
           <Route path='/book-detail/:isbn' element={<BookDetail/>}/>   
           {/* 게시판 */}
           <Route path='/board/BoardList' element={<BoardList/>}/>   
+          <Route path='/board/AdminBoardList' element={<AdminBoardList/>}/>   
+          <Route path='/board/AdminBoardDetail/:boardSeq' element={<AdminBoardDetail/>}/> 
           <Route path='/board/BoardDetail/:boardSeq' element={<BoardDetail/>}/> 
           <Route path='/board/BoardCreate' element={<BoardCreate/>}/> 
           <Route path='/board/Edit/:boardSeq' element={<Edit/>}/>
@@ -62,7 +66,7 @@ function App() {
             <Route path='/board/Inquiry' element={<Inquiry />}/> 
             <Route path='/board/UnInquiryList' element={<UnInquiryList/>}/> 
             <Route path='/board/OkInquiryList' element={<OkInquiryList/>}/> 
-            <Route path='/board/InquiryAllList' element={<InquiryAllList/>}/> 
+            {/* <Route path='/board/InquiryAllList' element={<InquiryAllList/>}/>  */}
           </Route>
           {/* admin */}
           <Route element={<AdminRoute />}>

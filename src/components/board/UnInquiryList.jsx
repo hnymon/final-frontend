@@ -86,9 +86,8 @@ const UnInquiryList = () => {
     const fetchData = async () => {
       try {
         const headers = GetTokenToHeader();
-        const response = await axios.post('/board/UnInquiryList',null, {
+        const response = await axios.post('/board/UnInquiryList',null, headers, {
           params: { page: currentPage },
-           headers,
         });
         const { list } = response.data;
         setInquiryList(list.content);
@@ -122,7 +121,6 @@ const UnInquiryList = () => {
       <InquiryItemContainer>
         {inquiryList.map((inquiry) => (
           <InquiryItem key={inquiry.inquiryId}>
-            <InquiryTypeLink to={`/board/InquiryDetail/${inquiry.inquiryId}`}>
               <p><strong>문의사항</strong> {inquiry.inquiryType}({inquiry.inquiryStatus})</p>
               <p><strong>Q: </strong>{inquiry.inquirySubject}</p>
               <p>{formatDate(inquiry.inquiryDate)}</p>
@@ -130,7 +128,6 @@ const UnInquiryList = () => {
               <InquiryContent>
                 <p>{inquiry.inquiryContent}</p>
               </InquiryContent>
-            </InquiryTypeLink>
           </InquiryItem>
         ))}
       </InquiryItemContainer>

@@ -62,12 +62,12 @@ const Navigation = styled.div`
             font-weight: bold;
 
             &:hover {
-                color: #FF5573;
+                color: skyblue;
             }
         }
 
         li {
-            font-size: 20px;
+            font-size: 15px;
         }
     }
 `;
@@ -86,12 +86,31 @@ const NavigationWrapper = styled.div`
     display: flex;
     justify-content: flex-end;
 `;
-
+const ArrowIcon = styled.span`
+  font-size: 10px;
+`;
+const DropdownMenu = styled.div`
+    margin-top: 0.5%;
+    position: absolute;
+    top: 60%;
+    left: 81.5%;
+    border-radius: 5px;
+    border: 1px solid black;
+    padding: 10px;
+    z-index: 1;
+    background-color: #ffffff;
+    display: ${(props) => (props.isOpen ? "block" : "none")};
+`;
 const Header = () => {
     const location = useLocation();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const navigate = useNavigate();
     const [cartItemCount, setCartItemCount] = useState(0);
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+    const toggleDropdown = () => {
+        setIsDropdownOpen(!isDropdownOpen);
+    };
 
     useEffect(() => {
         // localStorage에서 토큰을 가져와 isLoggedIn 상태를 업데이트합니다.
@@ -121,12 +140,7 @@ const Header = () => {
         alert('로그아웃 되었습니다');
         toHome();
     };
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
-    // Toggle the dropdown menu visibility
-    const toggleDropdown = () => {
-      setIsDropdownOpen(!isDropdownOpen);
-    };
+    
     const toHome = () => {
         navigate("/")
     }
@@ -163,17 +177,14 @@ const Header = () => {
                                 </li>
                             </>
                         )}
-                        <li>
-                            <NavLink to="/customer-service"onClick={()=>toggleDropdown("")}>고객센터</NavLink>
-                            {isDropdownOpen && (
-                            <div className="dropdown">
-                             {/* You can include additional dropdown items or categories here */}
-                                <NavLink to="/board/BoardList">게시판</NavLink><br></br>
-                                <NavLink to="/board/Inquiry">문의</NavLink><br></br>
-                                <NavLink to="/board/InquiryAllList">문의게시판</NavLink><br></br>
-                            </div>
-                            )}
-                       </li>
+                         <li>
+                            <a href="#" onClick={toggleDropdown}>고객센터 <ArrowIcon>{isDropdownOpen ? "▲" : "▼"}</ArrowIcon></a>
+                            
+                            <DropdownMenu isOpen={isDropdownOpen}>
+                                <NavLink to="/board/BoardList">공지사항</NavLink><br />
+                                <NavLink to="/board/Inquiry">문의</NavLink><br />
+                            </DropdownMenu>
+                        </li>
                     </ul>
                     </Navigation>
                 </NavigationWrapper>

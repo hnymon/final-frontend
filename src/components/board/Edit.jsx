@@ -91,7 +91,7 @@ const Edit = () => {
     try {
       await axios.post(`/board/Edit/${boardSeq}`, board);
       alert("수정되었습니다");
-      navigate(`/board/BoardDetail/${boardSeq}`);
+      navigate(`/board/AdminBoardDetail/${boardSeq}`);
     } catch (error) {
       alert("수정실패");
       console.error('글 수정 실패', error);
@@ -99,7 +99,7 @@ const Edit = () => {
   };
 
   const handleHome = () => {
-    navigate("/board/BoardList");
+    navigate("/board/AdminBoardList");
   };
 
   return (

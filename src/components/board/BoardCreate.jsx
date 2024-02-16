@@ -119,8 +119,8 @@ const BoardCreate = () => {
       console.log("성공");
       alert("작성이 완료되었습니다");
       console.log(response.data);
-      navigate('/board/BoardList');
-    } catch (error) {
+      navigate('/board/AdminBoardList');
+    } catch (error) { 
       console.log("실패했습니다", error);
     }
   };
@@ -144,6 +144,7 @@ const BoardCreate = () => {
             required
           /> */}
           <select name="check" id="writer" onChange={(e) => setBoard({ ...board, admin: e.target.value })}>
+          <option value="선택하세요">선택하세요</option>
           <option value="고객센터">고객센터</option>
           <option value="핫트랙스">핫트랙스</option>
           </select>
@@ -165,6 +166,8 @@ const BoardCreate = () => {
             id="boardContent"
             value={board.boardContent}
             onChange={(e) => setBoard({ ...board, boardContent: e.target.value })}
+            maxLength="500" // 최대 글자 수 설정
+            cols="50" rows="8"
             required
           />
         </ResponsiveFormGroup>
