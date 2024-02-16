@@ -38,7 +38,9 @@ const CartListInfo = ({cartInfoList, bookCount,setBookCount, bookPrice,setBookPr
 
     return (
       <CartWrapper>
-        {cartInfoList.map((book, index) => {
+        {cartInfoList.length === 0 ? (
+      <div>장바구니에 담긴 상품이 없습니다.</div>
+    ) : (cartInfoList.map((book, index) => {
           const totalPrice = bookCount[index] * book.salePrice;
   
           return (
@@ -54,7 +56,7 @@ const CartListInfo = ({cartInfoList, bookCount,setBookCount, bookPrice,setBookPr
               </Img>
               <BookInfo>
                 <li>{book.title}</li>
-                <li>{book.salePrice} 원</li>
+                <li>판매가 {book.salePrice} 원</li>
               </BookInfo>
               <BookTotalPrice>
                 <li>{totalPrice} 원</li>
@@ -68,7 +70,7 @@ const CartListInfo = ({cartInfoList, bookCount,setBookCount, bookPrice,setBookPr
               </ul>
             </CartContainer>
           );
-        })}
+        }))}
       </CartWrapper>
     );
   }

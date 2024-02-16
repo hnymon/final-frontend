@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import CommentArea from "../comment/CommentArea";
@@ -9,6 +9,8 @@ import CartItemDto from "../order/CartItemDto";
 import StarRatings from "react-star-ratings";
 import { getAccessCookie } from "../cookie/cookie";
 import GetTokenToHeader from "../../token/GetTokenToHeader";
+import { AddCartCount } from "../cart/CartCount";
+import { CartCountContext } from "../layout/Layout";
 
 const BookDetail = () => {
   const { isbn } = useParams();
@@ -20,6 +22,7 @@ const BookDetail = () => {
   const [avg, setAvg] = useState(0);
   const navigate = useNavigate();
   const token = getAccessCookie();
+  const { cartCount, setCartCount } = useContext(CartCountContext);
 
   useEffect(() => {
     const fetchBookDetail = async () => {
@@ -59,8 +62,12 @@ const BookDetail = () => {
       const headers = GetTokenToHeader();
       axios.post("/cart/add", { count, isbn13 },headers)
       .then((response) => {
+        const currentCartCount = cartCount;
+        const newCartCount = parseInt(currentCartCount)+1;
+        setCartCount(newCartCount);
         const confirmed = window.confirm('장바구니에 상품이 추가되었습니다. 장바구니로 이동하시겠습니까?');
         if (confirmed) {
+          AddCartCount();
           navigate('/cart');
         }
       })
