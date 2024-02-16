@@ -54,7 +54,7 @@ const Inquiry = () => {
                     selected={selectedTab === 2}
                     onClick={() => handleTabClick(2)}
                 >처리중</SelectDiv>
-                <SelectDiv
+                <SelectDiv 
                     selected={selectedTab === 3}
                     onClick={() => handleTabClick(3)}
                 >답변완료</SelectDiv>

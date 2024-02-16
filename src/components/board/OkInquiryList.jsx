@@ -128,9 +128,9 @@ const OkInquiryList = () => {
     const fetchData = async () => {
       try {
         const headers = GetTokenToHeader();
-        const response = await axios.post('/board/OkInquiryList',null, {
+        const response = await axios.post('/board/OkInquiryList',null, headers, {
           params: { page: currentPage ,size: pageSize,},
-          headers,
+         
         });
         const { list } = response.data;
         setInquiryList(list.content);

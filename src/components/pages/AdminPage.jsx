@@ -1,6 +1,8 @@
 import { useState } from "react";
 import styled from "styled-components";
 import AdminOrder from "../adminComponents/AdminOrder";
+import InquiryAllList from "../board/InquiryAllList";
+import AdminBoardList from "../board/AdminBoardList";
 
 const MainDiv = styled.div`
     height:100vh;
@@ -62,8 +64,8 @@ const AdminPage = () => {
             </HeaderDiv>
             <InnerDiv>
                 {selectedTab === 1 && <AdminOrder />}
-                {selectedTab === 2 && "2번"}
-                {selectedTab === 3 && "3번"}
+                {selectedTab === 2 && <AdminBoardList/>}
+                {selectedTab === 3 && <InquiryAllList/>}
                 {selectedTab === 4 && "4번"}
             </InnerDiv>
         </MainDiv>

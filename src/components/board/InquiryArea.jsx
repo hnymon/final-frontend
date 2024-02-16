@@ -72,9 +72,9 @@ const InquiryArea = () => {
     }
     try {
       const headers = GetTokenToHeader();
-      const response = await axios.post("/board/InquiryArea", inquiryEntity, {
+      const response = await axios.post("/board/InquiryArea", inquiryEntity, 
         headers,
-      });
+      );
       console.log('서버 응답:', response.data);
       
       // 제출 후 필드를 초기화합니다.
