@@ -141,6 +141,9 @@ const Header = () => {
                         {isLoggedIn ? (
                             <>
                                 <li>
+                                    <NavLink to="/admin">관리자</NavLink>
+                                </li>
+                                <li>
                                     <NavLink to="/mypage">마이페이지</NavLink>
                                 </li>
                                 <li>
