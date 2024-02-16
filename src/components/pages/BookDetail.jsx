@@ -8,6 +8,7 @@ import styled from "styled-components";
 import CartItemDto from "../order/CartItemDto";
 import StarRatings from "react-star-ratings";
 import { getAccessCookie } from "../cookie/cookie";
+import GetTokenToHeader from "../../token/GetTokenToHeader";
 
 const BookDetail = () => {
   const { isbn } = useParams();
@@ -55,11 +56,8 @@ const BookDetail = () => {
   const handleSubmit = () => {
     console.log(token+" 토큰");
     if(token !== null){
-      axios.post("/cart/add", { count, isbn13 },{
-        headers: {
-                Authorization: `Bearer ${token}`,
-              },
-      })
+      const headers = GetTokenToHeader();
+      axios.post("/cart/add", { count, isbn13 },headers)
       .then((response) => {
         const confirmed = window.confirm('장바구니에 상품이 추가되었습니다. 장바구니로 이동하시겠습니까?');
         if (confirmed) {

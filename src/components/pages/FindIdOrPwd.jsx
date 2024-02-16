@@ -6,7 +6,7 @@ import Logo from '../../img/Logo_n.png';
 import DatePicker from "react-datepicker";
 import { ko } from "date-fns/esm/locale";
 import "react-datepicker/dist/react-datepicker.css";
-
+import calender from "../../img/calendar.png"
 
 const PageContainer = styled.div`
     display: flex;
@@ -14,7 +14,7 @@ const PageContainer = styled.div`
     align-items: center;
     justify-content: flex-start;
     height: 100vh; /* 화면 세로 중앙 정렬을 위해 */
-    width: 50%;
+    width: 40%;
     margin: 0 auto;
 `;
 
@@ -64,11 +64,10 @@ const TabList = styled.ul`
 const TabListItem = styled.li`
     margin-right: 20px;
     cursor: pointer;
-    font-size: 2rem;
+    font-size: 1.7rem;
     font-weight: bold;
     color: white;
     justify-content: center; /* 수평으로 중앙 정렬 */
-    
     width:100%;
 `;
 
@@ -127,19 +126,21 @@ const InputBirthdayField = styled.input`
     margin-bottom: 10px;
     border-radius: 5px;
     border: 1px solid #ccc;
-    width:80%;
+    width:85%;
 `;
 const SubmitButton = styled.button`
     padding: 10px 20px;
-    background-color: green;
+    background-color: #FFEDED;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     margin-bottom: 10px;
+    font-weight: bold;
+    font-size: 20px;
 `;
 const DatePickerDiv = styled.div`
-
+    margin-bottom: 10px;
 `;
 
 const DatepickerViewDiv = styled.div`
@@ -592,7 +593,7 @@ const FindIdOrPwd = () => {
                                         onClick={toggleDatePicker}
                                         style={{ marginLeft: "10px", cursor: "pointer" }}
                                     >
-                                        달력
+                                        <img src={calender} alt="" /> 
                                     </DatePickerDiv>
                                 </div>
                                 <InputLabel>휴대폰번호</InputLabel>
@@ -615,7 +616,7 @@ const FindIdOrPwd = () => {
                                         onClick={toggleDatePicker}
                                         style={{ marginLeft: "10px", cursor: "pointer" }}
                                     >
-                                        달력
+                                        <img src={calender} alt="" />
                                     </DatePickerDiv>
                                 </div>
                                 <InputLabel>이메일</InputLabel>
@@ -644,7 +645,7 @@ const FindIdOrPwd = () => {
                                         onClick={toggleDatePicker}
                                         style={{ marginLeft: "10px", cursor: "pointer" }}
                                     >
-                                        달력
+                                        <img src={calender} alt="" />
                                     </DatePickerDiv>
                                 </div>
                                 <InputLabel>휴대폰번호</InputLabel>
@@ -669,7 +670,7 @@ const FindIdOrPwd = () => {
                                         onClick={toggleDatePicker}
                                         style={{ marginLeft: "10px", cursor: "pointer" }}
                                     >
-                                        달력
+                                        <img src={calender} alt="" />
                                     </DatePickerDiv>
                                 </div>
                                 <InputLabel>이메일</InputLabel>

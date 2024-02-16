@@ -4,6 +4,7 @@ import PopupDom from './PopupDom';
 import DaumPost from './DaumPost';
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import GetTokenToHeader from "../../../token/GetTokenToHeader";
 
 const CloseButton = styled.button`
     position: absolute;
@@ -127,7 +128,11 @@ const EditAdr = ({ onClose, onSuccess, address }) => {
         const truncatedValue = newValue.slice(0, 11);
         setAddressInfo({ ...addressInfo, recipientTel: formatPhoneNumber(truncatedValue) });
     };
-
+    const handleZipcodeChange = (event) => {
+        const newValue = event.target.value.replace(/[^0-9]/g, ''); // 숫자 이외의 문자 제거
+        const truncatedValue = newValue.slice(0, 5); // 최대 5자리까지 자름
+        setAddressInfo({ ...addressInfo, zipcode: truncatedValue });
+    };
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!addressInfo.recipientName || 
@@ -138,12 +143,8 @@ const EditAdr = ({ onClose, onSuccess, address }) => {
             return;
         }
         try {
-            const token = localStorage.getItem("token");
-            const response = await axios.post("/editAdr", addressInfo, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+            const headers = GetTokenToHeader();
+            const response = await axios.post("/addAddress", addressInfo, headers);
             console.log("Address added successfully:", response.data);
             if(response.data.result === "Save"){
                 // 주소 추가 성공 후 로직 추가
@@ -168,7 +169,7 @@ const EditAdr = ({ onClose, onSuccess, address }) => {
                     <Input type="text" name="recipientTel" value={addressInfo.recipientTel || ''} onChange={handlePhoneNumChange} />
                     <Label>우편번호<RequiredText>(필수)</RequiredText></Label>
                     <div style={{ display: 'flex', width: '100%' }}>
-                        <Input type="text" name="zipcode" value={addressInfo.zipcode || ''} onChange={handleChange} style={{ width: "50%", marginLeft:"2.4%"}} />
+                        <Input type="text" name="zipcode" value={addressInfo.zipcode || ''} onChange={handleZipcodeChange} style={{ width: "50%", marginLeft:"2.4%"}} />
                         <CodeButton type='button' onClick={openPostCode}>우편번호 검색</CodeButton>
                     </div>
                     <Label>주소<RequiredText>(필수)</RequiredText></Label>
