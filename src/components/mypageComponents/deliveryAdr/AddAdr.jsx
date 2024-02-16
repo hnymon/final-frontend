@@ -33,7 +33,7 @@ const CodeButton = styled.button`
     color: orange;
     font-weight: bold;
     cursor: pointer;
-    height: 82%;
+    height: 70%;
 `;
 
 const AdrContainer = styled.div`
@@ -127,7 +127,11 @@ const AddAdr = (props) => {
         const truncatedValue = newValue.slice(0, 11);
         setAddressInfo({ ...addressInfo, recipientTel: formatPhoneNumber(truncatedValue) });
     };
-
+    const handleZipcodeChange = (event) => {
+        const newValue = event.target.value.replace(/[^0-9]/g, ''); // 숫자 이외의 문자 제거
+        const truncatedValue = newValue.slice(0, 5); // 최대 5자리까지 자름
+        setAddressInfo({ ...addressInfo, zipcode: truncatedValue });
+    };
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!addressInfo.recipientName || 
@@ -164,7 +168,7 @@ const AddAdr = (props) => {
                     <Input type="text" name="recipientTel" value={addressInfo.recipientTel} onChange={handlePhoneNumChange} />
                     <Label>우편번호<RequiredText>(필수)</RequiredText></Label>
                     <div style={{ display: 'flex', width: '100%' }}>
-                        <Input type="text" name="zipcode" value={addressInfo.zipcode} onChange={handleChange} style={{ width: "50%", marginLeft:"2.4%"}} />
+                        <Input type="text" name="zipcode" value={addressInfo.zipcode} onChange={handleZipcodeChange} style={{ width: "50%", marginLeft:"2.4%"}} />
                         <CodeButton type='button' onClick={openPostCode}>우편번호 검색</CodeButton>
                     </div>
                     <Label>주소<RequiredText>(필수)</RequiredText></Label>

@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Navigate, Outlet } from "react-router-dom";
+import GetTokenToHeader from "../../token/GetTokenToHeader";
 
 const AdminRoute = () => {
   const [role, setRole] = useState("");
@@ -8,12 +9,8 @@ const AdminRoute = () => {
   useEffect(() => {
     const fetchMemberInfo = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const response = await axios.post("/getMemberInfo", null, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const headers = GetTokenToHeader();
+        const response = await axios.post("/getMemberInfo", null, headers);
         if (response.data.result === "Success") {
           setRole(response.data.currentMember.role);
         }
