@@ -8,8 +8,20 @@ import GetTokenToHeader from "../../../token/GetTokenToHeader";
 
 const CloseButton = styled.button`
     position: absolute;
-    top: 20.5%;
-    right: 34.2%;
+    top: 0;
+    right: 0;
+    background-color: transparent; /* 배경색을 투명하게 설정 */
+    border: none; /* 테두리를 제거 */
+    border-radius:50%;
+    color: #333; /* 글자색을 지정 */
+    padding: 10px; /* 적절한 패딩값 설정 */
+    font-size: 20px; /* 글자 크기 설정 */
+    cursor: pointer; /* 커서를 포인터로 변경하여 버튼임을 명시 */
+    transition: background-color 0.3s ease; /* 배경색 변화에 애니메이션 효과 추가 */
+
+    &:hover {
+        background-color: #f0f0f0; /* 마우스 오버시 살짝 회색으로 배경색 변경 */
+    }
 `;
 
 const AddAdrButton = styled.button`
@@ -48,6 +60,7 @@ const AdrContainer = styled.div`
     height: 64%;
     border: 1px solid black;
     background-color: white;
+    z-index:1;
 `;
 
 const Form = styled.form`
@@ -158,38 +171,36 @@ const EditAdr = ({ onClose, onSuccess, address }) => {
     }
     
     return(
-        <>
-            <AdrContainer>
-                <Form onSubmit={handleSubmit}>
-                    <Label>배송지 이름<RequiredText></RequiredText></Label>
-                    <Input type="text" name="daName" value={addressInfo.daName || ''} onChange={handleChange} />
-                    <Label>수령인<RequiredText>(필수)</RequiredText></Label>
-                    <Input type="text" name="recipientName" value={addressInfo.recipientName || ''} onChange={handleChange} />
-                    <Label>수령인 연락처<RequiredText>(필수)</RequiredText></Label>
-                    <Input type="text" name="recipientTel" value={addressInfo.recipientTel || ''} onChange={handlePhoneNumChange} />
-                    <Label>우편번호<RequiredText>(필수)</RequiredText></Label>
-                    <div style={{ display: 'flex', width: '100%' }}>
-                        <Input type="text" name="zipcode" value={addressInfo.zipcode || ''} onChange={handleZipcodeChange} style={{ width: "50%", marginLeft:"2.4%"}} />
-                        <CodeButton type='button' onClick={openPostCode}>우편번호 검색</CodeButton>
-                    </div>
-                    <Label>주소<RequiredText>(필수)</RequiredText></Label>
-                    <Input type="text" name="address" value={addressInfo.address || ''} onChange={handleChange} />
-                    <Label>상세주소</Label>
-                    <Input type="text" name="addrDetail" value={addressInfo.addrDetail || ''} onChange={handleChange} />
-                    <Label>배송시요청사항</Label>
-                    <Input type="text" name="deliveryRequest" value={addressInfo.deliveryRequest || ''} onChange={handleChange} />
-                    <AddAdrButton type="submit">수정하기</AddAdrButton>
-                </Form>
-                <div id='popupDom'>
-                    {isPopupOpen && (
-                        <PopupDom>
-                            <DaumPost onClose={closePostCode} onAddressSelected={handleAddressSelected} />
-                        </PopupDom>
-                    )}
+        <AdrContainer>
+            <Form onSubmit={handleSubmit}>
+                <Label>배송지 이름<RequiredText></RequiredText></Label>
+                <Input type="text" name="daName" value={addressInfo.daName || ''} onChange={handleChange} />
+                <Label>수령인<RequiredText>(필수)</RequiredText></Label>
+                <Input type="text" name="recipientName" value={addressInfo.recipientName || ''} onChange={handleChange} />
+                <Label>수령인 연락처<RequiredText>(필수)</RequiredText></Label>
+                <Input type="text" name="recipientTel" value={addressInfo.recipientTel || ''} onChange={handlePhoneNumChange} />
+                <Label>우편번호<RequiredText>(필수)</RequiredText></Label>
+                <div style={{ display: 'flex', width: '100%' }}>
+                    <Input type="text" name="zipcode" value={addressInfo.zipcode || ''} onChange={handleZipcodeChange} style={{ width: "50%", marginLeft:"2.4%"}} />
+                    <CodeButton type='button' onClick={openPostCode}>우편번호 검색</CodeButton>
                 </div>
-            </AdrContainer>
-            <CloseButton type='button' onClick={() => {onClose()}} >닫기</CloseButton>
-        </>
+                <Label>주소<RequiredText>(필수)</RequiredText></Label>
+                <Input type="text" name="address" value={addressInfo.address || ''} onChange={handleChange} />
+                <Label>상세주소</Label>
+                <Input type="text" name="addrDetail" value={addressInfo.addrDetail || ''} onChange={handleChange} />
+                <Label>배송시요청사항</Label>
+                <Input type="text" name="deliveryRequest" value={addressInfo.deliveryRequest || ''} onChange={handleChange} />
+                <AddAdrButton type="submit">수정하기</AddAdrButton>
+            </Form>
+            <div id='popupDom'>
+                {isPopupOpen && (
+                    <PopupDom>
+                        <DaumPost onClose={closePostCode} onAddressSelected={handleAddressSelected} />
+                    </PopupDom>
+                )}
+            </div>
+        <CloseButton type='button' onClick={() => {onClose()}} >X</CloseButton>
+        </AdrContainer>
     )
 
 }
