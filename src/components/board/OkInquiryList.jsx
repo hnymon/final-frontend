@@ -109,7 +109,7 @@ const AdminCommentList = ({ inquiryId }) => {
             <ul>
                 {adminComments.map((comment, index) => (
                     <li key={index}>
-                        <strong>답변 내용:</strong> {comment.adminComment} {formatDate(comment.adminCommentDate)}<br />
+                        <strong>관리자답변 :</strong> {comment.adminComment}<br/> {formatDate(comment.adminCommentDate)}<br />
                     </li>
                 ))}
             </ul>

@@ -9,23 +9,31 @@ const Container = styled.div`
 `;
 
 const Card = styled.div`
-  padding: 100px;
-  margin-top: 20px;
-  max-width: 80%; /* 수정: 카드 최대 너비를 더 넓게 조정 */
-  width: 100%;
+margin-left: 23%;
+margin-top: 10%;
+max-width: 55%; /* 수정: 카드 최대 너비를 더 넓게 조정 */
+// width: 100%;
 `;
 
 const Admin = styled.p`
-  margin-top: 20px;
-  margin-bottom: 40px;
-  font-weight: 1px bold;
+margin-top: 20px;
+margin-bottom: 40px;
+font-weight: 1px bold;
 `;
 
 const Title = styled.h2`
   color: #333;
 `;
 const BoardContent = styled.p`
-  padding: 5%;
+height: 500px;
+border: 1px solid black;
+color: #666;
+border: 1px solid #ccc;
+border-radius: 15px;
+padding: 5%;
+width: 90%;
+box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+overflow: hidden;
 `;
 const ButtonContainer = styled.div`
   margin-top: 20px;
@@ -71,7 +79,7 @@ const AdminBoardDetail = () => {
   }, [boardSeq]);
                                
   const handleHome = () => {
-    navigate("/board/AdminBoardList");
+    navigate("/admin");
   };
 
   const handleEdit = () => {

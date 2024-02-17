@@ -4,13 +4,13 @@ import { Link } from "react-router-dom";
 import styled from 'styled-components';
 
 const StyledBoardList = styled.div`
-  padding: 20px;
-  margin: 20px;
-  text-align: center;
+display: flex;
+flex-direction: column;
+align-items: center;
 
 
   table {
-    width: 70%;
+    width: 80%;
     border-collapse: collapse;
     margin-top: 20px;
     margin-left: auto; 
@@ -18,55 +18,47 @@ const StyledBoardList = styled.div`
   }
 
   td{
-    border: 1px solid #ddd;
-    border-left: none;
-    border-right: none;
-    padding: 3%;
+    border: 1px solid #dddddd;
+    padding: 8px;
     text-align: center;
   }
 
   th {
-    //background-color: #f2f2f2;
+    background-color: #ffeded;
     border: 1px solid #ddd;
-    border-left: none;
-    border-right: none;
-    border-top: 2px solid;
-    padding: 2%;
+    padding: 8px;
     text-align: center;
   }
 
   .button {
-    margin: 20px;
+    margin-top: 20px;
     display: inline-block;
-    padding: 10px;
+    padding: 5px;
     background-color: #FFC0CB;
     color: #fff;
     text-decoration: none;
-    margin-right: 10px;
-
-
-    &:hover {
-      background-color: #45a049;
-    }
+    border-radius: 4px;
   }
 `;
-const ButtonContainer = styled.div`
-  margin-top: 25px;
+const PaginationContainer = styled.div`
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    // background-color: #FFC0CB;
+`;
 
-  button {
-    margin-right: 10px;
-    padding: 10px;
+const PaginationButton = styled.button`
+    margin: 0 5px; /* 수정된 부분: 좌우 마진 추가 */
+    padding: 5px 10px;
+    border: 1px solid #ffffff;
     cursor: pointer;
+    color: #ffffff;
     background-color: #FFC0CB;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    font-size: 14px;
 
-    &:hover {
-      background-color: #2980b9;
-    }
-  }
+    // &:disabled {
+    //     opacity: 0.5;
+    //     cursor: not-allowed;
+    // }
 `;
 const AdminBoardList = () => {
   const [board, setBoards] = useState([]);
@@ -111,9 +103,14 @@ const formatDate = (dateString) => {
       setCurrentPage(currentPage + 1);
     }
   };
+  const handleRowClick = (boardSeq) => {
+    // 각 행을 클릭할 때 해당 문의의 세부 정보 페이지로 이동
+    window.location.href = `/board/AdminBoardDetail/${boardSeq}`;
+};
 
   return (
     <StyledBoardList>
+      <h2>공지</h2>
       <table>
         <thead>
           <tr>
@@ -126,12 +123,12 @@ const formatDate = (dateString) => {
         </thead>
         <tbody>
           {board.map((item) => (
-            <tr key={item.boardSeq}>
+            <tr key={item.boardSeq} onClick={()=> handleRowClick(item.boardSeq)}>
               <td>{item.boardSeq}</td>
               <td>
-                <Link to={`/board/AdminBoardDetail/${item.boardSeq}`}>
+                {/* <Link to={`/board/AdminBoardDetail/${item.boardSeq}`}> */}
                   {item.boardTitle}
-                </Link>
+                {/* </Link> */}
               </td>
               <td>{item.admin}</td>
               <td>{item.boardViews}</td>
@@ -140,20 +137,20 @@ const formatDate = (dateString) => {
           ))}
         </tbody>
       </table>
-      <ButtonContainer>
-        <button onClick={handlePrevPage} disabled={currentPage === 0}>◀</button>
-        {Array.from(Array(totalPages).keys()).map((page) => (
-          <button
-            key={page}
-            onClick={() => handlePageChange(page)}
-            disabled={currentPage === page}
-            style={{padding:"11.9px"}}
-          >
-            {page + 1}
-          </button>
-        ))}
-        <button onClick={handleNextPage} disabled={currentPage === totalPages - 1}>▶</button>
-        </ButtonContainer>
+      <PaginationContainer>
+          <PaginationButton onClick={handlePrevPage} disabled={currentPage === 0}>◀</PaginationButton>
+          {Array.from(Array(totalPages).keys()).map((page) => (
+            <PaginationButton
+              key={page}
+              onClick={() => handlePageChange(page)}
+              disabled={currentPage === page}
+              // style={{padding:"11.9px"}}
+            >
+              {page + 1}
+            </PaginationButton>
+          ))}
+          <PaginationButton onClick={handleNextPage} disabled={currentPage === totalPages - 1}>▶</PaginationButton>
+        </PaginationContainer>
       <Link className="button" to="/board/BoardCreate">
         글 작성
       </Link>
