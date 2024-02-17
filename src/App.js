@@ -3,7 +3,6 @@ import SignUp from './components/pages/SignUp';
 import Login from './components/pages/Login';
 import Mypage from './components/pages/Mypage';
 import Cart from './components/pages/Cart';
-import CustomerService from './components/pages/CustomerService';
 import Layout from './components/layout/Layout';
 import HomePage from './components/pages/HomePage';
 import BoardList from './components/board/BoardList';
@@ -23,7 +22,6 @@ import NotFound from './components/pages/NotFound';
 import PrivateRoute from './components/roleRoutes/PrivateRoute';
 import AdminRoute from './components/roleRoutes/AdminRoute';
 import AdminPage from './components/pages/AdminPage';
-import AdminOrderDetail from './components/adminComponents/AdminOrderDetail';
 import Inquiry from './components/board/Inquiry';
 import OkInquiryList from './components/board/OkInquiryList';
 import UnInquiryList from './components/board/UnInquiryList';
@@ -39,11 +37,6 @@ function App() {
           <Route path='/signup' element={<SignUp/>}/>
           <Route path='/login' element={<Login />}/>
           <Route path='/login/callback' element={<LoginCallback />}/>
-          <Route path='/mypage' element={<Mypage />}/>
-          <Route path='/cart' element={<Cart/>}/>
-          <Route path='/order' element={<Order/>}/>
-          <Route path='/order/success' element={<OrderSuccess/>}/>
-          <Route path='/customer-service' element={<CustomerService/>}/>
           {/* 책 검색 */}
           <Route path='/book-search/:keyword' element={<SearchBook />}/>   
           <Route path='/book-detail/:isbn' element={<BookDetail/>}/>   
@@ -67,6 +60,9 @@ function App() {
             <Route path='/board/UnInquiryList' element={<UnInquiryList/>}/> 
             <Route path='/board/OkInquiryList' element={<OkInquiryList/>}/> 
             {/* <Route path='/board/InquiryAllList' element={<InquiryAllList/>}/>  */}
+            <Route path='/cart' element={<Cart/>}/>
+            <Route path='/order' element={<Order/>}/>
+            <Route path='/order/success' element={<OrderSuccess/>}/>
           </Route>
           {/* admin */}
           <Route element={<AdminRoute />}>

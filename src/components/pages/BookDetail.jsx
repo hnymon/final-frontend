@@ -58,7 +58,7 @@ const BookDetail = () => {
   console.log(bookInfo);
   const handleSubmit = () => {
     console.log(token+" 토큰");
-    if(token !== null){
+    if(token !== undefined){
       const headers = GetTokenToHeader();
       axios.post("/cart/add", { count, isbn13 },headers)
       .then((response) => {
@@ -94,7 +94,7 @@ const BookDetail = () => {
   }
 
   const goOrder = () =>{
-    if(token !== null){
+    if(token !== undefined){
       const cartItem = new CartItemDto(bookInfo.isbn, count);
       const cartArray = [cartItem];
       navigate('/order', {state: {cartArray: cartArray}})

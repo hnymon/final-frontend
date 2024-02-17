@@ -63,7 +63,7 @@ const AdminOrderDetail = (props) => {
                 <TableBody>
                     {odt.map(order => (
                         <tr key={order.odtNum}>
-                            <TableCell><input type="checkbox" name="" id="" /><br />{order.odtNum}</TableCell>
+                            <TableCell>{order.odtNum}</TableCell>
                             <TableImgCell><Image src={order.thumbnail ? order.thumbnail : 'http://via.placeholder.com/120X150'} alt="" /></TableImgCell>
                             <TableInfoCell>
                                 <TitleSpan>{order.title}</TitleSpan>
