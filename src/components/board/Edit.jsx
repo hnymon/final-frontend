@@ -7,7 +7,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 20px;
+  margin-top: 100px;
 `;
 
 const Header = styled.h1`
@@ -16,12 +16,13 @@ const Header = styled.h1`
 `;
 
 const Card = styled.div`
-  background-color: #f5f5f5;
-  border: 1px solid #ddd;
-  padding: 20px;
-  margin-top: 20px;
+  width: 1000px;
   max-width: 600px;
-  width: 100%;
+  padding: 20px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 `;
 
 const Label = styled.label`
@@ -34,32 +35,37 @@ const Input = styled.input`
   padding: 8px;
   margin-bottom: 10px;
   box-sizing: border-box;
-`;
+  border-radius: 8px;
+  `;
 
 const Textarea = styled.textarea`
   width: 100%;
+  height: 200px; /* 수정 */
   padding: 8px;
   margin-bottom: 10px;
   box-sizing: border-box;
+  border-radius: 9px;
   resize: none;
 `;
 
 const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: center; /* 중앙 정렬 */
   margin-top: 20px;
+`;
 
-  .button {
-    margin-right: 10px;
-    padding: 10px;
-    cursor: pointer;
-    background-color: #3498db;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
+const Button = styled.button`
+  margin-right: 10px;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #FFC0CB; /* 수정 */
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 
-    &:hover {
-      background-color: #2980b9;
-    }
+  &:hover {
+    background-color: #FFC0CB; /* 수정 */
   }
 `;
 
@@ -99,7 +105,7 @@ const Edit = () => {
   };
 
   const handleHome = () => {
-    navigate("/board/AdminBoardList");
+    navigate("/admin");
   };
 
   return (
@@ -108,7 +114,7 @@ const Edit = () => {
         <div>
           <Header>게시글 수정</Header>
           <Card>
-            <Label htmlFor="admin">admin</Label>
+            <Label htmlFor="admin">관리자</Label>
             <Input
               type="text"
               id="admin"
@@ -116,7 +122,7 @@ const Edit = () => {
               onChange={(e) => setBoard({ ...board, admin: e.target.value })}
               required
             />
-            <Label htmlFor="boardTitle">Title</Label>
+            <Label htmlFor="boardTitle">공지제목 </Label>
             <Input
               type="text"
               id="boardTitle"
@@ -124,7 +130,7 @@ const Edit = () => {
               onChange={(e) => setBoard({ ...board, boardTitle: e.target.value })}
               required
             />
-            <Label htmlFor="boardContent">Content</Label>
+            <Label htmlFor="boardContent">공지내용</Label>
             <Textarea
               id="boardContent"
               value={board.boardContent}
@@ -133,8 +139,8 @@ const Edit = () => {
             />
           </Card>
           <ButtonContainer>
-            <p className='button' onClick={handleEdit}>수정</p>
-            <p className='button' onClick={handleHome}>돌아가기</p>
+            <Button onClick={handleEdit}>수정</Button>
+            <Button onClick={handleHome}>돌아가기</Button>
           </ButtonContainer>
         </div>
       )}

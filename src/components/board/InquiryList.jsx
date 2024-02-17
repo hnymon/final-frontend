@@ -59,7 +59,7 @@ const InquriyItems = styled.div`
 `;
 
 const InquiryContent = styled.div`
-  background-color: #fefdf1;
+  background-color: #f0f0f0;
   padding: 20px; /* 수정된 부분: 가로와 세로 모두 20px로 키움 */
   height: 120px;
   border-radius: 15px;

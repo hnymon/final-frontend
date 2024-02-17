@@ -7,7 +7,7 @@ const FormContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 20px;
+  margin-top: 100px;
 `;
 
 const Form = styled.form`
@@ -50,14 +50,14 @@ const Button = styled.button`
   margin-right: 10px;
   padding: 10px 20px;
   font-size: 16px;
-  background-color: #4caf50;
+  background-color: #FFC0CB;
   color: #fff;
   border: none;
   border-radius: 4px;
   cursor: pointer;
 
   &:hover {
-    background-color: #45a049;
+    background-color: #FFC0CB;
   }
 `;
 
@@ -119,19 +119,18 @@ const BoardCreate = () => {
       console.log("성공");
       alert("작성이 완료되었습니다");
       console.log(response.data);
-      navigate('/board/AdminBoardList');
+      navigate('/admin');
     } catch (error) { 
       console.log("실패했습니다", error);
     }
   };
 
   const handleHome = () => {
-    navigate("/");
+    navigate("/admin");
   };
 
   return (
     <FormContainer>
-      <h2>글작성</h2>
       <ResponsiveForm onSubmit={handleSubmit}>
         <ResponsiveFormGroup>
           <label htmlFor="admin">관리자 &nbsp;
@@ -143,8 +142,8 @@ const BoardCreate = () => {
             onChange={(e) => setBoard({ ...board, admin: e.target.value })}
             required
           /> */}
-          <select name="check" id="writer" onChange={(e) => setBoard({ ...board, admin: e.target.value })}>
-          <option value="선택하세요">선택하세요</option>
+          <select  name="check" id="writer" onChange={(e) => setBoard({ ...board, admin: e.target.value })} required>
+          <option value="">선택하세요</option>
           <option value="고객센터">고객센터</option>
           <option value="핫트랙스">핫트랙스</option>
           </select>

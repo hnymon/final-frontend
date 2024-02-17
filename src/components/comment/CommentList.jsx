@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import styled from "styled-components";
+import GetTokenToHeader from "../../token/GetTokenToHeader";
 
 const CenteredCommentList = styled.div`
   display: flex;
@@ -58,7 +59,7 @@ const CommentDate = styled.div`
 const DeleteButton = styled.button`
   position: absolute;
   bottom: 5px;
-  right: -10px;
+  right: 20px;
   padding: 5px 10px;
   background-color: #FFC0CB;
   color: #fff;
@@ -70,7 +71,7 @@ const DeleteButton = styled.button`
 const UpdateButton = styled.button`
   position: absolute;
   bottom: 5px;
-  right: -60px;
+  right: 80px;
   padding: 5px 10px;
   background-color: #FFC0CB;
   color: #fff;
@@ -95,44 +96,37 @@ const StyledSaveButton = styled.button`
 `;
 
 const CommentList = (props) => {
-  const [list, setCommentList] = useState([]);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
+  const items = 7;
+  const [comments, setComments] = useState([]);
+  const [totalElements, setTotalElements] = useState(0);
+  const totalPages = Math.ceil(totalElements/items);
+  const [currentPage, setCurrentPage] = useState(1);
   const [isbn, setIsbn] = useState(props.isbn);
   const [editableCommentId, setEditableCommentId] = useState(null);
-  const [editedCommentContent, setEditedCommentContent] = useState('');
-
-  useEffect(() => {
-    const fetchPagedComments = async () => {
+  const [editedCommentContent, setEditedCommentContent] = useState({
+    commentContent: '',
+    starRating: 0
+  });
+  const [check, setCheck] = useState(false);
+  const [member , setMember] = useState(0);
+useEffect(() => {
+    const fetchComments = async () => {
       try {
-        const response = await axios.get(`/comment/CommentList`, {
-          params: {
-            page: currentPage,
-            size: pageSize,
-            isbn: isbn,
-          },
-        });
+        console.log(isbn);
+        const headers = GetTokenToHeader();
+        const response = await axios.post(`/comment/CommentList`,{isbn},headers);
+        console.log(response.data.list);
         console.log(response.data);
-        const { content, totalPages } = response.data;
-  
-        // content 배열의 각 요소들의 날짜 형식을 변경하여 새로운 배열 생성
-        const formattedContent = content.map(comment => {
-          return {
-            ...comment,
-            commentDate: formatDate(comment.commentDate) // 날짜 형식 변경
-          };
-        });
-  
-        setCommentList(formattedContent);
-        setTotalPages(totalPages);
+        setComments(response.data.list);
+        setTotalElements(response.data.list.length);
+        setMember(response.data.member);
       } catch (error) {
-        console.error("데이터를 불러오는 중 에러 발생:", error);
+        console.error('Error fetching comments:', error);
       }
     };
-  
-    fetchPagedComments();
-  }, [currentPage, pageSize, isbn, props.updateFlag]);
+    fetchComments();
+  }, [currentPage,check,props.updateFlag]); // 재랜더링
+
   
   const formatDate = (content) => {
     const date = new Date(content); // ISO 8601 형식의 문자열을 Date 객체로 변환
@@ -142,10 +136,15 @@ const CommentList = (props) => {
     return `${year}.${month}.${day}`;
   };
 
-  const handlePageChange = (newPage) => {
-    setCurrentPage(newPage);
+ const getDataForPage = () => {
+    const startIndex = (currentPage - 1) * items;
+    const endIndex = Math.min(startIndex + items, totalElements);
+    return comments.slice(startIndex, endIndex);
   };
-
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+//
   const handleDelete = async (commentId) => {
     const confirmDelete = window.confirm("삭제하시겠습니까?");
     if (confirmDelete) {
@@ -160,28 +159,37 @@ const CommentList = (props) => {
       }
     }
   };
-
-  const handleUpdateToggle = (commentId, commentContent) => {
+  const handleStarRatingChange = (rating) => {
+    setEditedCommentContent(prevState => ({
+      ...prevState,
+      starRating: rating
+    }));
+  };
+  const handleUpdateToggle = (commentId, commentContent,starRating) => {
     if (editableCommentId === commentId) {
       setEditableCommentId(null);
     } else {
       setEditableCommentId(commentId);
-      setEditedCommentContent(commentContent);
+        setEditedCommentContent({
+        commentContent: commentContent,
+        starRating: starRating
+      });
     }
   };
-
+  
   const handleSaveUpdate = async (commentId) => {
+    console.log(editedCommentContent);
     try {
       const response = await axios.post(`/comment/CommentUpdate/${commentId}`,editedCommentContent,
-      {
-        headers: {
-          'Content-Type': 'text/plain' // 임의로 json형태를 바꿔준다
-        }
-      }
+      // {
+      //   headers: {
+      //     'Content-Type': 'text/plain' // 임의로 json형태를 바꿔준다
+      //   }
+      // }
       );
       console.log(response.data);
       if (response.data === "success") {
-        // alert("수정되었습니다");
+        alert("수정되었습니다");
         setEditableCommentId(null); // 수정 상태 종료
         props.setUpdateFlag(prevFlag => !prevFlag);
       }
@@ -192,42 +200,71 @@ const CommentList = (props) => {
 
   return (
     <CenteredCommentList>
-      {list.map((formattedContent, index) => (
-        <CommentContainer key={index}>
+      {getDataForPage().map(comment => (
+        <CommentContainer key={comment.commentId}>
           <StarContainer>
-            <strong>작성자:</strong> {formattedContent.memberName}
+            <strong>작성자:</strong> {comment.memberName}
             <StarRating>
               {" "}
               {[...Array(5).keys()].map((index) => (
-                <span key={index} style={{ color: index < formattedContent.starRating ? "orange" : "grey" }}>
+                <span key={index} style={{ color: index < comment.starRating ? "orange" : "grey" }}>
                   &#9733;
                 </span>
               ))}
             </StarRating>
-            <CommentDate>{formattedContent.commentDate}</CommentDate>
+            <CommentDate>{formatDate(comment.commentDate)}</CommentDate>
           </StarContainer>
-          {editableCommentId === formattedContent.commentId ? (
-            <StyledTextarea
-              value={editedCommentContent}
-              onChange={(e) => setEditedCommentContent(e.target.value)}
-            />
+          
+          {editableCommentId === comment.commentId ? (
+            <>
+            {/* 별점 */}
+            <div style={{ marginBottom: "10px" }}></div>
+              {[...Array(5).keys()].map((index) => (
+                <span 
+                  key={index} 
+                  value={editedCommentContent.starRating}
+                  style={{ color: index < editedCommentContent.starRating ? "orange" : "grey" , cursor:"pointer"}}
+                  onClick={() => handleStarRatingChange(index + 1)}
+                >
+                  &#9733;
+                </span>
+              ))} 
+              {/* 별점 */}
+              <StyledTextarea
+                value={editedCommentContent.commentContent}
+                onChange={(e) => setEditedCommentContent(prevState => ({
+                  ...prevState,
+                  commentContent: e.target.value
+                }))}
+              />
+            </>
           ) : (
-            <div>{formattedContent.commentContent}</div>
+            <div>{comment.commentContent}{comment.member}</div>
           )}
-          <DeleteButton onClick={() => handleDelete(formattedContent.commentId)}>삭제</DeleteButton>
-          {editableCommentId === formattedContent.commentId ? (
-            <StyledSaveButton onClick={() => handleSaveUpdate(formattedContent.commentId)}>저장</StyledSaveButton>
-          ) : (
-            <UpdateButton onClick={() => handleUpdateToggle(formattedContent.commentId, formattedContent.commentContent)}>수정</UpdateButton>
-          )}
+          {member === comment.memberNum ? (<div>
+            <DeleteButton onClick={() => handleDelete(comment.commentId)}>삭제</DeleteButton>
+            {editableCommentId === comment.commentId ? (
+              <StyledSaveButton onClick={() => handleSaveUpdate(comment.commentId)}>저장</StyledSaveButton>
+            ) : (
+              <UpdateButton onClick={() => handleUpdateToggle(comment.commentId, comment.commentContent , comment.starRating)}>수정</UpdateButton>
+            )}
+          </div>):<></>}
+          
+          
         </CommentContainer>
       ))}
       <PaginationContainer>
-        {[...Array(totalPages).keys()].map((page) => (
-          <PageButton key={page} onClick={() => handlePageChange(page)} disabled={page === currentPage}>
-            {page + 1}
-          </PageButton>
-        ))} 
+      {Array.from({ length: totalPages }, (_, index) => index + 1).map(
+          (page) => (
+            <PageButton
+              key={page}
+              onClick={() => handlePageChange(page)}
+              disabled={currentPage === page}
+            >
+              {page}
+            </PageButton>
+          )
+        )} 
       </PaginationContainer>
     </CenteredCommentList>
   );
