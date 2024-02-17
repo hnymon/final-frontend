@@ -33,6 +33,7 @@ const InquiryContent = styled.p`
 const InquiryDetail = () => {
   const { inquiryId } = useParams();
   const [inquiry, setInquiry] = useState([]);
+  const [updateFlag, setUpdateFlag] = useState(false); // 상태 추가
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
@@ -70,8 +71,9 @@ const InquiryDetail = () => {
         {formatDate(inquiry.inquiryDate)}
         </p>
       </InquiryContent>
-      {inquiry && <AdminCommentList inquiryId={inquiry.inquiryId} />}
-      {inquiry && <AdminComment inquiryId={inquiry.inquiryId} />}
+      {/* updateFlag 상태 전달 */}
+      {inquiry && <AdminCommentList inquiryId={inquiry.inquiryId} updateFlag={updateFlag} setUpdateFlag={setUpdateFlag} />}
+      {inquiry && <AdminComment inquiryId={inquiry.inquiryId} updateFlag={updateFlag} setUpdateFlag={setUpdateFlag} />}
       
     </InquiryDetailContainer>
   );

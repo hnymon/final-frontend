@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
 
 const AdminCommentContainer = styled.div`
@@ -27,6 +27,12 @@ const SubmitButton = styled.button`
 
 const AdminComment = ({ inquiryId }) => {
   const [adminComment, setAdminComment] = useState("");
+
+  useEffect(() => {
+    // inquiryId가 변경될 때마다 실행될 코드 작성
+    console.log("Inquiry ID updated:", inquiryId);
+    // 여기서 원하는 작업 수행
+  }, [inquiryId]); // inquiryId를 의존성 배열에 포함
 
   const handleSubmit = async (event) => {
     event.preventDefault();
