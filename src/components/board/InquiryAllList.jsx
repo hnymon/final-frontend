@@ -29,19 +29,21 @@ const PaginationContainer = styled.div`
     margin-top: 20px;
     display: flex;
     justify-content: center;
+    // background-color: #FFC0CB;
 `;
 
 const PaginationButton = styled.button`
-    margin: 0 5px;
+    margin: 0 5px; /* 수정된 부분: 좌우 마진 추가 */
     padding: 5px 10px;
-    border: 1px solid #dddddd;
-    background-color: #ffffff;
+    border: 1px solid #ffffff;
     cursor: pointer;
+    color: #ffffff;
+    background-color: #FFC0CB;
 
-    &:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
+    // &:disabled {
+    //     opacity: 0.5;
+    //     cursor: not-allowed;
+    // }
 `;
 
 const InquiryAllList = () => {
@@ -84,8 +86,8 @@ const InquiryAllList = () => {
 
     return (
         <div>
-            <h2>문의 테이블</h2>
             <TableContainer>
+            <h2>문의 테이블</h2>
                 <Table>
                     {/* 테이블 헤더 */}
                     <thead>
@@ -119,7 +121,7 @@ const InquiryAllList = () => {
                 {/* 페이지네이션 */}
                 <PaginationContainer>
                     <PaginationButton onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 0}>
-                        이전 페이지
+                        ◀
                     </PaginationButton>
                     {Array.from({ length: totalPages }, (_, index) => (
                         <PaginationButton key={index} onClick={() => handlePageChange(index)}>
@@ -127,7 +129,7 @@ const InquiryAllList = () => {
                         </PaginationButton>
                     ))}
                     <PaginationButton onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages - 1}>
-                        다음 페이지
+                        ▶
                     </PaginationButton>
                 </PaginationContainer>
             </TableContainer>

@@ -94,11 +94,9 @@ const DropdownMenu = styled.div`
     margin-top: 0.5%;
     position: absolute;
     top: 60%;
-    left: 81.5%;
     border-radius: 5px;
     border: 1px solid black;
-    padding: 10px;
-    z-index: 1;
+    padding: 0.5%;
     background-color: #ffffff;
     display: ${(props) => (props.isOpen ? "block" : "none")};
 `;
