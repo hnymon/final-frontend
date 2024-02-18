@@ -1,8 +1,14 @@
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 const OrderSuccess = () =>{
 
+    const navigate = useNavigate();
+
+    const handleOrderListClick = () => {
+        navigate("/mypage", {state : 3}); // 마이페이지로 이동
+      };
     return(
         <>
         <Display>
@@ -20,7 +26,7 @@ const OrderSuccess = () =>{
             <Books>
                 <div>결제가 성공적으로 완료되었습니다.</div>
             </Books>
-            <Button>주문내역 바로가기</Button>
+            <Button onClick={handleOrderListClick}>주문내역 바로가기</Button>
         </Div>
     </>
     )

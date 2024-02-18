@@ -45,9 +45,9 @@ const Order = () =>{
 
         try {
           console.log(location.state.cartArray);
-          const { cartInfoList, bookCount } = await FetchBookDetail(location.state.cartArray);
+          const cartInfoList = location.state.cartArray;
           setCartInfoList(cartInfoList);
-          setBookCount(bookCount);
+          setBookCount(location.state.bookCount);
         } catch (error) {
           console.error('주문하기 책 정보 불러오기 오류', error);
         }

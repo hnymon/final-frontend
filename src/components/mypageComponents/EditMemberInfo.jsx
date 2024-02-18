@@ -10,6 +10,15 @@ const FormContainer = styled.div`
     flex-direction: column;
     align-items: center;
 `;
+
+const Title = styled.div`
+    float: left;
+    text-align: left; /* 추가: 텍스트 왼쪽 정렬 */
+    font-weight: bold;
+    color: #333333;
+    font-size: 24px;
+    margin-top: 10px;
+`
 const StyledTable = styled.table`
     border-collapse: collapse;
     width: 100%;
@@ -415,6 +424,7 @@ const EditMemberInfo = (props) => {
     
     return (
         <FormContainer>
+            <Title>회원 정보 수정</Title>
             <form onSubmit={handleSubmit}>                
                 <StyledTable>
                     <tbody>
