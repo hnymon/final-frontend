@@ -7,6 +7,7 @@ import arrow from '../../img/down_arrow.png';
 import DatePicker from "react-datepicker";
 import { ko } from "date-fns/esm/locale";
 import "react-datepicker/dist/react-datepicker.css";
+import calender from "../../img/calendar.png"
 
 const FormContainer = styled.div`
     margin: 50px auto;
@@ -607,7 +608,7 @@ const SignUp = () => {
                                         onClick={toggleDatePicker}
                                         style={{ marginLeft: "10px", cursor: "pointer" }}
                                     >
-                                        달력
+                                        <img src={calender} alt="" />
                                     </DatePickerDiv>
                                 </div>
                             </td>

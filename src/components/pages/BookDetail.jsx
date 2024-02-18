@@ -43,7 +43,9 @@ const BookDetail = () => {
             translators: data.translators,
           });
           setIsbn13(data.isbn);
-          setAvg(response.data.starAvg);
+          if(response.data.starAvg){
+            setAvg(response.data.starAvg);
+          }
         } else {
           console.error("No book details found.");
         }

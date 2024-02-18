@@ -40,8 +40,9 @@ const LeftColumn = styled.div`
     align-items: center;
     justify-content: center;
     width: 50%;
-    border-radius: 10px 0 0 10px ;
-    border: ${(props) => props.active ? '2px solid blue' : 'none'};
+    border-radius: 10px 10px 10px 10px ;
+    background-color: ${props => props.active ? '#51b6e1' : 'skyblue'};
+    transform: ${props => props.active ? 'translateY(-2px)' : 'none'};
 `;
 
 const RightColumn = styled.div`
@@ -50,8 +51,9 @@ const RightColumn = styled.div`
     align-items: center;
     justify-content: center;
     width: 50%;
-    border-radius: 0 10px 10px 0;
-    border: ${(props) => props.active ? '2px solid blue' : 'none'};
+    border-radius: 10px 10px 10px 10px ;
+    background-color: ${props => props.active ? '#51b6e1' : 'skyblue'};
+    transform: ${props => props.active ? 'translateY(-2px)' : 'none'};
 `;
 
 const TabList = styled.ul`
@@ -82,8 +84,8 @@ const SelectFindType = styled.div`
 const FindTypeList = styled.ul`
     list-style: none;
     padding: 0;
-    margin: 0;
-    width: 100%;
+    margin: 0 auto;
+    width: 90%;
 `;
 
 const FindTypeListItem = styled.li`
@@ -146,7 +148,7 @@ const DatePickerDiv = styled.div`
 const DatepickerViewDiv = styled.div`
     position: absolute;
     zIndex: 1000;
-    top: 24%;
+    top: 41%;
     left: 42%;
 `;
 const ShowUserId = styled.div`
@@ -585,10 +587,13 @@ const FindIdOrPwd = () => {
                         {showDropdown1 && (
                             <InputWrapper>
                                 <InputLabel>이름</InputLabel>
-                                <InputField type="text" name="memberName" value={findIdOrPwdInfo.memberName} onChange={handleInputChange} />
+                                <InputField type="text" name="memberName" value={findIdOrPwdInfo.memberName} onChange={handleInputChange} 
+                                placeholder="한글 2 ~ 5 글자"/>
                                 <InputLabel>생년월일(숫자)</InputLabel>
                                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                                    <InputBirthdayField type="text" value={findIdOrPwdInfo.birthday} onChange={handleBirthdayChange} />
+                                    <InputBirthdayField type="text" value={findIdOrPwdInfo.birthday} onChange={handleBirthdayChange} 
+                                    placeholder="0000-00-00"
+                                    />
                                     <DatePickerDiv
                                         onClick={toggleDatePicker}
                                         style={{ marginLeft: "10px", cursor: "pointer" }}
@@ -597,7 +602,8 @@ const FindIdOrPwd = () => {
                                     </DatePickerDiv>
                                 </div>
                                 <InputLabel>휴대폰번호</InputLabel>
-                                <InputField type="text" name="phoneNum" value={findIdOrPwdInfo.phoneNum} onChange={handlePhoneNumChange} />
+                                <InputField type="text" name="phoneNum" value={findIdOrPwdInfo.phoneNum} onChange={handlePhoneNumChange} 
+                                placeholder="' - ' 없이 000-0000-0000  11개 입력시 자동으로 ' - ' 입력됩니다."/>
                                 <SubmitButton onClick={handleIdSubmit}>확인</SubmitButton>
                             </InputWrapper>
                         )}
@@ -608,10 +614,12 @@ const FindIdOrPwd = () => {
                         {showDropdown2 && (
                             <InputWrapper>
                                 <InputLabel>이름</InputLabel>
-                                <InputField type="text" name="memberName" value={findIdOrPwdInfo.memberName} onChange={handleInputChange} />
+                                <InputField type="text" name="memberName" value={findIdOrPwdInfo.memberName} onChange={handleInputChange} 
+                                placeholder="한글 2 ~ 5 글자"/>
                                 <InputLabel>생년월일(숫자)1</InputLabel>
                                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                                    <InputBirthdayField type="text" value={findIdOrPwdInfo.birthday} onChange={handleBirthdayChange} />
+                                    <InputBirthdayField type="text" value={findIdOrPwdInfo.birthday} onChange={handleBirthdayChange} 
+                                    placeholder="0000-00-00"/>
                                     <DatePickerDiv
                                         onClick={toggleDatePicker}
                                         style={{ marginLeft: "10px", cursor: "pointer" }}
@@ -620,7 +628,8 @@ const FindIdOrPwd = () => {
                                     </DatePickerDiv>
                                 </div>
                                 <InputLabel>이메일</InputLabel>
-                                <InputField type="text" name="email" value={findIdOrPwdInfo.email} onChange={handleInputChange} />
+                                <InputField type="text" name="email" value={findIdOrPwdInfo.email} onChange={handleInputChange} 
+                                placeholder="xxx@xxx.xxx"/>
                                 <SubmitButton onClick={handleIdSubmit}>확인</SubmitButton>
                             </InputWrapper>
                         )}
@@ -635,12 +644,15 @@ const FindIdOrPwd = () => {
                         {showDropdown3 && (
                             <InputWrapper>
                                 <InputLabel>아이디</InputLabel>
-                                <InputField type="text" name="username" value={findIdOrPwdInfo.username} onChange={handleInputChange} />
+                                <InputField type="text" name="username" value={findIdOrPwdInfo.username} onChange={handleInputChange} 
+                                placeholder="영문과 숫자로 이루어진 6~12글자"/>
                                 <InputLabel>이름</InputLabel>
-                                <InputField type="text" name="memberName" value={findIdOrPwdInfo.memberName} onChange={handleInputChange} />
+                                <InputField type="text" name="memberName" value={findIdOrPwdInfo.memberName} onChange={handleInputChange} 
+                                placeholder="한글 2 ~ 5 글자"/>
                                 <InputLabel>생년월일(숫자)</InputLabel>
                                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                                    <InputBirthdayField type="text" value={findIdOrPwdInfo.birthday} onChange={handleBirthdayChange} />
+                                    <InputBirthdayField type="text" value={findIdOrPwdInfo.birthday} onChange={handleBirthdayChange} 
+                                    placeholder="0000-00-00"/>
                                     <DatePickerDiv
                                         onClick={toggleDatePicker}
                                         style={{ marginLeft: "10px", cursor: "pointer" }}
@@ -649,7 +661,8 @@ const FindIdOrPwd = () => {
                                     </DatePickerDiv>
                                 </div>
                                 <InputLabel>휴대폰번호</InputLabel>
-                                <InputField type="text" name="phoneNum" value={findIdOrPwdInfo.phoneNum} onChange={handlePhoneNumChange} />
+                                <InputField type="text" name="phoneNum" value={findIdOrPwdInfo.phoneNum} onChange={handlePhoneNumChange} 
+                                placeholder="' - ' 없이 000-0000-0000  11개 입력시 자동으로 ' - ' 입력됩니다."/>
                                 <SubmitButton onClick={handlePwdSubmit}>확인</SubmitButton>
                             </InputWrapper>
                         )}
@@ -660,12 +673,15 @@ const FindIdOrPwd = () => {
                         {showDropdown4 && (
                             <InputWrapper>
                                 <InputLabel>아이디</InputLabel>
-                                <InputField type="text" name="username" value={findIdOrPwdInfo.username} onChange={handleInputChange} />
+                                <InputField type="text" name="username" value={findIdOrPwdInfo.username} onChange={handleInputChange} 
+                                placeholder="영문과 숫자로 이루어진 6~12글자"/>
                                 <InputLabel>이름</InputLabel>
-                                <InputField type="text" name="memberName" value={findIdOrPwdInfo.memberName} onChange={handleInputChange} />
+                                <InputField type="text" name="memberName" value={findIdOrPwdInfo.memberName} onChange={handleInputChange} 
+                                placeholder="한글 2 ~ 5 글자"/>
                                 <InputLabel>생년월일(숫자)</InputLabel>
                                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                                    <InputBirthdayField type="text" value={findIdOrPwdInfo.birthday} onChange={handleBirthdayChange} />
+                                    <InputBirthdayField type="text" value={findIdOrPwdInfo.birthday} onChange={handleBirthdayChange} 
+                                    placeholder="0000-00-00"/>
                                     <DatePickerDiv
                                         onClick={toggleDatePicker}
                                         style={{ marginLeft: "10px", cursor: "pointer" }}
@@ -674,7 +690,9 @@ const FindIdOrPwd = () => {
                                     </DatePickerDiv>
                                 </div>
                                 <InputLabel>이메일</InputLabel>
-                                <InputField type="text" name="email" value={findIdOrPwdInfo.email} onChange={handleInputChange} />
+                                <InputField type="text" name="email" value={findIdOrPwdInfo.email} onChange={handleInputChange} 
+                                placeholder="xxx@xxx.xxx"
+                                />
                                 <SubmitButton onClick={handlePwdSubmit}>확인</SubmitButton>
                             </InputWrapper>
                         )}
