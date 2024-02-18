@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import Divider from '@mui/material/Divider';
 import GetTokenToHeader from "../../token/GetTokenToHeader";
@@ -10,24 +10,27 @@ import CartItemDto from "../order/CartItemDto";
 
 const Cart = () => {
 
-  const [cartInfoList, setCartInfoList] = useState([]);
+  const [cartInfoList, setCartInfoList] = useState([{}]);
   const [checkItems, setCheckItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [bookCount, setBookCount] = useState([]);
   const [bookPrice, setBookPrice] = useState({});
   const [productTotal, setProductTotal] = useState(0);
   const [deliveryFee, setDeliveryFee] = useState(3000);
+  const [isbnBookCount, setIsbnBookCount] = useState({});
 
   const fetchCartInfo = async () => {
     const headers = GetTokenToHeader();
     setLoading(true);  
     try {
       const response = await axios.get("/cart", headers);
-      console.log(response.data);
-
-      const { cartInfoList, bookCount } = await FetchBookDetail(response.data);
-      setCartInfoList(cartInfoList);
-      setBookCount(bookCount);
+      console.log('장바구니 값',response.data);
+      const bookInfo = response.data;
+      // const { cartInfoList, bookCount } = await FetchBookDetail(response.data);
+      setCartInfoList(bookInfo);
+      setBookCount(bookInfo.map(item => item.count));
+      console.log(cartInfoList);
+      console.log(bookCount);
     } catch (error) {
       console.error('토큰으로 장바구니 불러오기 오류', error);
     }finally{
@@ -36,24 +39,20 @@ const Cart = () => {
   };
 
   const handleAllCheck = (checked) =>{
-    let total = 0;
+    let newBookPrices = {};
     if(checked){
         const isbnArray = cartInfoList.map(item => item.isbn);
         setCheckItems(isbnArray);
-        const bookPriceArray = cartInfoList.reduce((acc, item) => {
-          acc[item.isbn] = item.salePrice;
-          return acc;
-        }, {});
-        setBookPrice(bookPriceArray);
-        
-        for(let i=0; i<cartInfoList.length;i++){
-            total += bookCount[i] * cartInfoList[i].salePrice;
+
+        for (let i = 0; i < cartInfoList.length; i++) {
+            let price = bookCount[i] * cartInfoList[i].salePrice;
+            newBookPrices[cartInfoList[i].isbn] = price;
         }
-        setProductTotal(total);
+
+        setBookPrice(newBookPrices);
     }else{
       setCheckItems([]);
       setBookPrice({});
-      setProductTotal(0);
     }
   }; 
 
@@ -62,30 +61,38 @@ const Cart = () => {
   }, []);
       
   useEffect(() => {
-    const total = Object.values(bookPrice).reduce((acc, curr) => acc + curr, 0);
+    // const total = Object.values(bookPrice).reduce((acc, curr) => acc + curr, 0);
+    let total = 0;
+    console.log(isbnBookCount);
+    for (const key in bookPrice) {
+      total += parseInt(bookPrice[key]);
+    }
+    console.log('이쪽', total);
     setProductTotal(total);
   },[bookCount]); 
-      
-  useEffect(() => {
-    calculateTotalPrice();
-  }, [bookPrice]);
      
-  const calculateTotalPrice = () => {
+  const calculateTotalPrice = useCallback(() => {
     let total = 0;
-    console.log(bookPrice);
+    console.log('bookPrice', bookPrice);
     for (const key in bookPrice) {
       total += parseInt(bookPrice[key]);
     }
     setProductTotal(total);
     console.log(total);
-  };
+  }, [bookPrice]);
+
+  useEffect(() => {
+    calculateTotalPrice();
+  }, [calculateTotalPrice]);
     
   //주문 페이지 이동
   const navigate = useNavigate();
   const toOrder = () =>{
     if(checkItems.length>0){
-      const cartArray = checkItems.map((isbn, index) => new CartItemDto(isbn, bookCount[index]));
-      navigate('/order', {state: {cartArray: cartArray}});
+      navigate('/order', {state: {
+        cartArray: cartInfoList,
+        bookCount: bookCount,
+      }});
     }else{
       alert('한 개 이상의 상품을 선택하세요');
 
@@ -122,6 +129,8 @@ const Cart = () => {
         cartInfoList={cartInfoList}
         bookCount={bookCount}
         setBookCount={setBookCount}
+        isbnBookCount={isbnBookCount}
+        setIsbnBookCount={setIsbnBookCount}
         bookPrice={bookPrice}
         setBookPrice={setBookPrice}
         checkItems={checkItems}
@@ -197,7 +206,7 @@ const ToOrderNum = styled.p`
 
 const MenuBar = styled.div`
     margin: 10px;
-    width : 800px;
+    width : 900px;
     height : 35px;
     border-radius: 15px;
     background-color: #FEC4C4;

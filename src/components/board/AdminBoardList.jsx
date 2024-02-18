@@ -103,6 +103,7 @@ const formatDate = (dateString) => {
       setCurrentPage(currentPage + 1);
     }
   };
+  
   const handleRowClick = (boardSeq) => {
     // 각 행을 클릭할 때 해당 문의의 세부 정보 페이지로 이동
     window.location.href = `/board/AdminBoardDetail/${boardSeq}`;
