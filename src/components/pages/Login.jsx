@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useLayoutEffect, useState } from "react";
 import axios from "axios";
 import styled from "styled-components";
 import { Link, NavLink, useNavigate } from "react-router-dom";
@@ -9,6 +9,7 @@ import GoogleLoginButton from "../oauth/GoogleLogin";
 import { setAccessCookie, setRefreshCookie } from "../cookie/cookie";
 import GetTokenToHeader from "../../token/GetTokenToHeader";
 import { CartCountContext } from "../layout/Layout";
+import { Cookies } from "react-cookie";
 
 const PageContainer = styled.div`
     display: flex;
@@ -90,11 +91,29 @@ const FindIdOrPwd = styled.div`
 
 const Login = () => {
     const navigate = useNavigate();
-    const [username, setUsername] = useState("");
+    const cookies = new Cookies();
+    const getSabveId = () =>{
+        if(cookies.get("saveId")!==null||cookies.get("saveId")!==undefined){
+            return cookies.get("saveId");
+        } else{
+            return("");
+        }
+    };
+    const checkBox = () => {
+        if(cookies.get("saveId")===undefined){
+            return false;
+        } else{
+            return true;
+        }
+    }
+    const [isChecked, setIsChecked] = useState(checkBox());
+    const handleCheckboxChange = (event) => {
+        setIsChecked(event.target.checked);
+    };
+    const [username, setUsername] = useState(getSabveId());
     const [password, setPassword] = useState("");
     const { cartCount, setCartCount } = useContext(CartCountContext);
     const headers = GetTokenToHeader();
-    
     const getCartCount = () =>{
         axios
           .get("/cart/count", headers)
@@ -118,10 +137,16 @@ const Login = () => {
             // const authorizationRefresh = response.headers['authorization-refresh'];
             // const refreshToken = authorizationRefresh.split(" ")[1];
             // 추가적으로 서버로부터의 응답을 처리하거나 상태를 업데이트할 수 있음
+            if(isChecked){
+                console.log("아이디저장")
+                cookies.set("saveId", username);
+            } else{
+                cookies.remove("saveId")
+            }
             if (response) {
+                setAccessCookie(token);
                 // 토큰을 로컬 스토리지에 저장
                 // localStorage.setItem("token", token);
-                setAccessCookie(token);
                 // setRefreshCookie('refreshToken', token);
                 console.log("로그인 성공");
                 console.log(token);
@@ -191,10 +216,16 @@ const Login = () => {
             </FormContainer>
             <SaveAndFind>
                 <SaveId>
-                    <input type="checkbox"/>아이디 저장
+                    <input
+                        type="checkbox"
+                        id="saveIdCheckbox"
+                        checked={isChecked}
+                        onChange={handleCheckboxChange}
+                    />
+                    <label htmlFor="saveIdCheckbox" style={{cursor:"pointer"}}>아이디 저장</label>
                 </SaveId>
                 <FindIdOrPwd>
-                    <Link to={"/find"}><span>아이디/비밀번호 찾기</span></Link>
+                    <StyledLink to={"/find"}><span>아이디 / 비밀번호 찾기</span></StyledLink>
                 </FindIdOrPwd>
             </SaveAndFind>
             <SocialLogo>
@@ -210,3 +241,7 @@ const Login = () => {
 };
 
 export default Login;
+const StyledLink = styled(Link)`
+    text-decoration: none;
+    color: black;
+`;
