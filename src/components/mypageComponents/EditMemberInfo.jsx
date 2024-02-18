@@ -4,6 +4,7 @@ import styled from "styled-components";
 import arrow from '../../img/down_arrow.png';
 import { useNavigate } from "react-router-dom";
 import GetTokenToHeader from "../../token/GetTokenToHeader";
+import { removeAccessCookie, removeRefreshCookie } from "../cookie/cookie";
 
 const FormContainer = styled.div`
     display: flex;
@@ -89,6 +90,20 @@ const StyledButton = styled.input`
         background-color: #ffe8bd;
     }
 `;
+const StyledDeleteButton = styled.input`
+    font-size:1.2rem;
+    font-weight: bold;
+    width: 20%;
+    padding: 5px;
+    background-color: #ff7d7d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    letter-spacing: 10px;
+    text-align: center;
+    margin: 5px; /* 버튼 간의 간격 조정 */
+`;
 // 중복확인 버튼 : 이메일
 const StyledCheckButton2 = styled.button`
     font-weight: bold;
@@ -134,6 +149,7 @@ const StyledResetButton2 = styled.button`
     width: 45%;
     padding: 8px;
     height: 100%;
+    font-weight: bold;
     background-color: #ffe8bd;
     color: white;
     border: none;
@@ -420,7 +436,23 @@ const EditMemberInfo = (props) => {
         setIsEmailCheckButton2Disabled(true);
         setIsEmailCheckButton3Disabled(true);
     };
-    
+    const deleteMember = async () => {
+        try {
+            const response = await axios.post("/deleteMember", member);
+            console.log(response.data)
+            if(response.data==="Success"){
+                removeAccessCookie();
+                removeRefreshCookie();
+                alert('회원탈퇴 성공');
+                toHome();
+            }
+        } catch (error) {
+            
+        }
+    }
+    const toHome = () => {
+        navigate("/")
+    }
     
     return (
         <FormContainer>
@@ -541,6 +573,7 @@ const EditMemberInfo = (props) => {
                     <StyledButton type="reset" onClick={resetEdit} value="취소" />
                 </ButtonContainer>
             </form>
+            <StyledDeleteButton type="button"  onClick={deleteMember} value="회원 탈퇴"/>
         </FormContainer>
     );
 };

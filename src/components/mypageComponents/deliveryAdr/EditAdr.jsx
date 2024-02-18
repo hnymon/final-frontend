@@ -173,7 +173,7 @@ const EditAdr = ({ onClose, onSuccess, address }) => {
     return(
         <AdrContainer>
             <Form onSubmit={handleSubmit}>
-                <Label>배송지 이름<RequiredText></RequiredText></Label>
+                <Label>배송지 이름</Label>
                 <Input type="text" name="daName" value={addressInfo.daName || ''} onChange={handleChange} />
                 <Label>수령인<RequiredText>(필수)</RequiredText></Label>
                 <Input type="text" name="recipientName" value={addressInfo.recipientName || ''} onChange={handleChange} />
