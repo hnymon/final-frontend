@@ -18,7 +18,6 @@ const AddAdrButton = styled.button`
     cursor:pointer;
 `;
 const Wrapper = styled.div`
-
 `;
 const HeaderDiv = styled.div`
     display: flex;
@@ -96,6 +95,11 @@ const DeleteAdrButton = styled.button`
         box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2); /* 호버 시 그림자 크게 설정 */
     }
 `;
+
+const Div = styled.div`
+    margin-left: 30px;
+    width: 90%;
+`
 
 
 const DeliveryAdrExist = (props) => {
@@ -201,7 +205,7 @@ const DeliveryAdrExist = (props) => {
         }
     }
     return(
-        <div>
+        <Div>
             <Wrapper>
                 
                 <HeaderDiv>
@@ -287,7 +291,7 @@ const DeliveryAdrExist = (props) => {
                     <PagingArBtn onClick={nextPage} disabled={currentPage === totalPages}>&gt;</PagingArBtn>
                 </PagingDiv>
             </FooterDiv>
-        </div>
+        </Div>
     );
 }
 export default DeliveryAdrExist;

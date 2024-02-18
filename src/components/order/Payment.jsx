@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import GetTokenToHeader from '../../token/GetTokenToHeader';
 import { useNavigate } from 'react-router-dom';
 
-const Payment = ({cartInfoList,bookCount, totalPrice, selectedPaymentMethod, deliveryInfo}) => {
+const Payment = ({cartInfoList, bookCount, totalPrice, selectedPaymentMethod, deliveryInfo}) => {
   const bookPrice = [];
   for (let i = 0; i < cartInfoList.length; i++) {
     bookPrice.push(bookCount[i] * cartInfoList[i].salePrice);
@@ -34,6 +34,8 @@ const Payment = ({cartInfoList,bookCount, totalPrice, selectedPaymentMethod, del
     console.log(bookPrice);
 
     if (!deliveryInfo || !deliveryInfo.name || !deliveryInfo.phone || !deliveryInfo.address) {
+      console.log('cartInfoList', cartInfoList);
+      console.log(cartInfoList.map(item => item.thumbnail));
       alert('배송 정보를 모두 입력해주세요');
       return;
     };
@@ -67,7 +69,10 @@ const Payment = ({cartInfoList,bookCount, totalPrice, selectedPaymentMethod, del
               const headers = GetTokenToHeader();
               const orderDTO = {
                 isbn: cartInfoList.map(item => item.isbn),
-                bookCount: bookCount.map(item => item),
+                title: cartInfoList.map(item => item.title),
+                price: cartInfoList.map(item => item.salePrice),
+                thumbnail: cartInfoList.map(item => item.thumbnail),
+                bookCount: bookCount,
                 bookPrice: bookPrice,
                 totalPrice: totalPrice,
                 deliveryInfo: deliveryInfo,

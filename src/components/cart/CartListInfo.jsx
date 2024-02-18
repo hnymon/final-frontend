@@ -1,16 +1,26 @@
 import styled from "styled-components";
 import XButton from "./XButton";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Divider } from "@mui/material";
 
 
-const CartListInfo = ({cartInfoList, bookCount,setBookCount, bookPrice,setBookPrice, checkItems, setCheckItems,removeFromCart,calculateTotalPrice,productTotal }) => {
+const CartListInfo = ({cartInfoList, isbnBookCount, setIsbnBookCount, bookCount,setBookCount, bookPrice,setBookPrice, checkItems, setCheckItems,removeFromCart,calculateTotalPrice,productTotal }) => {
 
   useEffect(()=>{
 
   },[cartInfoList]);
 
-  const decrease = (index) =>{
+  useEffect(()=>{
+
+  },[bookCount]); 
+  
+  const changeBookPrice = (isbn, index, price) => {
+    console.log('bookCount',bookCount)
+    const updatePrice = parseInt(bookCount[index]) * parseInt(price);
+    setBookPrice({...bookPrice, [isbn]:updatePrice});
+  }
+
+  const decrease = (index, isbn, price) =>{
     if(bookCount[index] > 1){
       const updateCount = [...bookCount];
       updateCount[index] -= 1;
@@ -18,17 +28,18 @@ const CartListInfo = ({cartInfoList, bookCount,setBookCount, bookPrice,setBookPr
     }
   }
 
-  const increase = (index) =>{
+  const increase = (index, isbn, price) =>{
     const updateCount = [...bookCount]
     updateCount[index] += 1;
-    console.log(updateCount);
+    console.log('increase', updateCount);
     setBookCount(updateCount);
+
   }
 
-  const handleSingleCheck = (isbn, price, checked) =>{
+  const handleSingleCheck = (isbn, totalPrice, checked) =>{
     if(checked){
       setCheckItems(prev => [...prev,isbn]);
-      setBookPrice({...bookPrice, [isbn]:price});
+      setBookPrice({...bookPrice, [isbn]:totalPrice});
     }else{
       setCheckItems(checkItems.filter((el) => el !== isbn));
       setBookPrice({...bookPrice, [isbn]: 0});
@@ -42,7 +53,7 @@ const CartListInfo = ({cartInfoList, bookCount,setBookCount, bookPrice,setBookPr
       <div>장바구니에 담긴 상품이 없습니다.</div>
     ) : (cartInfoList.map((book, index) => {
           const totalPrice = bookCount[index] * book.salePrice;
-  
+          
           return (
             <CartContainer key={index}>
               <CheckBox
@@ -61,8 +72,8 @@ const CartListInfo = ({cartInfoList, bookCount,setBookCount, bookPrice,setBookPr
               <BookTotalPrice>
                 <li>{totalPrice} 원</li>
                 <li>
-                  <button onClick={() => decrease(index)}>-</button> {bookCount[index]}{" "}
-                  <button onClick={() => increase(index)}>+</button>
+                  <button onClick={() => decrease(index, book.isbn, book.salePrice)}>-</button> {bookCount[index]}{" "}
+                  <button onClick={() => increase(index, book.isbn, book.salePrice)}>+</button>
                 </li>
               </BookTotalPrice>
               <ul>

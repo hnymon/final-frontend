@@ -60,7 +60,12 @@ const BookDetail = () => {
     console.log(token+" 토큰");
     if(token !== undefined){
       const headers = GetTokenToHeader();
-      axios.post("/cart/add", { count, isbn13 },headers)
+      axios.post("/cart/add", { 
+        count: count, 
+        isbn : bookInfo.isbn,
+        salePrice: bookInfo.salePrice, 
+        title: bookInfo.title, 
+        thumbnail : bookInfo.thumbnail }, headers)
       .then((response) => {
         const currentCartCount = cartCount;
         const newCartCount = parseInt(currentCartCount)+1;

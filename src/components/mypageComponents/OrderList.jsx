@@ -1,8 +1,7 @@
 import axios from "axios";
 import GetTokenToHeader from "../../token/GetTokenToHeader";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-
 
 const OrderList = () =>{
     const [orders, setOrders] = useState([]);
@@ -12,7 +11,8 @@ const OrderList = () =>{
             try {
                 const headers = GetTokenToHeader();
                 const response = await axios.get('/order/loadMyOrder', headers);
-                setOrders(response.data);
+                console.log(response.data.myOrder);
+                setOrders(response.data.myOrder);
             } catch (error) {
                 console.error('주문 목록을 불러오는 중 에러 발생:', error);
             }
@@ -20,45 +20,121 @@ const OrderList = () =>{
         fetchOrders();
     }, []);
 
+    function formatDateTime(dateTimeStr) {
+        if(dateTimeStr){
+            const [datePart, timePart] = dateTimeStr.split('T');
+            const timeOnly = timePart.slice(0, 5);
+            return `${datePart}`;
+        }
+    }
+
     return(
-        <OrderContainer>
-            {orders.map((order, index) => (
-                <OrderItem key={index}>
-                    <OrderTitle>주문 번호: {index + 1}</OrderTitle>
-                    <OrderDetail>총 가격: {order.totalPrice}</OrderDetail>
-                    <OrderDetail>배송비: {order.deliveryFee}</OrderDetail>
-                    <OrderDetail>승인 여부: {order.approval}</OrderDetail>
-                    <OrderDetail>주문 날짜: {order.orderDate}</OrderDetail>
-                    <ul>
-                        {order.orderDetailList.map((detail, detailIndex) => (
-                            <li key={detailIndex}>
-                                ISBN: {detail.isbn}, 수량: {detail.count}, 상세 승인 여부: {detail.detailApproval.toString()}
-                            </li>
+        <Wrapper>
+            <Title>주문 내역</Title>
+            <Table>
+                <thead>
+                    <tr>
+                        <TableHeader>주문번호</TableHeader>
+                        <TableHeader>주문일자</TableHeader>
+                        <TableHeader colSpan="2">상세내역</TableHeader>
+                        <TableHeader>총 결제 금액</TableHeader>
+                        <TableHeader>주문상태</TableHeader>
+                    </tr>
+                </thead>
+                        <React.Fragment>
+                            {orders.map((order, index) => (
+                            <TableRow key={index}>
+                                <TableCell>{order.id}</TableCell>
+                                <TableCell>{formatDateTime(order.orderDate)}</TableCell>
+                                <TableCell style={{width:'55px'}}>
+                                    {/* <ul>
+                                        {order.orderDetailList.map((detail, detailIndex) => (
+                                            <li key={detailIndex}>
+                                                이름 : {detail.title} / {detail.count} 권
+                                            </li>
+                                        ))}
+                                    </ul> */}
+                                    <Img src={order.orderDetailList ? order.orderDetailList[0].thumbnail : 'http://via.placeholder.com/55X80'} alt="" />
+                                </TableCell >
+                                <TableCell>
+                                    <TitleText>{order.orderDetailList[0].title} </TitleText>
+                                    <OrderType>외 {order.orderDetailList.length} 종</OrderType>
+                                </TableCell>
+                                <TableCell>{order.totalPrice + order.deliveryFee} 원</TableCell>
+                                <TableCell>{order.approval}</TableCell>
+                            </TableRow>
                         ))}
-                    </ul>
-                </OrderItem>
-            ))}
-        </OrderContainer>
+                        
+                        </React.Fragment>
+            </Table>
+        </Wrapper>
+        
     );
 }
 
 export default OrderList;
 
-const OrderContainer = styled.div`
-    margin-top: 20px;
+const Title = styled.div`
+    float: left;
+    text-align: left; /* 추가: 텍스트 왼쪽 정렬 */
+    font-weight: bold;
+    color: #333333;
+    font-size: 24px;
+    margin-top: 10px;
+    margin-bottom: 30px;
+`
+
+const OrderType = styled.div`
+    margin-left: 5px;
+    font-size: 1rem;
+    color: #888;
 `;
 
-const OrderItem = styled.div`
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 10px;
-    margin-bottom: 20px;
+const Img = styled.img`
+    width : 55px;
+    height: 80px;
+`
+
+const Wrapper = styled.div`
+    width: 100%;
+    background-color:white;
 `;
 
-const OrderTitle = styled.h3`
-    color: #333;
+const Table = styled.table`
+    width: 93%;
+    margin: 20px auto;
+    border-collapse: collapse;
+`;
+const TableRow = styled.tr`
+    border-bottom: 1px solid #DDDDDD;
+    border-left: 1px solid #fff;
+    border-right: 1px solid #fff;
+`;
+const TableHeader = styled.th`
+    border-bottom: 3px solid pink;
+    border-top: 3px solid pink;
+    padding: 8px;
 `;
 
-const OrderDetail = styled.p`
-    margin: 5px 0;
+const TableCell = styled.td`
+    padding: 8px;
+    text-align: center;
+    vertical-align: middle;
+    
 `;
+
+const TitleText = styled.div`
+
+    display: inline-block;
+        width: 350px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space:nowrap;
+
+    
+    &:hover {
+        text-decoration: underline;
+        cursor: pointer;
+    }
+`;
+
