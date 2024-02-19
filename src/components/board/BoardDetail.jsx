@@ -24,7 +24,7 @@ const Admin = styled.p`
 const Title = styled.h2`
   color: #333;
 `;
-const BoardContent = styled.p`
+const BoardContent = styled.pre`
   height: 500px;
   border: 1px solid black;
   color: #666;

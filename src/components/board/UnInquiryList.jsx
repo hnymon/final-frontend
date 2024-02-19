@@ -117,7 +117,7 @@ const UnInquiryList = () => {
 
   return (
     <InquiryContainer>
-      <Title>Unprocessed Inquiry List</Title>
+      <Title>1대1문의 사항</Title>
       <InquiryItemContainer>
         {inquiryList.map((inquiry) => (
           <InquiryItem key={inquiry.inquiryId}>
@@ -126,7 +126,7 @@ const UnInquiryList = () => {
               <p>{formatDate(inquiry.inquiryDate)}</p>
               <hr />
               <InquiryContent>
-                <p>{inquiry.inquiryContent}</p>
+                <pre>{inquiry.inquiryContent}</pre>
               </InquiryContent>
           </InquiryItem>
         ))}
