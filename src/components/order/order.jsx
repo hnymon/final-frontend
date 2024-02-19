@@ -58,6 +58,11 @@ const Order = () =>{
 
       useEffect(() => {
         fetchOrderInfo();
+        axios.get('/order/loadDefaultDelivery', headers)
+            .then(response =>{
+                console.log(response.data);
+                setDeliveryInfo(response.data);
+            })
       }, []);
 
       const handlePaymentMethodChange = (method) => {
