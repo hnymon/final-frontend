@@ -135,7 +135,7 @@ const Header = () => {
                     console.error('장바구니 아이템 개수 조회 오류:', error);
                 });
         }
-    }, [location.pathname]); // 페이지 경로가 변경될 때마다 실행
+    }, [location.pathname, isLoggedIn]); // 페이지 경로가 변경될 때마다 실행
 
     const handleLogout = () => {
         // 로그아웃 버튼을 클릭할 때 실행되는 함수
