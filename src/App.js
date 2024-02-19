@@ -42,11 +42,7 @@ function App() {
           <Route path='/book-detail/:isbn' element={<BookDetail/>}/>   
           {/* 게시판 */}
           <Route path='/board/BoardList' element={<BoardList/>}/>   
-          <Route path='/board/AdminBoardList' element={<AdminBoardList/>}/>   
-          <Route path='/board/AdminBoardDetail/:boardSeq' element={<AdminBoardDetail/>}/> 
           <Route path='/board/BoardDetail/:boardSeq' element={<BoardDetail/>}/> 
-          <Route path='/board/BoardCreate' element={<BoardCreate/>}/> 
-          <Route path='/board/Edit/:boardSeq' element={<Edit/>}/>
           {/* 아이디/비밀번호 찾기 */}
           <Route path='/find' element={<FindIdOrPwd />}/>
           {/* 로그인 해야만 들어갈 수 있는 페이지 */}
@@ -55,11 +51,9 @@ function App() {
             {/* 1대1문의 */}
             <Route path='/board/InquiryArea' element={<InquiryArea/>}/> 
             <Route path='/board/InquiryList' element={<InquiryList/>}/> 
-            <Route path='/board/InquiryDetail/:inquiryId' element={<InquiryDetail/>}/> 
             <Route path='/board/Inquiry' element={<Inquiry />}/> 
             <Route path='/board/UnInquiryList' element={<UnInquiryList/>}/> 
             <Route path='/board/OkInquiryList' element={<OkInquiryList/>}/> 
-            {/* <Route path='/board/InquiryAllList' element={<InquiryAllList/>}/>  */}
             <Route path='/cart' element={<Cart/>}/>
             <Route path='/order' element={<Order/>}/>
             <Route path='/order/success' element={<OrderSuccess/>}/>
@@ -67,6 +61,11 @@ function App() {
           {/* admin */}
           <Route element={<AdminRoute />}>
             <Route path='/admin' element={<AdminPage />}/> 
+            <Route path='/board/AdminBoardDetail/:boardSeq' element={<AdminBoardDetail/>}/> 
+            <Route path='/board/AdminBoardList' element={<AdminBoardList/>}/>   
+            <Route path='/board/InquiryDetail/:inquiryId' element={<InquiryDetail/>}/> 
+            <Route path='/board/BoardCreate' element={<BoardCreate/>}/> 
+            <Route path='/board/Edit/:boardSeq' element={<Edit/>}/>
           </Route>
         </Route>
       </Routes>
