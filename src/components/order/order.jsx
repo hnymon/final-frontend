@@ -45,9 +45,12 @@ const Order = () =>{
 
         try {
           console.log(location.state.cartArray);
+          console.log(location.state.bookCount);
           const cartInfoList = location.state.cartArray;
           setCartInfoList(cartInfoList);
           setBookCount(location.state.bookCount);
+          console.log(cartInfoList);
+          console.log(bookCount);
         } catch (error) {
           console.error('주문하기 책 정보 불러오기 오류', error);
         }
@@ -187,7 +190,7 @@ const Order = () =>{
         <ul>
             <li>
                 <lable style={{marginRight:'15px'}}>배송지 불러오기</lable>
-                <input type="radio" name="deliveryAddr" value="default" onChange={loadDeliveryAddr} /> <span>기본배송지</span>
+                <input type="radio" name="deliveryAddr" value="default" onChange={loadDeliveryAddr} defaultChecked/> <span>기본배송지</span>
                 <input type="radio" name="deliveryAddr" value="others" onChange={loadDeliveryAddr}/> <span>배송지 목록</span>
             </li>
             <li>

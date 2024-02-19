@@ -1,24 +1,28 @@
 import { Box, Modal, Typography } from "@mui/material";
+import axios from "axios";
 import { useState } from "react";
 import styled from "styled-components";
 
 const MemberModal = ({open, handleClose, SelectedMember})=>{
-    const [selectedAddress, setSelectedAddress] = useState(null);
-    
-    // const handleCheckboxChange = (event, address) => {
-    //     if (event.target.checked) {
-    //         setSelectedAddress(address);
-    //     } else {
-    //         setSelectedAddress(null);
-    //     }
-    // };
 
     const handleConfirm = () => {
-        if (selectedAddress) {
-            // setDeliveryInfo(selectedAddress);
-            handleClose();
-        }
+        handleClose();
     };
+
+    const handleMemberDelete = async ()=>{
+        const shouldDelete = window.confirm('정말로 삭제하시겠습니까?');
+        const memberNum = SelectedMember.memberNum;
+        if (shouldDelete) {
+            try {
+                await axios.delete(`admin/member/delete/${memberNum}`);
+                alert('삭제 완료');
+            } catch (error) {
+                console.error('사용자 삭제 중 오류가 발생했습니다:', error);
+            }
+        } else {
+            console.log('사용자가 삭제를 취소했습니다.');
+        }
+    }
 
     return(
         <Modal open={open}
@@ -27,19 +31,35 @@ const MemberModal = ({open, handleClose, SelectedMember})=>{
             aria-describedby="modal-modal-description">
             <Box sx={style}>
                 <Typography id="modal-modal-title" variant="h6" component="h2">
-                    <H3>회원 정보 수정</H3>
-                    <Button onClick={handleConfirm}>확인</Button>
+                    <H3>회원 정보</H3>
+                    <Button onClick={handleConfirm}>닫기</Button>
+                    <Button onClick={handleMemberDelete}>회원 탈퇴</Button>
                 </Typography>
                 <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                    <div>
-                    <ul>
-                        <li>
-                            <div>회원 번호:{SelectedMember? SelectedMember.memberNum: ''}</div>
-                            <div>전화번호:</div>
-                            <br/>
-                        </li>
-                    </ul>
-                </div>
+                {SelectedMember && (
+                    <table>
+                        <Tr>
+                            <Td>회원 번호</Td> 
+                            <Td>{SelectedMember.memberNum}</Td>
+                        </Tr>
+                        <Tr>
+                            <Td>회원 이름</Td> 
+                            <Td>{SelectedMember.memberName}</Td>
+                        </Tr>
+                        <Tr>
+                            <Td>회원 아이디</Td> 
+                            <Td>{SelectedMember.username ? SelectedMember.username : `${SelectedMember.socialType} 회원입니다`}</Td>
+                        </Tr>
+                        <Tr>
+                            <Td>회원 이메일</Td>
+                            <Td>{SelectedMember.socialType? `${SelectedMember.socialType} 회원입니다`: SelectedMember.email}</Td>
+                        </Tr>
+                        <Tr>
+                            <Td>전화번호</Td>
+                            <Td>{SelectedMember.phoneNum}</Td>
+                        </Tr>
+                    </table>
+                )}
                 </Typography>
             </Box>
         </Modal>
@@ -53,21 +73,22 @@ const H3 = styled.h3`
     margin-right: 10px;
 `
 
-const Label = styled.label`
-    display: inline-flex;
-    align-items: center;
-`;
+const Td = styled.td`
+    padding-left: 20px;
+`
 
-const Input = styled.input`
-    margin-right: 5px;
-
+const Tr = styled.tr`
 `
 
 const Button = styled.button`
     margin-top: 5px;
+    margin-left: 5px;
     float: right;
-    padding: 3px;
-    
+    padding: 5px 8px;
+    background-color: pink;
+    color: white;
+    border:none;
+    cursor: pointer;
 `
 
 const style = {
@@ -77,7 +98,7 @@ const style = {
     transform: 'translate(-50%, -50%)',
     width: 400,
     bgcolor: 'background.paper',
-    border: '2px solid #000',
+    border: '2px solid #333',
     boxShadow: 24,
     p: 4,
   };

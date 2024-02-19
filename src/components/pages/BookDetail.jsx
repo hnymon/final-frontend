@@ -102,9 +102,10 @@ const BookDetail = () => {
 
   const goOrder = () =>{
     if(token !== undefined){
-      const cartItem = new CartItemDto(bookInfo.isbn, count);
-      const cartArray = [cartItem];
-      navigate('/order', {state: {cartArray: cartArray}})
+      navigate('/order', {state: {
+        cartArray: [bookInfo],
+        bookCount: [count],
+      }})
     }else{
         alert('로그인 해주세요');
         navigate('/login');

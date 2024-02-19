@@ -2,8 +2,9 @@ import axios from "axios";
 import GetTokenToHeader from "../../token/GetTokenToHeader";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import { Link } from "react-router-dom";
 
-const OrderList = () =>{
+const OrderList = ({handleTabClick, setOrderDetailList }) =>{
     const [orders, setOrders] = useState([]);
 
     useEffect(() => {
@@ -28,6 +29,12 @@ const OrderList = () =>{
         }
     }
 
+    const goToOrderDetail = (orderDetailList) => {
+        console.log('orderDetailList',orderDetailList);
+        handleTabClick(4);
+        setOrderDetailList(orderDetailList);
+    };
+
     return(
         <Wrapper>
             <Title>주문 내역</Title>
@@ -47,17 +54,12 @@ const OrderList = () =>{
                                 <TableCell>{order.id}</TableCell>
                                 <TableCell>{formatDateTime(order.orderDate)}</TableCell>
                                 <TableCell style={{width:'55px'}}>
-                                    {/* <ul>
-                                        {order.orderDetailList.map((detail, detailIndex) => (
-                                            <li key={detailIndex}>
-                                                이름 : {detail.title} / {detail.count} 권
-                                            </li>
-                                        ))}
-                                    </ul> */}
                                     <Img src={order.orderDetailList ? order.orderDetailList[0].thumbnail : 'http://via.placeholder.com/55X80'} alt="" />
                                 </TableCell >
                                 <TableCell>
-                                    <TitleText>{order.orderDetailList[0].title} </TitleText>
+                                    <TitleText onClick={() => goToOrderDetail(order.orderDetailList)}>
+                                    {order.orderDetailList[0].title}
+                                    </TitleText>
                                     <OrderType>외 {order.orderDetailList.length} 종</OrderType>
                                 </TableCell>
                                 <TableCell>{order.totalPrice + order.deliveryFee} 원</TableCell>
