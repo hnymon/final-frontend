@@ -3,6 +3,8 @@ import styled from "styled-components";
 import axios from "axios";
 import GetTokenToHeader from "../../token/GetTokenToHeader";
 import MemberModal from "./MemberModal";
+import InquiryModal from "./InquiryModal";
+import OrderModal from "./OrderModal";
 
 
 const MemberManagement = () =>{
@@ -11,8 +13,12 @@ const MemberManagement = () =>{
     const [totalPages, setTotalPages] = useState(0);
     const [searchTerm, setSearchTerm] = useState("");
     const [open, setOpen] = useState(false);
-    const [isPopupOpen, setIsPopupOpen] = useState(false)
+    const [isOrderOpen, setIsOrderOpen] = useState(false)
+    const [isInquiryOpen, setIsInquiryOpen] = useState(false)
     const [SelectedMember, setSelectedMember] = useState();
+    const [memberInquiry, setmemberInquiry] = useState();
+    const [memberOrder, setMemberOrder] = useState();
+     const [orderApprovalChanged, setOrderApprovalChanged] = useState(false);
 
     const handleOpen = (member) => {
         setOpen(true);
@@ -23,6 +29,33 @@ const MemberManagement = () =>{
         setOpen(false);
         setSelectedMember(null);
     }
+
+    const orderOpen = (order)=>{
+        setIsOrderOpen(true);
+        setMemberOrder(order);
+        console.log('order', order);
+    }
+
+    const orderClose = ()=>{
+        setIsOrderOpen(false);
+        setMemberOrder(null);
+    }
+
+    const inquiryOpen = (Inquiry)=>{
+        console.log('Inquiry', Inquiry);
+        setIsInquiryOpen(true);
+        setmemberInquiry(Inquiry);
+    }
+
+    const inquiryClose = ()=>{
+        setIsInquiryOpen(false);
+        setmemberInquiry(null);
+    }
+
+    const handleOrderApprovalChange = () => {
+        // 주문 승인 상태가 변경되었음을 알림
+        setOrderApprovalChanged(prevState => !prevState);
+    };
 
     const fetchOrders = async (page) => {
         try {
@@ -35,31 +68,17 @@ const MemberManagement = () =>{
             console.log(response.data);
             console.log(response.data.content)
             setMembers(response.data.content);
+
+            const newMemberOrders = response.data.content.map(member => member.order).flat();
+            setMemberOrder(newMemberOrders);
         } catch (error) {
             console.error('회원 목록을 불러오는 중 에러 발생:', error);
         }
     };
 
-    const handlePageChange = (page) => {
-        setCurrentPage(page);
-      };
-
-      const handlePrevPage = () => {
-        if (currentPage > 0) {
-          setCurrentPage(currentPage - 1);
-        }
-      };
-    
-      const handleNextPage = () => {
-        if (currentPage < totalPages - 1) {
-          setCurrentPage(currentPage + 1);
-        }
-      };
-
     function formatDateTime(dateTimeStr) {
         if(dateTimeStr){
             const [datePart, timePart] = dateTimeStr.split('T');
-            const timeOnly = timePart.slice(0, 5);
             return `${datePart}`;
         }
     }
@@ -68,8 +87,8 @@ const MemberManagement = () =>{
         return orders.filter(order => order.approval === '미승인').length;
     };
 
-    const countUnapprovedInquerys = (inquerys) =>{
-        return inquerys.filter(inquery => inquery.inquiryStatus === '처리중').length;
+    const countUnapprovedInquerys = (Inquirys) =>{
+        return Inquirys.filter(Inquiry => Inquiry.inquiryStatus === '처리중').length;
     }
 
     const handleSearch = () => {
@@ -84,7 +103,19 @@ const MemberManagement = () =>{
 
     useEffect(() => {
         fetchOrders(currentPage);
-      }, [currentPage]);
+      }, [currentPage, orderApprovalChanged]);
+
+      const handlePreviousPage = () => {
+        setCurrentPage(currentPage - 1);
+      };
+    
+      const handleNextPage = () => {
+        setCurrentPage(currentPage + 1);
+      };
+    
+      const handlePageClick = (page) => {
+        setCurrentPage(page);
+      };
 
     return(
         <Wrapper>
@@ -92,6 +123,18 @@ const MemberManagement = () =>{
             open = {open}
             handleClose = {handleClose}
             SelectedMember = {SelectedMember}
+            />
+            <OrderModal
+            open = {isOrderOpen}
+            handleClose = {orderClose}
+            order={memberOrder}
+            formatDateTime={formatDateTime}
+            handleOrderApprovalChange = {handleOrderApprovalChange}
+            />
+            <InquiryModal
+            open = {isInquiryOpen}
+            handleClose = {inquiryClose}
+            Inquiry={memberInquiry}
             />
             <Title>회원 목록</Title>
             <SearchBar>
@@ -120,8 +163,16 @@ const MemberManagement = () =>{
                             <TableCell><ModalLink onClick={() => handleOpen(member)}>
                                 {member.memberName ? member.memberName : `소셜 회원 ${member.memberNum}`}</ModalLink>
                                 </TableCell>
-                            <TableCell>미승인: {countUnapprovedOrders(member.order)} 건</TableCell>
-                            <TableCell>처리중: {countUnapprovedInquerys(member.inquery)} 건</TableCell>
+                            <TableCell>
+                                <ModalLink onClick={() => orderOpen(member.order)}>
+                                    미승인: {countUnapprovedOrders(member.order)} 건
+                                </ModalLink>
+                                </TableCell>
+                            <TableCell>
+                                <ModalLink onClick={() => inquiryOpen(member.inquery)}>
+                                처리중: {countUnapprovedInquerys(member.inquery)} 건
+                                </ModalLink>
+                                </TableCell>
                             <TableCell>{formatDateTime(member.createDate)}</TableCell>
                         </TableRow>
                     ))}
@@ -129,19 +180,16 @@ const MemberManagement = () =>{
                         </React.Fragment>
             </Table>
             <PaginationContainer>
-          <PaginationButton onClick={handlePrevPage} disabled={currentPage === 0}>◀</PaginationButton>
-          {Array.from(Array(totalPages).keys()).map((page) => (
-            <PaginationButton
-              key={page}
-              onClick={() => handlePageChange(page)}
-              disabled={currentPage === page}
-              // style={{padding:"11.9px"}}
-            >
-              {page + 1}
-            </PaginationButton>
-          ))}
-          <PaginationButton onClick={handleNextPage} disabled={currentPage === totalPages - 1}>▶</PaginationButton>
-        </PaginationContainer>
+        <PaginationButton onClick={handlePreviousPage} disabled={currentPage === 0}>이전</PaginationButton>
+        {[...Array(totalPages)].map((_, index) => (
+          <PaginationButton key={index} onClick={() => handlePageClick(index)}>
+            {index + 1}
+          </PaginationButton>
+        ))}
+        <PaginationButton onClick={handleNextPage} disabled={currentPage === totalPages - 1}>다음</PaginationButton>
+      </PaginationContainer>
+      <PaginationContainer>
+      </PaginationContainer>
         </Wrapper>
         
     );

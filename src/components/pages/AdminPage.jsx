@@ -30,6 +30,22 @@ const SelectDiv = styled.div`
     color: ${({ selected }) => (selected ? "white" : "#666666")};
     border-radius: 10px;
     cursor: pointer;
+
+    &:nth-child(2){
+        border-radius: 10px 10px 10px 10px;
+    }
+
+    &:nth-child(4){
+        border-radius: 10px 10px 0px 0px;
+    }
+
+    &:nth-child(5){
+        border-radius: 0px 0px 0px 0px;
+    }
+
+    &:nth-child(6){
+        border-radius: 0px 0px 10px 10px;
+    }
 `;
 
 const InnerDiv = styled.div`
@@ -68,22 +84,20 @@ const AdminPage = () => {
             <Divider sx={{ m: 0.5 }}/>
             <HeaderDiv>
                 <Div>
-                <Menu>결제 관리</Menu>
-                <SelectDiv
-                    selected={selectedTab === 1}
-                    onClick={() => handleTabClick(1)}
-                >주문/환불</SelectDiv>
-                <MenuS>공지 관리</MenuS>
+                <Menu>공지사항 관리</Menu>
                 <SelectDiv
                     selected={selectedTab === 2}
                     onClick={() => handleTabClick(2)}
                 >공지</SelectDiv>
-                <MenuS>문의 관리</MenuS>
+                <MenuS>회원 관리</MenuS>
+                <SelectDiv
+                    selected={selectedTab === 1}
+                    onClick={() => handleTabClick(1)}
+                >주문/환불</SelectDiv>
                 <SelectDiv
                     selected={selectedTab === 3}
                     onClick={() => handleTabClick(3)}
                 >문의</SelectDiv>
-                <MenuS>회원 관리</MenuS>
                 <SelectDiv
                     selected={selectedTab === 4}
                     onClick={() => handleTabClick(4)}

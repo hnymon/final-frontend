@@ -61,29 +61,46 @@ const Cart = () => {
   }, []);
       
   useEffect(() => {
-    // const total = Object.values(bookPrice).reduce((acc, curr) => acc + curr, 0);
-    let total = 0;
-    console.log(isbnBookCount);
-    for (const key in bookPrice) {
-      total += parseInt(bookPrice[key]);
-    }
-    console.log('이쪽', total);
+    const total = Object.values(bookPrice).reduce((acc, curr) => acc + curr, 0);
+    // let total = 0;
+    // console.log(isbnBookCount);
+    // for (const key in bookPrice) {
+    //   total += parseInt(isbnBookCount[key]) * parseInt(bookPrice[key]);
+    // }
+    // console.log('이쪽', total);
     setProductTotal(total);
   },[bookCount]); 
-     
-  const calculateTotalPrice = useCallback(() => {
-    let total = 0;
-    console.log('bookPrice', bookPrice);
-    for (const key in bookPrice) {
-      total += parseInt(bookPrice[key]);
-    }
-    setProductTotal(total);
-    console.log(total);
-  }, [bookPrice]);
 
   useEffect(() => {
-    calculateTotalPrice();
-  }, [calculateTotalPrice]);
+    let total = 0;
+    console.log(bookCount)
+    console.log(bookPrice);
+    
+    total = checkItems.reduce((acc, isbn) => {
+      if (bookPrice.hasOwnProperty(isbn)) {
+        const price = bookPrice[isbn];
+        acc += price;
+      }
+      return acc;
+    }, 0);
+  
+    console.log('이쪽', total);
+    setProductTotal(total);
+  }, [checkItems, bookCount, bookPrice]);
+     
+  // const calculateTotalPrice = useCallback(() => {
+  //   let total = 0;
+  //   console.log('bookPrice', bookPrice);
+  //   for (const key in bookPrice) {
+  //     total += parseInt(bookPrice[key]);
+  //   }
+  //   setProductTotal(total);
+  //   console.log(total);
+  // }, [bookPrice]);
+
+  // useEffect(() => {
+  //   calculateTotalPrice();
+  // }, [calculateTotalPrice]);
     
   //주문 페이지 이동
   const navigate = useNavigate();
@@ -136,8 +153,6 @@ const Cart = () => {
         checkItems={checkItems}
         setCheckItems={setCheckItems}
         removeFromCart={removeFromCart}
-        calculateTotalPrice={calculateTotalPrice}
-        productTotal={productTotal}
         />
         <OrderContainer>
         <OrderPrice>
