@@ -4,37 +4,33 @@ import { useEffect, useState } from "react";
 import { Divider } from "@mui/material";
 
 
-const CartListInfo = ({cartInfoList, isbnBookCount, setIsbnBookCount, bookCount,setBookCount, bookPrice,setBookPrice, checkItems, setCheckItems,removeFromCart,calculateTotalPrice,productTotal }) => {
+const CartListInfo = ({cartInfoList, isbnBookCount, setIsbnBookCount, bookCount,setBookCount, bookPrice,setBookPrice, checkItems, setCheckItems,removeFromCart }) => {
 
   useEffect(()=>{
 
-  },[cartInfoList]);
+  },[cartInfoList]); 
 
-  useEffect(()=>{
 
-  },[bookCount]); 
-  
-  const changeBookPrice = (isbn, index, price) => {
-    console.log('bookCount',bookCount)
-    const updatePrice = parseInt(bookCount[index]) * parseInt(price);
-    setBookPrice({...bookPrice, [isbn]:updatePrice});
-  }
-
-  const decrease = (index, isbn, price) =>{
+  const decrease = async (index, isbn, price) =>{
     if(bookCount[index] > 1){
       const updateCount = [...bookCount];
       updateCount[index] -= 1;
       setBookCount(updateCount);
+
+      const updatedPrice = updateCount[index] * price;
+      setBookPrice({...bookPrice, [isbn]:updatedPrice});
     }
   }
 
-  const increase = (index, isbn, price) =>{
-    const updateCount = [...bookCount]
+  const increase = async (index, isbn, price) =>{
+    const updateCount = [...bookCount];
     updateCount[index] += 1;
     console.log('increase', updateCount);
     setBookCount(updateCount);
 
-  }
+    const updatedPrice = updateCount[index] * price;
+    setBookPrice({...bookPrice, [isbn]: updatedPrice});
+};
 
   const handleSingleCheck = (isbn, totalPrice, checked) =>{
     if(checked){
