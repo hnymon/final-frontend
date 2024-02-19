@@ -219,6 +219,7 @@ const EditMemberInfo = (props) => {
         };
         fetchMemberInfo();
         setUserPasswordCheck("");
+        setRandomInitial("");
     }, [props.flag]);
 
     
