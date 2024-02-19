@@ -109,7 +109,7 @@ const AdminCommentList = ({ inquiryId }) => {
             <ul>
                 {adminComments.map((comment, index) => (
                     <li key={index}>
-                        <strong>관리자답변 :</strong> {comment.adminComment}<br/> {formatDate(comment.adminCommentDate)}<br />
+                        <strong>관리자답변 :</strong> <pre>{comment.adminComment}</pre><br/> {formatDate(comment.adminCommentDate)}<br />
                     </li>
                 ))}
             </ul>
@@ -173,7 +173,7 @@ const OkInquiryList = () => {
             <p>{formatDate(inquiry.inquiryDate)}</p>
             <br />
             <InquiryContent>
-              <p>{inquiry.inquiryContent}</p>
+              <pre>{inquiry.inquiryContent}</pre>
             </InquiryContent>
               <ToggleButton onClick={() => toggleItem(inquiry.inquiryId)}>
                 {toggledItemId === inquiry.inquiryId ? '▲' : '▼'}
