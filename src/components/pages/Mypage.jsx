@@ -6,6 +6,7 @@ import MembershipInfo from "../mypageComponents/MembershipInfo";
 import OrderList from "../mypageComponents/OrderList";
 import { Divider } from "@mui/material";
 import { useLocation } from "react-router-dom";
+import OrderDetailsPage from "../mypageComponents/OrderDetailPage";
 
 const MainDiv = styled.div`
     height:100vh;
@@ -71,6 +72,7 @@ const MenuS = styled.div`
 const Mypage = () => {
     const [selectedTab, setSelectedTab] = useState(1);
     const location = useLocation();
+    const [orderDetailList , setOrderDetailList] = useState([]);
     const handleTabClick = (tabIndex) => {
         setSelectedTab(tabIndex);
     };
@@ -107,7 +109,8 @@ const Mypage = () => {
             <InnerDiv>
                 {selectedTab === 1 && <EditMemberInfo flag={flag} setFlag={setFlag} />}
                 {selectedTab === 2 && <DeliveryAdr />}
-                {selectedTab === 3 && <OrderList />}
+                {selectedTab === 3 && <OrderList handleTabClick={handleTabClick} setOrderDetailList={setOrderDetailList} />}
+                {selectedTab === 4 && <OrderDetailsPage orderDetailList={orderDetailList} />}
             </InnerDiv>
             </HeaderDiv>
         </MainDiv>
