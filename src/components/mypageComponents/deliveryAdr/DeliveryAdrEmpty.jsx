@@ -15,6 +15,7 @@ const Wrapper = styled.div`
 const ImageDiv = styled.div`
     display: flex;
     flex-direction: column;
+    margin-top: 50px;
     align-items: center; /* 수평 가운데 정렬 */
     text-align: center; /* 텍스트 정렬 */
 `;

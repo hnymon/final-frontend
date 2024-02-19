@@ -143,7 +143,7 @@ const InquiryList = () => {
             <InquriyItems>{inquiry.inquiryDate}</InquriyItems>
             <hr />
             <InquiryContent>
-              <p>{inquiry.inquiryContent}</p>
+              <pre>{inquiry.inquiryContent}</pre>
             </InquiryContent>
             
           </InquiryItem>

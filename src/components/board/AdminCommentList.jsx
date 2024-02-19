@@ -62,7 +62,7 @@ const AdminCommentList = () => {
           <CommentContentTest key={index}>
             <CommentItem>
               <strong>답변 내용:</strong>
-              {comment.adminComment}
+              <pre>{comment.adminComment}</pre>
               <br />
               <strong>답변 날짜:</strong>
               {formatDate(comment.adminCommentDate)}

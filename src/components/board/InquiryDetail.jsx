@@ -65,7 +65,7 @@ const InquiryDetail = () => {
         {inquiry.inquirySubject}
       </p>
         <strong>문의 내용: </strong>
-        {inquiry.inquiryContent}
+        <pre>{inquiry.inquiryContent}</pre>
         <p>
         <strong>문의 시간: </strong>
         {formatDate(inquiry.inquiryDate)}

@@ -110,14 +110,22 @@ const Header = () => {
     const toggleDropdown = () => {
         setIsDropdownOpen(!isDropdownOpen);
     };
-
+    const [role, setRole] = useState("");
     useEffect(() => {
         // localStorage에서 토큰을 가져와 isLoggedIn 상태를 업데이트합니다.
         const token = getAccessCookie();
         const headers = GetTokenToHeader();
         console.log('헤더', token);
         setIsLoggedIn(!!token);
+        
         if(isLoggedIn){
+            axios.post("/getMemberInfo",null,headers)
+                .then(responseA =>{
+                    setRole(responseA.data.currentMember.role);
+                })
+                .catch(error =>{
+                    console.error('권한 확인', error);
+                });
             axios.get("/cart/count",headers)
                 .then(response =>{
                     setCartCount(response.data);
@@ -153,9 +161,13 @@ const Header = () => {
                     <ul>
                         {isLoggedIn ? (
                             <>
-                                <li>
-                                    <NavLink to="/admin">관리자</NavLink>
-                                </li>
+                                {role === "ADMIN" ? (
+                                    <>
+                                        <li>
+                                            <NavLink to="/admin">관리자</NavLink>
+                                        </li>
+                                    </>
+                                ):<></>}
                                 <li>
                                     <NavLink to="/mypage">마이페이지</NavLink>
                                 </li>
