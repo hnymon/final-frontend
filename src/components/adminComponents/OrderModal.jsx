@@ -8,9 +8,13 @@ const OrderModal = ({open, handleClose, order, formatDateTime, handleOrderApprov
         handleClose();
     };
 
-    const approval = async (odtNum, id) => {
+    const approval = async (detailId, orderId) => {
       try {
-          const response = await axios.post("/adminOrder/approval", {odtNum})
+
+          const response = await axios.post("/admin/approvalModal", {
+            detailId : detailId,
+            orderId : orderId
+          })
           console.log(response.data)
           if(response.data=== "Success"){
             handleOrderApprovalChange();
@@ -60,7 +64,7 @@ const OrderModal = ({open, handleClose, order, formatDateTime, handleOrderApprov
                       </Div>
                     </Td>
                     <Td>
-                        <DetailApproval>{detail.detailApproval ? "승인": "대기상태"} </DetailApproval>
+                        <DetailApproval>{detail.detailApproval ? "승인됨": "대기상태"} </DetailApproval>
                         {detail.detailApproval ? 
                           <div>
                             <Button onClick={() => approval(detail.id, item.id)}>대기</Button>
@@ -138,6 +142,8 @@ const style = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
+    maxHeight: 700,
+    overflow: 'scroll',
     width: 800,
     bgcolor: 'background.paper',
     border: '2px solid #333',
