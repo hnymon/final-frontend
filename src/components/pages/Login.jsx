@@ -114,17 +114,18 @@ const Login = () => {
     const [password, setPassword] = useState("");
     const { cartCount, setCartCount } = useContext(CartCountContext);
     const headers = GetTokenToHeader();
-    const getCartCount = () =>{
-        axios
-          .get("/cart/count", headers)
-          .then((response) => {
-            setCartCount(response.data);
-            console.log('장바구니 데이타', response.data);
-          })
-          .catch((error) => {
-            console.error('장바구니 아이템 개수 조회 오류:', error);
-          });
-    }
+    // const getCartCount = () =>{
+    //     axios
+    //       .get("/cart/count", headers)
+    //       .then((response) => {
+    //         setCartCount(response.data);
+    //         console.log('장바구니 데이타', response.data);
+    //       })
+    //       .catch((error) => {
+    //         console.error('장바구니 아이템 개수 조회 오류:', error);
+    //         setCartCount(0);
+    //       });
+    // }
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -151,7 +152,7 @@ const Login = () => {
                 console.log("로그인 성공");
                 console.log(token);
 
-                getCartCount();
+                // getCartCount();
                 // console.log("리프레시 토큰", refreshToken);
                 // 로그인 성공
                 alert("로그인 성공!");
