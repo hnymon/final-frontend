@@ -93,7 +93,7 @@ const Edit = () => {
 
   const handleEdit = async (e) => {
     e.preventDefault();
-    alert("수정하시겠습니까?");
+    window.confirm("수정하시겠습니까?");
     try {
       await axios.post(`/board/Edit/${boardSeq}`, board);
       alert("수정되었습니다");

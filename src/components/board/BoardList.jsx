@@ -51,17 +51,18 @@ table {
     color: #fff;
     text-decoration: none;
     margin-right: 10px;
-
+    
     &:hover {
       background-color: #45a049;
     }
   }
 `;
 const PaginationContainer = styled.div`
-    margin-top: 20px;
-    display: flex;
+    // margin-top: 20px;
+    // display: flex;
+    buttom
     justify-content: center;
-    // background-color: #FFC0CB;
+    
 `;
 
 const PaginationButton = styled.button`
@@ -72,10 +73,6 @@ const PaginationButton = styled.button`
     color: #ffffff;
     background-color: #FFC0CB;
 
-    // &:disabled {
-    //     opacity: 0.5;
-    //     cursor: not-allowed;
-    // }
 `;
 const BoardList = () => {
   const [board, setBoards] = useState([]);
@@ -152,6 +149,7 @@ const BoardList = () => {
         </tbody>
       </table>
       <PaginationContainer>
+        
         <PaginationButton onClick={handlePreviousPage} disabled={currentPage === 0}>이전</PaginationButton>
         {[...Array(totalPages)].map((_, index) => (
           <PaginationButton key={index} onClick={() => handlePageClick(index)}>
@@ -164,6 +162,7 @@ const BoardList = () => {
         <PaginationButton onClick={handleHome}>돌아가기</PaginationButton>
       </PaginationContainer>
     </StyledBoardList>
+    
   );
 }
 

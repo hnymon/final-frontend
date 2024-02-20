@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 
 const AdminCommentContainer = styled.div`
@@ -24,8 +23,7 @@ const CommentContentTest = styled.div`
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
-const AdminCommentList = () => {
-  const { inquiryId } = useParams();
+const AdminCommentList = ({ inquiryId , setUpdateFlag, updateFlag }) => {
   const [adminComments, setAdminComments] = useState([]);
 
   const formatDate = (dateString) => {
@@ -46,14 +44,18 @@ const AdminCommentList = () => {
           `/board/AdminCommentList/${inquiryId}`
         );
         setAdminComments(response.data.list);
+        setUpdateFlag(prevFlag => !prevFlag);
       } catch (error) {
         console.error("Error fetching admin comments:", error);
       }
     };
-
+    
     fetchAdminComments();
-  }, [inquiryId]); // inquiryId를 의존성 배열에 포함
+  }, [inquiryId,updateFlag,setUpdateFlag]);
+  useEffect(() => {
+    // updateFlag가 변경될 때마다 다시 랜더링됨
 
+  }, [updateFlag]);
   return (
     <AdminCommentContainer>
       <h2>관리자 답변 목록</h2>
