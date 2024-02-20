@@ -114,7 +114,7 @@ const KakaoMap = () => {
         case "학교도서관":
           markerImage = "/school.png";
         default:
-          markerImage = "/default_library_marker.png"; 
+          markerImage = "/default_library_marker.jpg"; 
       }
       const marker = new window.kakao.maps.Marker({
         position: markerPosition,
@@ -201,7 +201,7 @@ const KakaoMap = () => {
           image: currentLocationMarkerImage, // 현재위치 마커 이미지 적용
         });
         currentLocationMarker.setMap(map);
-
+ 
         setMarker(currentLocationMarker);
       },
       (error) => {

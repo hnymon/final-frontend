@@ -98,7 +98,7 @@ const AdminBoardDetail = () => {
       try {
         await axios.delete(`/board/BoardDelete/${boardSeq}`);
         alert("삭제되었습니다");
-        navigate('/board/AdminBoardList');
+        navigate('/admin');
       } catch (error) {
         console.error('글 삭제 실패', error);
       }
