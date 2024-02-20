@@ -192,9 +192,9 @@ const FormContainer = styled.div`
     width: 30%; /* 또는 다른 값을 설정하여 원하는 넓이로 조절 */
     padding: 10px;
     position: absolute;
-    zIndex: 1000;
-    top:30%;
+    top:40%;
     background-color:white;
+    border: 1px solid black;
 `;
 
 const StyledTable = styled.table`

@@ -497,7 +497,7 @@ const SignUp = () => {
                 console.log(response.data);
                 alert("아이디를 입력하세요.");
             } else {
-                alert(response.data);
+                alert("사용 가능한 아이디입니다.");
                 console.log(response.data);
                 setIsCheckButtonDisabled(true);
             }

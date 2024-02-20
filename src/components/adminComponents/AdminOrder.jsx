@@ -11,7 +11,7 @@ const AdminOrder = () => {
     const handleOderPage = () => {
         setCheckApproval(prevApproval => !prevApproval);
     }
-    const items = 10;
+    const items = 5;
     const [total, setTotal] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
     const totalPages = Math.ceil(total/items);
