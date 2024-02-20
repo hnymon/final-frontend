@@ -1,14 +1,21 @@
+import { getOffsetLeft } from '@mui/material';
 import React from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 const OrderDetailsPage = ({orderDetailList}) => {
 
+    const navigate = useNavigate();
 
     console.log(orderDetailList);
 
     if (!orderDetailList || orderDetailList.length === 0) {
         return <div>주문 상세 내역이 없습니다.</div>;
+    }
+
+    const goToBookDetail = (isbn)=>{
+        console.log(isbn);
+        navigate(`/book-detail/${isbn}`);
     }
     
     
@@ -33,7 +40,7 @@ const OrderDetailsPage = ({orderDetailList}) => {
                                     <Img src={order.thumbnail ? order.thumbnail : 'http://via.placeholder.com/55X80'} alt="" />
                                 </TableCell >
                                 <TableCell>
-                                    <TitleText>
+                                    <TitleText onClick={() => goToBookDetail(order.isbn)}>
                                     {order.title}
                                     </TitleText>
                                 </TableCell>
