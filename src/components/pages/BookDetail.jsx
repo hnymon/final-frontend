@@ -153,7 +153,7 @@ const BookDetail = () => {
           </BookInfo>
           
         ) : (
-          <h1>No book details available.</h1>
+          <h1>해당 도서 정보가 없습니다.</h1>
         )
       )}
       {/* <form onSubmit={handleSubmit}>

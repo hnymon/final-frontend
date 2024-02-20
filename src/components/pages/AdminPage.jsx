@@ -93,7 +93,7 @@ const AdminPage = () => {
                 <SelectDiv
                     selected={selectedTab === 1}
                     onClick={() => handleTabClick(1)}
-                >주문/환불</SelectDiv>
+                >주문</SelectDiv>
                 <SelectDiv
                     selected={selectedTab === 3}
                     onClick={() => handleTabClick(3)}
