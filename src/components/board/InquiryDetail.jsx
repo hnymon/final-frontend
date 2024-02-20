@@ -6,19 +6,16 @@ import AdminComment from "./AdminComment";
 import AdminCommentList from "./AdminCommentList";
 import InquiryAllList from "./InquiryAllList";
 
-// InquiryDetailContainer 컴포넌트에 스타일 적용
 const InquiryDetailContainer = styled.div`
   margin: 10%;
 `;
 
-// InquiryTitle에 스타일 적용
 const InquiryTitle = styled.h2`
   font-size: 24px;
   color: #333;
   margin-bottom: 20px;
 `;
 
-// InquiryContent에 스타일 적용
 const InquiryContent = styled.p`
   font-size: 18px;
   color: #666;
@@ -33,7 +30,8 @@ const InquiryContent = styled.p`
 const InquiryDetail = () => {
   const { inquiryId } = useParams();
   const [inquiry, setInquiry] = useState([]);
-  const [updateFlag, setUpdateFlag] = useState(false); // 상태 추가
+  const [updateFlag, setUpdateFlag] = useState(false); 
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
@@ -43,7 +41,12 @@ const InquiryDetail = () => {
     const minutes = String(date.getMinutes()).padStart(2, '0');
     
     return `${year}-${month}-${day} ${hours}:${minutes}`;
-};
+  }; 
+  // useEffect(() => {
+  //   // updateFlag가 변경될 때마다 다시 랜더링됨
+  //   console.log(updateFlag);
+  // }, [updateFlag]);
+
   useEffect(() => {
     const getBoard = async () => {
       try {
@@ -54,27 +57,26 @@ const InquiryDetail = () => {
       }
     };
     getBoard();
+    
   }, [inquiryId]);
 
   return ( 
     <InquiryDetailContainer>
       <InquiryContent>
-      <InquiryTitle>1대1 문의 사항 상세 정보</InquiryTitle>
-      <p>
-        <strong>문의 제목: </strong>
-        {inquiry.inquirySubject}
-      </p>
+        <InquiryTitle>1대1 문의 사항 상세 정보</InquiryTitle>
+        <p>
+          <strong>문의 제목: </strong>
+          {inquiry.inquirySubject}
+        </p>
         <strong>문의 내용: </strong>
         <pre>{inquiry.inquiryContent}</pre>
         <p>
-        <strong>문의 시간: </strong>
-        {formatDate(inquiry.inquiryDate)}
+          <strong>문의 시간: </strong>
+          {formatDate(inquiry.inquiryDate)}
         </p>
       </InquiryContent>
-      {/* updateFlag 상태 전달 */}
       {inquiry && <AdminCommentList inquiryId={inquiry.inquiryId} updateFlag={updateFlag} setUpdateFlag={setUpdateFlag} />}
-      {inquiry && <AdminComment inquiryId={inquiry.inquiryId} updateFlag={updateFlag} setUpdateFlag={setUpdateFlag} />}
-      
+      {inquiry && <AdminComment inquiryId={inquiry.inquiryId} setUpdateFlag={setUpdateFlag} />}  
     </InquiryDetailContainer>
   );
 };

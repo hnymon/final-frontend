@@ -72,6 +72,10 @@ const CommentArea = (props) => {
       const response = await axios.post("/comment/CommentArea", comment,
         headers,
       );
+      if(comment.commentContent === ""){
+        alert("내용을 입력해주세요");
+        return;
+      }
       if (response.data.result === "Success") {
         console.log("리뷰 전송 성공", response.data);
         setComment({ ...comment, commentContent: "" });

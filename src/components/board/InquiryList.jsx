@@ -76,7 +76,7 @@ const PaginationButton = styled.button`
   padding: 6px 10px;
   border: none;
   border-radius: 5px;
-  background-color: ${({ active }) => (active ? '#FFC0CB' : '#ccc')};
+  background-color: ${({ active }) => (active ? '#ccc' : '#FFC0CB')};
   color: ${({ active }) => (active ? '#fff' : '#000')};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
 `;
@@ -89,15 +89,16 @@ const InquiryList = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchInquiryList = async () => {
+    const fetchInquiryList = async (page) => {
       try {
         const headers = GetTokenToHeader();
-        const response = await axios.post("/board/InquiryList", null, headers,{
+        const response = await axios.post(`/board/InquiryList?page=${page}`, null, headers,{
           params: {
-            page: currentPage,
+            page: currentPage, 
             size: pageSize,
           },
         });
+        console.log(response.data.paging);
         const { content, totalPages } = response.data.paging;
         const formattedContent = content.map(inquiry => {
           return {
@@ -108,13 +109,13 @@ const InquiryList = () => {
         setInquiryList(formattedContent);
         setTotalPages(totalPages);
       } catch (error) {
-        
         console.error('Error fetching inquiry list:', error);
       }
     };
-    fetchInquiryList();
-  },[currentPage]);
-
+    fetchInquiryList(currentPage);
+    
+  }, [currentPage]);
+  
   const formatDate = (content) => {
     const date = new Date(content);
     const year = date.getFullYear();
@@ -123,13 +124,24 @@ const InquiryList = () => {
     return `${year}-${month}-${day}`;
   };
 
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-  };
+  
 
   const handleButtonClick = () => {
     navigate("/board/InquiryArea");
   };
+ 
+  const handlePreviousPage = () => {
+    setCurrentPage(currentPage - 1);
+  };
+
+  const handleNextPage = () => {
+    setCurrentPage(currentPage + 1);
+  };
+
+  const handlePageClick = (page) => {
+    setCurrentPage(page);
+  };
+
 
   return (
     <InquiryContainer>
@@ -150,22 +162,14 @@ const InquiryList = () => {
         ))}
       </InquiryItemContainer>
       <PaginationContainer>
-        <PaginationButton onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 0}>
-          이전페이지
-        </PaginationButton>
-        {[...Array(totalPages).keys()].map((page) => (
-          <PaginationButton
-            key={page}
-            onClick={() => handlePageChange(page)}
-            active={currentPage === page}
-            disabled={currentPage === page}
-          >
-            {page + 1}
+        
+        <PaginationButton onClick={handlePreviousPage} disabled={currentPage === 0}>이전페이지</PaginationButton>
+        {[...Array(totalPages)].map((_, index) => (
+          <PaginationButton key={index} onClick={() => handlePageClick(index)}>
+            {index + 1}
           </PaginationButton>
         ))}
-        <PaginationButton onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages-1}>
-          다음페이지
-        </PaginationButton>
+        <PaginationButton onClick={handleNextPage} disabled={currentPage === totalPages - 1}>다음페이지</PaginationButton>
       </PaginationContainer>
     </InquiryContainer>
   );

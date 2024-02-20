@@ -28,6 +28,8 @@ import UnInquiryList from './components/board/UnInquiryList';
 import InquiryAllList from './components/board/InquiryAllList';
 import AdminBoardDetail from './components/board/AdminBoardDetail';
 import AdminBoardList from './components/board/AdminBoardList';
+import AdminComment from './components/board/AdminComment';
+import AdminCommentList from './components/board/AdminCommentList';
 function App() {
   return (
       <Routes>
@@ -64,6 +66,8 @@ function App() {
             <Route path='/board/AdminBoardDetail/:boardSeq' element={<AdminBoardDetail/>}/> 
             <Route path='/board/AdminBoardList' element={<AdminBoardList/>}/>   
             <Route path='/board/InquiryDetail/:inquiryId' element={<InquiryDetail/>}/> 
+            <Route path='/board/AdminComment/:inquiryId' element={<AdminComment/>}/>  
+            <Route path='/board/AdminCommentList/:inquiryId' element={<AdminCommentList/>}/> 
             <Route path='/board/BoardCreate' element={<BoardCreate/>}/> 
             <Route path='/board/Edit/:boardSeq' element={<Edit/>}/>
           </Route>
