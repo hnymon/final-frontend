@@ -60,7 +60,7 @@ const OrderList = ({handleTabClick, setOrderDetailList }) =>{
                                     <TitleText onClick={() => goToOrderDetail(order.orderDetailList)}>
                                     {order.orderDetailList[0].title}
                                     </TitleText>
-                                    <OrderType>외 {order.orderDetailList.length} 종</OrderType>
+                                    <OrderType>등 {order.orderDetailList.length} 종</OrderType>
                                 </TableCell>
                                 <TableCell>{order.totalPrice + order.deliveryFee} 원</TableCell>
                                 <TableCell>{order.approval}</TableCell>
