@@ -423,10 +423,6 @@ const SignUp = () => {
             alert("ID 중복확인 해주세요.");
             return;
         }
-        if (!isEmailCheckButtonDisabled) {
-            alert("이메일 중복확인 해주세요.");
-            return;
-        }
         // 비밀번호 일치 여부 확인
         if (member.password !== userPasswordCheck) {
             alert("비밀번호가 일치하지 않습니다.");
@@ -438,6 +434,10 @@ const SignUp = () => {
         }
         if (!isPasswordValid) {
             alert("비밀번호는 최소 8자리, 대문자1, 소문자1, 숫자1로 이루어져야 합니다. (!@#$%^&* 만 가능)");
+            return;
+        }
+        if (!isEmailCheckButtonDisabled) {
+            alert("이메일 중복확인 해주세요.");
             return;
         }
 

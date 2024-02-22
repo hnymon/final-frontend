@@ -78,7 +78,7 @@ const CommentArea = (props) => {
       }
       if (response.data.result === "Success") {
         console.log("리뷰 전송 성공", response.data);
-        setComment({ ...comment, commentContent: "" });
+        setComment({ ...comment, commentContent: "" ,starRating:0 });
         props.setUpdateFlag(prevFlag => !prevFlag);
       } else {
         console.log("리뷰 전송 실패", response.data);
