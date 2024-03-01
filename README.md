@@ -584,7 +584,7 @@ export default BookDetail;
 
 </details>
 
-[내 Naver_API 전체 코드 보러 가기](https://github.com/hnymon/final-backend/blob/master/src/main/java/com/web/controller/BookController.java)
+[Back_내 Naver_API 전체 코드 보러 가기](https://github.com/hnymon/final-backend/blob/master/src/main/java/com/web/controller/BookController.java)
 
 <br/>
 
@@ -594,132 +594,565 @@ export default BookDetail;
 
 
 ### 2. 웹 크롤링
-- 웹사이트(Yes24, Aladin)를 크롤링하여 해당 정보를 DB에 저장
+- Back : 웹사이트(Yes24, Aladin)를 크롤링하여 해당 정보를 DB에 저장
 > 처음 크롤링은 페이지에서 책 상세보기를 가져올 수 있는 url을 가져온 후
 > 해당 url을 이용하여 상세정보 페이지에서 해당 책에 대한 정보를 가져와 db에 저장
 
+- Front : DB에 저장되어 있는 웹크롤링 데이터를 가져와 보여주기
+
 <details>
-    <summary>코드 보기</summary>
+    <summary>HomePage 코드 보기</summary>
     
-```
-```	
-	
-</details>
+```javascript
+const HomePage = () => {
+  const navigate = useNavigate();
+  const [animate, setAnimate] = useState(true);
+  const onStop = () => setAnimate(false);
+  const onRun = () => setAnimate(true);
 
-
-[Crawling_Aladin 전체 코드 보러 가기](https://github.com/hnymon/final-backend/blob/master/src/main/java/com/web/crawling/CrawlingAladin.java)
- 
-[Crawling_Yes24 전체 코드 보러 가기](https://github.com/hnymon/final-backend/blob/master/src/main/java/com/web/crawling/CrawlingYes24.java)
-
-### 3. 책 상세 정보와 수량을 장바구니에 담고 결제하기 구현
-- 장바구니
-
-<details>
-	<summary>코드 보기</summary>
-
-```
-
-
-```
-
-</details>
-
-<details>
-	<summary>코드 보기</summary>
-
-```
-```
-
-</details>
-
-- 결제하기
-
-
-<details>
-	<summary>코드 보기</summary>
-
-```
-
-```
-
-</details>
-
-
-<details>
-	<summary>코드 보기</summary>
-
-```
-
-```
-
-</details>
-
-
- 
-### 4. 공공 데이터를 활용(전국도서관표준데이터)_csv
-- 공공데이터 포털에서 해당 데이터를 저장 후 csv 데이터를 list에 담은 후 DB에 저장
-
-<details>
-    <summary>코드 보기</summary>
-    
-```
-```	
-	
-</details>
+  const [newBookList, setNewBookList] = useState([]);
+  const [todayBookYes24List, setTodayBookYes24List] = useState([]);
+  const [nowThisBookYes24List, setNowThisBookYes24List] = useState([]);
+  const [popularBookYes24List, setPopularBookYes24List] = useState([]);
+  console.log(newBookList);
+  const navigateToDetail = (isbn) => {
+    navigate(`/book-detail/${isbn}`);
+  };
+  const items = 4;
+  const [thisTotal, setThisTotal] = useState(0);
+  const [currentThisPage, setCurrentThisPage] = useState(1);
+  const thisTotalPages = Math.ceil(thisTotal / items);
+  console.log(currentThisPage)
+  console.log(thisTotalPages)
   
-   [전체 코드 보러 가기](https://github.com/hnymon/final-backend/blob/master/src/main/java/com/web/service/CSVParserExample.java)
+  // 현재 페이지에 해당하는 데이터 가져오기
+  const getThisDataForPage = () => {
+    const startIndex = (currentThisPage - 1) * items;
+    const endIndex = Math.min(startIndex + items, thisTotal);
+    // startIndex부터 endIndex까지의 데이터 가져오기
+    // 기본 주소가 먼저 오도록 정렬
+    return nowThisBookYes24List.slice(startIndex, endIndex);
+  };
+  const nextThisPage = () => {
+    if(currentThisPage === thisTotalPages){
+      console.log("지금")
+      setCurrentThisPage(1);
+    } else{
+      setCurrentThisPage((prevPage) => Math.min(prevPage + 1, thisTotalPages));
+    }
+  };
+
+  const prevThisPage = () => {
+    if(currentThisPage === 1){
+      setCurrentThisPage(thisTotalPages);
+    } else{
+      setCurrentThisPage((prevPage) => Math.max(prevPage - 1, 1));
+    }
+  };
+
+
+  const [popularTotal, setPopularTotal] = useState(0);
+  const [currentPopularPage, setCurrentPopularPage] = useState(1);
+  const popularTotalPages = Math.ceil(popularTotal / items);
+  
+  const getPopularDataForPage = () => {
+    const startIndex = (currentPopularPage - 1) * items;
+    const endIndex = Math.min(startIndex + items, thisTotal);
+    // startIndex부터 endIndex까지의 데이터 가져오기
+    // 기본 주소가 먼저 오도록 정렬
+    return popularBookYes24List.slice(startIndex, endIndex);
+  };
+  const nextPopularPage = () => {
+    if(currentPopularPage === popularTotalPages){
+      setCurrentPopularPage(1);
+    } else {
+      setCurrentPopularPage((prevPage) => Math.min(prevPage + 1, popularTotalPages));
+    }
+  };
+
+  const prevPopularPage = () => {
+    if(currentPopularPage === 1){
+      setCurrentPopularPage(popularTotalPages);
+    } else{
+      setCurrentPopularPage((prevPage) => Math.max(prevPage - 1, 1));
+    }
+  };
+
+
+
+
+  useEffect(() => {
+    const testCrawling = async () => {
+      try {
+        const response = await axios.get("/testCrawling");
+        setNewBookList(response.data.newBookList);
+        setTodayBookYes24List(response.data.todayBookYes24List);
+        setBook(response.data.todayBookYes24List[0]);
+        setNowThisBookYes24List(response.data.nowThisBookYes24List);
+        setThisTotal(response.data.nowThisBookYes24List.length);
+        setPopularBookYes24List(response.data.popularBookYes24List);
+        setPopularTotal(response.data.popularBookYes24List.length);
+      } catch (error) {
+        console.error("Error fetching board data:", error);
+      }
+    };
+    testCrawling();
+  }, []);
+  const [setTodayBook, setSetTodayBook] = useState(null);
+  const setBook = (book) => {
+    setSetTodayBook(book);
+  };
+  console.log(setTodayBook);
+
+  return (
+    <HomePageWarpper>
+      <SlideWrapper>
+        <NewH1Div>
+          <h1>새로 나온 책</h1>
+        </NewH1Div>
+        <div className="wrapper">
+          <div className="slide_container">
+            <ul
+              className="slide_wrapper"
+              onMouseEnter={onStop}
+              onMouseLeave={onRun}
+            >
+              <div className={"slide original".concat(animate ? "" : " stop")}>
+                {newBookList.map((s, i) => (
+                  <li key={i} className={"book"}>
+                    <Link to={`/book-detail/${s.isbn13}`}>
+                      <div className="item">
+                        <img src={s.imgUrl} alt="" />
+                      </div>
+                    </Link>
+                  </li>
+                ))}
+              </div>
+              <div className={"slide clone".concat(animate ? "" : " stop")}>
+                {newBookList.map((s, i) => (
+                  <li key={i} className={"book"}>
+                    <Link to={`/book-detail/${s.isbn13}`}>
+                      <div className="item">
+                        <img src={s.imgUrl} alt="" />
+                      </div>
+                    </Link>
+                  </li>
+                ))}
+              </div>
+            </ul>
+          </div>
+        </div>
+      </SlideWrapper>
+      <br />
+      <TodayBook>
+        {todayBookYes24List.length === 0 ? (
+          <h2>로딩중...</h2>
+        ) : (
+          <TodayInner>
+            <TodayInnerImg>
+              <Link to={`/book-detail/${setTodayBook.isbn13}`}>
+                <img src={setTodayBook.imgUrl} alt="" />
+              </Link>
+            </TodayInnerImg>
+            <TodayInnerRight>
+              <div>
+                <h2>오늘의 책</h2>
+              </div>
+              <BookTitle>{setTodayBook.bookName}</BookTitle>
+              <BookContentDiv>
+                <BookContent>{setTodayBook.content}</BookContent>
+              </BookContentDiv>
+              <BookInfoDiv>
+                <BookAuthor>{setTodayBook.author}</BookAuthor>
+                <BookPub>{setTodayBook.publisher}</BookPub>
+              </BookInfoDiv>
+              <GalleryContainer>
+                {todayBookYes24List.map((d, index) => (
+                  <GalleryItem
+                    style={generateItemStyle(d.imgUrl)}
+                    key={index}
+                    onClick={() => setBook(d)}
+                  ></GalleryItem>
+                ))}
+              </GalleryContainer>
+            </TodayInnerRight>
+          </TodayInner>
+        )}
+      </TodayBook>
+      <br />
+      {nowThisBookYes24List.length === 0 ? (
+        <h2>로딩중...</h2>
+      ) : (
+        <ConDiv>
+          <HeaderDiv>
+            <ConInnerH1>
+              <h1>지금 이 책</h1>
+            </ConInnerH1>
+            <CPageDiv>
+              {currentThisPage}/{thisTotalPages}
+            </CPageDiv>
+          </HeaderDiv>
+          <ConInnerBooks>
+            <PagingButton onClick={prevThisPage}>&lt;</PagingButton>
+            {getThisDataForPage().map((d, index) => (
+              <BoxDiv key={index}>
+                <StyledLink to={`/book-detail/${d.isbn13}`}>
+                  <ImgDiv >
+                    <BookImg src={d.imgUrl} alt=""/>
+                  </ImgDiv>
+                  <TitleDiv>
+                    <TitleSpan>{d.bookName}</TitleSpan>
+                    <AuthorSpan>{d.author}</AuthorSpan>
+                    <PubSpan>{d.publisher}</PubSpan>
+                  </TitleDiv>
+                </StyledLink>
+              </BoxDiv>
+            ))}
+            <PagingButton onClick={nextThisPage}>&gt;</PagingButton>
+          </ConInnerBooks>
+        </ConDiv>
+      )}
+      <br />
+      {popularBookYes24List.length === 0 ? (
+        <h2>로딩중...</h2>
+      ) : (
+        <ConDiv>
+          <HeaderDiv>
+            <ConInnerH1>
+              <h1>베스트셀러</h1>
+            </ConInnerH1>
+            <CPageDiv>
+              {currentPopularPage}/{popularTotalPages}
+            </CPageDiv>
+          </HeaderDiv>
+          <ConInnerBooks>
+          <PagingButton onClick={prevPopularPage}>&lt;</PagingButton>
+          {getPopularDataForPage().map((d, index) => (
+            <BoxDiv key={index}>
+              <StyledLink to={`/book-detail/${d.isbn13}`}>
+                <ImgDiv >
+                  <BookImg src={d.imgUrl} alt=""/>
+                </ImgDiv>
+                <TitleDiv>
+                  <TitleSpan>{d.bookName}</TitleSpan>
+                  <AuthorSpan>{d.author}</AuthorSpan>
+                  <PubSpan>{d.publisher}</PubSpan>
+                </TitleDiv>
+              </StyledLink>
+            </BoxDiv>
+          ))}
+          <PagingButton onClick={nextPopularPage}>&gt;</PagingButton>
+          </ConInnerBooks>
+        </ConDiv>
+      )}
+      <br />
+    </HomePageWarpper>
+  );
+};
+
+export default HomePage;
+```	
+	
+</details>
+
+
+[Back_Crawling_Aladin_전체 코드 보러 가기](https://github.com/hnymon/final-backend/blob/master/src/main/java/com/web/crawling/CrawlingAladin.java)
+ 
+[Back_Crawling_Yes24_전체 코드 보러 가기](https://github.com/hnymon/final-backend/blob/master/src/main/java/com/web/crawling/CrawlingYes24.java)
+
    
-### 5. 카카오 맵 API
+### 3. 카카오 맵 API
 - 카카오 맵 API를 통해 도서관 위치 표시
   
 <details>
-	<summary>Controller 코드 보기</summary>
+	<summary>코드 보기</summary>
 
-```
+```javascript
+const KakaoMap = () => {
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [map, setMap] = useState(null);
+  const [marker, setMarker] = useState(null);
+  const [clickedAddress, setClickedAddress] = useState("");
+  const openModal = () => {
+    setModalIsOpen(true);
+  };
 
-```
+  const closeModal = () => {
+    setModalIsOpen(false);
+  };
 
-</details>
-### 6. 주문, 문의 내역 확인
-- 주문 확인
+  useEffect(() => {
+    Modal.setAppElement("#root");
+  }, []);
+  const kjskey = process.env.REACT_APP_KAKAO_JS_KEY;
+  useEffect(() => {
+    if (modalIsOpen) {
+      const loadKakaoMapsSDK = () => {
+        return new Promise((resolve, reject) => {
+          const script = document.createElement("script");
+          script.src =
+            `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${kjskey}&libraries=services&autoload=false`;
+
+          script.onload = () => {
+            window.kakao.maps.load(() => {
+              initMap(); // Kakao 지도 SDK 로드 후 지도 초기화 함수 호출
+              resolve();
+            });
+          };
+
+          script.onerror = () => {
+            reject(new Error("Failed to load Kakao Maps SDK."));
+          };
+
+          document.head.appendChild(script);
+        });
+      };
+
+      loadKakaoMapsSDK().catch((error) => {
+        console.error(error);
+      });
+    }
+  }, [modalIsOpen]);
+
+  const initMap = () => {
+    const container = document.getElementById("map");
+    const options = {
+      center: new window.kakao.maps.LatLng(33.450701, 126.570667),
+      level: 3,
+    };
+
+    const map = new window.kakao.maps.Map(container, options);
+    setMap(map);
+
+    displayCurrentLocationMarker(map);
+
+    fetchDataAndDisplayMarkers(map);
+
+    window.kakao.maps.event.addListener(map, "click", (mouseEvent) => {
+      moveCurrentLocationMarker(mouseEvent.latLng);
+    });
+  };
+  // 도서관 마커를 찍어주는 const
+  //  도서관 위치
+ const fetchDataAndDisplayMarkers = async (map) => {
+  try {
+    const response = await axios.get("/Library");
+    const dataList = response.data.csvList; // 서버에서 받아온 데이터
+    console.log(dataList);
+    const markers = [];
+    dataList.forEach((data) => {
+      const markerPosition = new window.kakao.maps.LatLng(
+        data.latitude,
+        data.longitude
+      );
+      // // 마커 구분짓기 // 좀있다가 범헌
+      let markerImage;
+
+      switch (data.lbrrySe) {
+        case "어린이도서관":
+          markerImage = "/children1.png"; // 어린이도서관 마커 
+          break;
+        case "공공도서관":
+          markerImage = "/publicLibrary.png"; // 공공도서관 마커 
+          break;
+        case "작은도서관":
+          markerImage = "/small.png"; // 작은도서관 마커 이미지 
+          break;
+        case "학교도서관":
+          markerImage = "/school.png";
+        default:
+          markerImage = "/default_library_marker.jpg"; 
+      }
+      const marker = new window.kakao.maps.Marker({
+        position: markerPosition,
+        image: new window.kakao.maps.MarkerImage(markerImage, new window.kakao.maps.Size(30, 30)) // 마커 표시
+      });
+      marker.setMap(map);
+      // 마커 클러스트
+      
+      const content = `
+        <div class="wrap" style="background-color: white; border: 1px solid #ccc; padding: 10px;">
+          <div class="info">
+            <div class="title" style="font-size: 18px; font-weight: bold; color: #666; margin-bottom: 10px;">${data.lbrryNm}</div>
+            <hr style="border-top: 1px solid #ccc; margin: 10px 0;"/>
+            <div class="body" style="display: flex; align-items: center;">
+              <div class="img" style="margin-right: 10px;">
+                <img src="https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/thumnail.png" width="73" height="70"/>
+              </div>
+              <div class="desc" style="flex-grow: 1;">
+                <div class="ellipsis" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">${data.rdnmadr}</div>
+                <div class="jibun ellipsis" style="color: #666;">${data.phoneNumber}</div>
+                <div><a href="${data.homepageUrl}" target="_blank" class="link" style="color: blue; text-decoration: none;">홈페이지</a></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+     const overlay = new window.kakao.maps.CustomOverlay({
+        clickable: true,
+        content: content,
+        map: null,
+        position: marker.getPosition(),
+        yAnchor: 0,
+      });
+      
+      window.kakao.maps.event.addListener(marker, "click", function () {
+        if (overlay.getMap() === null) {
+          overlay.setMap(map);
+        } else {
+          overlay.setMap(null);
+        }
+      });
+    });
+
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+};
+
+
+  //  도서관 위치
+  // 현재위치를 직어주는 const
+  const displayCurrentLocationMarker = (map) => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const currentPos = new window.kakao.maps.LatLng(
+          position.coords.latitude,
+          position.coords.longitude
+        );
+
+        // 현재 위치 마커에 이미지 적용
+        const currentLocationMarkerImage = new window.kakao.maps.MarkerImage(
+          "/Logo_n.png", // 현재 위치 마커 이미지 파일 경로
+          new window.kakao.maps.Size(60, 60) // 마커 이미지 크기 설정
+        );
+
+        const currentLocationMarker = new window.kakao.maps.Marker({
+          position: currentPos,
+          image: currentLocationMarkerImage, // 현재위치 마커 이미지 적용
+        });
+        currentLocationMarker.setMap(map);
+ 
+        setMarker(currentLocationMarker);
+      },
+      (error) => {
+        console.error("Error getting current location:", error);
+      }
+    );
+  };
+
+  const moveCurrentLocationMarker = (latLng) => {
+    if (marker) {
+      marker.setMap(null);
+      marker.setPosition(latLng);
+      marker.setMap(map);
+    }
+  };
+  // 현재위치 맵클릭시 마커이동 useEffect()
+  useEffect(() => {
+    if (map && marker) {
+      const clickListener = window.kakao.maps.event.addListener(
+        map,
+        "click",
+        (mouseEvent) => {
+          const geocoder = new window.kakao.maps.services.Geocoder();
+
+          geocoder.coord2Address(
+            mouseEvent.latLng.getLng(),
+            mouseEvent.latLng.getLat(),
+            (result, status) => {
+              if (status === window.kakao.maps.services.Status.OK) {
+                const addr =
+                  result[0]?.road_address?.address_name ||
+                  result[0]?.address?.address_name;
+
+                console.log("클릭한 위치의 주소:", addr);
+
+                setClickedAddress(addr);
+                if (marker) {
+                  marker.setMap(null);
+                  marker.setPosition(mouseEvent.latLng);
+                  marker.setMap(map);
+                }
+              }
+            }
+          );
+        }
+      );
+
+      return () => {
+        if (clickListener) {
+          window.kakao.maps.event.removeListener(clickListener);
+        }
+      };
+    }
+  }, [map, marker]);
+  // 현재위치 geolocation
+  const getIp = async () =>
+    await fetch("https://geolocation-db.com/json/")
+      .then((res) => res.json())
+      .then((res) => res["IPv4"]);
   
-<details>
-	<summary>코드 보기</summary>
+  const [geo, setGeo] = useState({ lat: 0, lon: 0 });
+  const getLocation = async () => {
+    const nowIp = await getIp();
+    console.log(nowIp)
+    const geoData = await fetch(`http://ip-api.com/json/${nowIp}`)
+      .then((res) => res.json())
+      .then((res) => {
+        console.log(res);
+        return res;
+      });
+    const latitude = geoData.lat;
+    const longitude = geoData.lon;
+    setGeo({ lat: latitude, lon: longitude });
+  };
+  useEffect(() => {
+    getLocation();
+  }, []);
+  
+   
+  useEffect(() => {
+    console.log(geo)
+    const getCurrentLocation = async () => {
+      try {
+        const position = await new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject);
+        });
+        console.log(position.coords.latitude)
+        console.log(position.coords.longitude)
+        const currentPos = new window.kakao.maps.LatLng(
+          position.coords.latitude,
+          position.coords.longitude
+        );
+
+        if (map) {
+          map.panTo(currentPos);
+
+          if (marker) {
+            marker.setMap(null);
+            marker.setPosition(currentPos);
+            marker.setMap(map);
+          }
+        }
+
+        setClickedAddress("");
+      } catch (error) {
+        console.error("현재 위치를 가져오는 데 실패했습니다:", error);
+      }
+    };
+
+    getCurrentLocation();
+  }, [map, marker]);
 
 ```
 
-```
 
 </details>
 
+[카카오 공식 문서 보러가기](https://apis.map.kakao.com/web/sample/)
 
-<details>
-	<summary>코드 보기</summary>
-
-```
-
-```
-
-</details>
-
-
-- 문의 확인
-
-<details>
-	<summary>코드 보기</summary>
-
-```
-
-
-```
-
-</details>
-
-
-<details>
-	<summary>코드 보기</summary>
-
-```
 
 
 ```
