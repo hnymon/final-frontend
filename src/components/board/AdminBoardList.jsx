@@ -54,11 +54,6 @@ const PaginationButton = styled.button`
     cursor: pointer;
     color: #ffffff;
     background-color: #FFC0CB;
-
-    // &:disabled {
-    //     opacity: 0.5;
-    //     cursor: not-allowed;
-    // }
 `;
 const AdminBoardList = () => {
   const [board, setBoards] = useState([]);
@@ -127,9 +122,9 @@ const formatDate = (dateString) => {
             <tr key={item.boardSeq} onClick={()=> handleRowClick(item.boardSeq)}>
               <td>{item.boardSeq}</td>
               <td>
-                {/* <Link to={`/board/AdminBoardDetail/${item.boardSeq}`}> */}
+                
                   {item.boardTitle}
-                {/* </Link> */}
+                
               </td>
               <td>{item.admin}</td>
               <td>{item.boardViews}</td>

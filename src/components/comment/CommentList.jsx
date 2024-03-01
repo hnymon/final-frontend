@@ -114,12 +114,18 @@ useEffect(() => {
       try {
         console.log(isbn);
         const headers = GetTokenToHeader();
-        const response = await axios.post(`/comment/CommentList`,{isbn},headers);
-        console.log(response.data.list);
-        console.log(response.data);
-        setComments(response.data.list);
-        setTotalElements(response.data.list.length);
-        setMember(response.data.member);
+        console.log(headers.headers.Authorization.split(" ")[1])
+        if(headers.headers.Authorization.split(" ")[1] !== "undefined") {
+          const response = await axios.post("/comment/CommentList",{isbn},headers);
+          setComments(response.data.list);
+          setTotalElements(response.data.list.length);
+          setMember(response.data.member);
+        } else {
+          const response = await axios.post("/comment/CommentList2",{isbn});
+          console.log("???")
+          setComments(response.data.list);
+          setTotalElements(response.data.list.length);
+        }
       } catch (error) {
         console.error('Error fetching comments:', error);
       }
@@ -181,11 +187,6 @@ useEffect(() => {
     console.log(editedCommentContent);
     try {
       const response = await axios.post(`/comment/CommentUpdate/${commentId}`,editedCommentContent,
-      // {
-      //   headers: {
-      //     'Content-Type': 'text/plain' // 임의로 json형태를 바꿔준다
-      //   }
-      // }
       );
       console.log(response.data);
       if (response.data === "success") {

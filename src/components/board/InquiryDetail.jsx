@@ -42,10 +42,6 @@ const InquiryDetail = () => {
     
     return `${year}-${month}-${day} ${hours}:${minutes}`;
   }; 
-  // useEffect(() => {
-  //   // updateFlag가 변경될 때마다 다시 랜더링됨
-  //   console.log(updateFlag);
-  // }, [updateFlag]);
 
   useEffect(() => {
     const getBoard = async () => {

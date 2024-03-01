@@ -35,14 +35,14 @@ const KakaoMap = () => {
   useEffect(() => {
     Modal.setAppElement("#root");
   }, []);
-
+  const kjskey = process.env.REACT_APP_KAKAO_JS_KEY;
   useEffect(() => {
     if (modalIsOpen) {
       const loadKakaoMapsSDK = () => {
         return new Promise((resolve, reject) => {
           const script = document.createElement("script");
           script.src =
-            "https://dapi.kakao.com/v2/maps/sdk.js?appkey=e06a12caf9f1479fb96a03f060d86d4c&libraries=services&autoload=false";
+            `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${kjskey}&libraries=services&autoload=false`;
 
           script.onload = () => {
             window.kakao.maps.load(() => {
@@ -85,8 +85,6 @@ const KakaoMap = () => {
   };
   // 도서관 마커를 찍어주는 const
   //  도서관 위치
-  // const [dataList, setDataList] = useState([]);
-  // console.log(dataList);
  const fetchDataAndDisplayMarkers = async (map) => {
   try {
     const response = await axios.get("/Library");
@@ -157,23 +155,8 @@ const KakaoMap = () => {
           overlay.setMap(null);
         }
       });
-      // markers.push(marker);
     });
 
-    // var clusterer = new window.kakao.maps.MarkerClusterer({
-    //   map: map,
-    //   averageCenter: true,
-    //   disableClickZoom: true,
-    //   minClusterSize: 2
-    // });
-  
-    // clusterer.addMarkers(markers);
-  
-    // window.kakao.maps.event.addListener(clusterer, 'clusterclick', function(cluster) {
-    //   console.log('클러스터 클릭', cluster);
-    // });
-  
-  
   } catch (error) {
     console.error("Error fetching data:", error);
   }
@@ -182,32 +165,32 @@ const KakaoMap = () => {
 
   //  도서관 위치
   // 현재위치를 직어주는 const
-  const displayCurrentLocationMarker = (map) => {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const currentPos = new window.kakao.maps.LatLng(
-          position.coords.latitude,
-          position.coords.longitude
-        );
-
-        // 현재 위치 마커에 이미지 적용
-        const currentLocationMarkerImage = new window.kakao.maps.MarkerImage(
-          "/Logo_n.png", // 현재 위치 마커 이미지 파일 경로
-          new window.kakao.maps.Size(60, 60) // 마커 이미지 크기 설정
-        );
-
-        const currentLocationMarker = new window.kakao.maps.Marker({
-          position: currentPos,
-          image: currentLocationMarkerImage, // 현재위치 마커 이미지 적용
-        });
-        currentLocationMarker.setMap(map);
- 
-        setMarker(currentLocationMarker);
-      },
-      (error) => {
-        console.error("Error getting current location:", error);
-      }
+  const displayCurrentLocationMarker = async (map) => {
+    const nowIp = await getIp();
+    const geoData = await fetch(`http://ip-api.com/json/${nowIp}`)
+      .then((res) => res.json())
+      .then((res) => {
+        console.log(res);
+        return res;
+      });
+    const currentPos = new window.kakao.maps.LatLng(
+      geoData.lat,
+      geoData.lon
     );
+
+    // 현재 위치 마커에 이미지 적용
+    const currentLocationMarkerImage = new window.kakao.maps.MarkerImage(
+      "/Logo_n.png", // 현재 위치 마커 이미지 파일 경로
+      new window.kakao.maps.Size(60, 60) // 마커 이미지 크기 설정
+    );
+
+    const currentLocationMarker = new window.kakao.maps.Marker({
+      position: currentPos,
+      image: currentLocationMarkerImage, // 현재위치 마커 이미지 적용
+    });
+    currentLocationMarker.setMap(map);
+
+    setMarker(currentLocationMarker);
   };
 
   const moveCurrentLocationMarker = (latLng) => {
@@ -256,17 +239,25 @@ const KakaoMap = () => {
       };
     }
   }, [map, marker]);
-  // 현재위치 geolocation
+  
+  // 현재위치 geolocation > https or localhost 에서만 사용 가능하기 때문에 다른 방법으로 수정
+  const getIp = async () =>
+    await fetch("https://geolocation-db.com/json/")
+      .then((res) => res.json())
+      .then((res) => res["IPv4"]);
   useEffect(() => {
     const getCurrentLocation = async () => {
       try {
-        const position = await new Promise((resolve, reject) => {
-          navigator.geolocation.getCurrentPosition(resolve, reject);
-        });
-
+        const nowIp = await getIp();
+        const geoData = await fetch(`http://ip-api.com/json/${nowIp}`)
+          .then((res) => res.json())
+          .then((res) => {
+            console.log(res);
+            return res;
+          });
         const currentPos = new window.kakao.maps.LatLng(
-          position.coords.latitude,
-          position.coords.longitude
+          geoData.lat,
+          geoData.lon
         );
 
         if (map) {

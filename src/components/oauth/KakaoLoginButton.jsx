@@ -4,7 +4,7 @@ import SNSLink from './SNSLink';
 
 const KakaoLoginButton = () => {
 
-  const url = `http://localhost:8080/oauth2/authorization/kakao`;
+  const url = `http://www.starbook.p-e.kr:8080/oauth2/authorization/kakao`;
 
   const loginKakao = () => {
     window.location.href = url;

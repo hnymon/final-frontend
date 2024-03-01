@@ -134,14 +134,7 @@ const BoardCreate = () => {
       <ResponsiveForm onSubmit={handleSubmit}>
         <ResponsiveFormGroup>
           <label htmlFor="admin">관리자 &nbsp;
-          {/* <input
-            type="text"
-            id="writer"
-            // value={board.admin}
-            value="고객센터"
-            onChange={(e) => setBoard({ ...board, admin: e.target.value })}
-            required
-          /> */}
+          
           <select  name="check" id="writer" onChange={(e) => setBoard({ ...board, admin: e.target.value })} required>
           <option value="">선택하세요</option>
           <option value="고객센터">고객센터</option>

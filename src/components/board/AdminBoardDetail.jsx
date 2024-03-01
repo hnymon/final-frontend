@@ -12,7 +12,6 @@ const Card = styled.div`
 margin-left: 23%;
 margin-top: 10%;
 max-width: 55%; /* 수정: 카드 최대 너비를 더 넓게 조정 */
-// width: 100%;
 `;
 
 const Admin = styled.p`

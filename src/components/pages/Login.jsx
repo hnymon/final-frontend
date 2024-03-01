@@ -90,6 +90,11 @@ const FindIdOrPwd = styled.div`
 
 
 const Login = () => {
+    useEffect(()=>{
+
+    },[])
+
+
     const navigate = useNavigate();
     const cookies = new Cookies();
     const getSabveId = () =>{
@@ -234,9 +239,11 @@ const Login = () => {
                 <KakaoLoginButton/>
                 <GoogleLoginButton/>
             </SocialLogo>
+            <p>구글 로그인 승인 대기중</p>
             <StyledNavLink to="/signup">
                 회원가입
             </StyledNavLink>
+            <useGeolocation/>
         </PageContainer>
     );
 };

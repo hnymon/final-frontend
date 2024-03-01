@@ -4,7 +4,7 @@ import logo from '../../img/btnG.png'
 
 const NaverLoginButton = () => {
 
-  const url = `http://localhost:8080/oauth2/authorization/naver`;
+  const url = `http://www.starbook.p-e.kr:8080/oauth2/authorization/naver`;
 
   const loginNaver = () => {
     window.location.href = url;
