@@ -1153,6 +1153,9 @@ const KakaoMap = () => {
 
 [카카오 공식 문서 보러가기](https://apis.map.kakao.com/web/sample/)
 
+#### 현재위치 수정 참고
+
+[참고 블로그](https://velog.io/@94lfnv/%EC%B9%B4%EC%B9%B4%EC%98%A4-%EB%A7%B5-http%EC%97%90%EC%84%9C-%EA%B5%AC%ED%98%84%ED%95%98%EA%B8%B0)
 
 
 
